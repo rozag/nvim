@@ -12,8 +12,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- TODO: set up autoformatting and use stylua.toml
-
 -- Install and configure plugins via lazy.nvim
 require("lazy").setup(
   -- Plugins - either a table or a string:
@@ -23,13 +21,11 @@ require("lazy").setup(
   --   Your Plugins:
   --   https://github.com/folke/lazy.nvim#-structuring-your-plugins
   {
-    -- TODO extract definitions and settings for them
   },
 
   -- Options: https://github.com/folke/lazy.nvim#%EF%B8%8F-configuration
   {
     defaults = { lazy = true },
-    -- install = { colorscheme = { "nvchad" } }, -- TODO get some NvChad scheme?
 
     ui = {
       icons = {
@@ -57,7 +53,6 @@ require("lazy").setup(
       },
     },
 
-    -- TODO: got this block from NvChad, should probably be reviewed
     performance = {
       rtp = {
         disabled_plugins = {
