@@ -59,7 +59,7 @@ require("lazy").setup(
       end,
     },
 
-    -- Comments
+    -- Comments: `gcc` & `gc` while in visual
     -- https://github.com/navarasu/onedark.nvim
     {
       "numToStr/Comment.nvim",
@@ -68,7 +68,7 @@ require("lazy").setup(
       end,
     },
 
-    -- Surround
+    -- Surround: `yse"` & `cs"b`
     -- https://github.com/kylechui/nvim-surround
     {
       "kylechui/nvim-surround",
