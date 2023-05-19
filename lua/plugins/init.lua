@@ -25,6 +25,9 @@ require("lazy").setup(
     -- https://github.com/nvim-lua/plenary.nvim
     "nvim-lua/plenary.nvim",
 
+    -- -- TODO: `opts = {}` is the same as calling `require('fidget').setup({})`
+    -- { 'j-hui/fidget.nvim', opts = {} },
+
     -- tree-sitter
     -- https://github.com/nvim-treesitter/nvim-treesitter
     {
@@ -75,6 +78,18 @@ require("lazy").setup(
       config = function()
         require("nvim-surround").setup()
       end
+    },
+
+    -- Indentation guides
+    -- https://github.com/lukas-reineke/indent-blankline.nvim
+    {
+      "lukas-reineke/indent-blankline.nvim",
+      config = function()
+        require("indent_blankline").setup {
+          show_trailing_blankline_indent = false,
+          show_current_context = true,
+        }
+      end,
     },
   },
 
