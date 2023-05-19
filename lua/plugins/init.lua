@@ -25,9 +25,6 @@ require("lazy").setup(
     -- https://github.com/nvim-lua/plenary.nvim
     "nvim-lua/plenary.nvim",
 
-    -- -- TODO: `opts = {}` is the same as calling `require('fidget').setup({})`
-    -- { 'j-hui/fidget.nvim', opts = {} },
-
     -- tree-sitter
     -- https://github.com/nvim-treesitter/nvim-treesitter
     {
@@ -38,7 +35,7 @@ require("lazy").setup(
       },
       build = ":TSUpdate",
       config = function()
-        require("nvim-treesitter.configs").setup {
+        require("nvim-treesitter").setup {
           ensure_installed = { "lua" },
           highlight = {
             enable = true,
@@ -57,13 +54,20 @@ require("lazy").setup(
         local onedark = require(colorschemeName)
         onedark.setup {
           style = "darker",
+          code_style = {
+            comments = "italic",
+            keywords = "bold",
+            functions = "italic",
+            strings = "none",
+            variables = "none",
+          },
         }
         onedark.load()
       end,
     },
 
     -- Comments: `gcc` & `gc` while in visual
-    -- https://github.com/navarasu/onedark.nvim
+    -- https://github.com/numToStr/Comment.nvim
     {
       "numToStr/Comment.nvim",
       config = function()
@@ -77,7 +81,7 @@ require("lazy").setup(
       "kylechui/nvim-surround",
       config = function()
         require("nvim-surround").setup()
-      end
+      end,
     },
 
     -- Indentation guides
@@ -86,9 +90,214 @@ require("lazy").setup(
       "lukas-reineke/indent-blankline.nvim",
       config = function()
         require("indent_blankline").setup {
+          indentLine_enabled = 1,
+          filetype_exclude = {
+            "help",
+            "terminal",
+            "lazy",
+            "lspinfo",
+            "TelescopePrompt",
+            "TelescopeResults",
+            "mason",
+            "nvdash",
+            "nvcheatsheet",
+            "",
+          },
+          buftype_exclude = { "terminal" },
           show_trailing_blankline_indent = false,
+          show_first_indent_level = true,
           show_current_context = true,
+          show_current_context_start = false,
         }
+      end,
+    },
+
+    -- Preview for color literals, adds colored highlight for #123456 strings
+    -- https://github.com/NvChad/nvim-colorizer.lua
+    {
+      "NvChad/nvim-colorizer.lua",
+      config = function()
+        local colorizer = require("colorizer")
+        colorizer.setup()
+        colorizer.attach_to_buffer(0)
+      end,
+    },
+
+    -- Show pending keybindings
+    -- https://github.com/folke/which-key.nvim
+    {
+      "folke/which-key.nvim",
+      config = function()
+        require("which-key").setup()
+      end,
+    },
+
+    -- git releated signs for the gutter + utilities for managing changes
+    -- https://github.com/lewis6991/gitsigns.nvim
+    {
+      "lewis6991/gitsigns.nvim",
+      lazy = true,
+      ft = { "gitcommit", "diff" },
+      init = function()
+        -- Load gitsigns only when a git file is opened
+        vim.api.nvim_create_autocmd(
+          { "BufRead" },
+          {
+            group = vim.api.nvim_create_augroup(
+              "GitSignsLazyLoad",
+              { clear = true }
+            ),
+            callback = function()
+              vim.fn.system(
+                "git -C "
+                .. '"'
+                .. vim.fn.expand("%:p:h")
+                .. '"'
+                .. " rev-parse"
+              )
+              if vim.v.shell_error == 0 then
+                vim.api.nvim_del_augroup_by_name "GitSignsLazyLoad"
+                vim.schedule(
+                  function()
+                    require("lazy").load { plugins = { "gitsigns.nvim" } }
+                  end
+                )
+              end
+            end,
+          }
+        )
+      end,
+      config = function()
+        require("gitsigns").setup {
+          signs = {
+            add = {
+              hl = "DiffAdd",
+              text = "│",
+              numhl = "GitSignsAddNr",
+            },
+            change = {
+              hl = "DiffChange",
+              text = "│",
+              numhl = "GitSignsChangeNr",
+            },
+            delete = {
+              hl = "DiffDelete",
+              text = "󰍵",
+              numhl = "GitSignsDeleteNr",
+            },
+            topdelete = {
+              hl = "DiffDelete",
+              text = "‾",
+              numhl = "GitSignsDeleteNr",
+            },
+            changedelete = {
+              hl = "DiffChangeDelete",
+              text = "~",
+              numhl = "GitSignsChangeNr",
+            },
+            untracked = {
+              hl = "GitSignsAdd",
+              text = "│",
+              numhl = "GitSignsAddNr",
+              linehl = "GitSignsAddLn",
+            },
+          },
+        }
+      end,
+    },
+
+    -- Fancy icons , , , etc.
+    -- https://github.com/nvim-tree/nvim-web-devicons
+    {
+      "nvim-tree/nvim-web-devicons",
+      config = function()
+        require("nvim-web-devicons").setup()
+      end,
+    },
+
+    -- File managing, picker etc.
+    -- https://github.com/nvim-tree/nvim-tree.lua
+    {
+      "nvim-tree/nvim-tree.lua",
+      lazy = true,
+      cmd = { "NvimTreeToggle", "NvimTreeFocus" },
+      config = function()
+        require("nvim-tree").setup {
+          filters = {
+            dotfiles = false,
+            exclude = { vim.fn.stdpath "config" .. "/lua/custom" },
+          },
+          disable_netrw = true,
+          hijack_netrw = true,
+          hijack_cursor = true,
+          hijack_unnamed_buffer_when_opening = false,
+          sync_root_with_cwd = true,
+          update_focused_file = {
+            enable = true,
+            update_root = false,
+          },
+          view = {
+            adaptive_size = false,
+            side = "left",
+            width = 40,
+            preserve_window_proportions = true,
+          },
+          git = {
+            enable = false,
+            ignore = true,
+          },
+          filesystem_watchers = {
+            enable = true,
+          },
+          actions = {
+            open_file = {
+              resize_window = true,
+            },
+          },
+          renderer = {
+            root_folder_label = false,
+            highlight_git = true,
+            highlight_opened_files = "all",
+
+            indent_markers = {
+              enable = false,
+            },
+
+            icons = {
+              show = {
+                file = true,
+                folder = true,
+                folder_arrow = true,
+                git = true,
+              },
+
+              glyphs = {
+                default = "󰈚",
+                symlink = "",
+                folder = {
+                  default = "󰉋",
+                  empty = "",
+                  empty_open = "",
+                  open = "",
+                  symlink = "",
+                  symlink_open = "",
+                  arrow_open = "",
+                  arrow_closed = "",
+                },
+                git = {
+                  unstaged = "✗",
+                  staged = "✓",
+                  unmerged = "",
+                  renamed = "➜",
+                  untracked = "★",
+                  deleted = "",
+                  ignored = "◌",
+                },
+              },
+            },
+          },
+        }
+        vim.g.nvimtree_side = "left"
       end,
     },
   },
