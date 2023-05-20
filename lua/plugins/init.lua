@@ -14,7 +14,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- [[ Name of colorscheme to reuse in several places ]]
-local colorschemeName = "onedark"
+local colorschemeName = "monokai-pro"
 
 -- [[ Install and configure plugins via lazy.nvim ]]
 -- https://github.com/folke/lazy.nvim
@@ -170,10 +170,6 @@ require("lazy").setup(
             },
           },
           refactor = {
-            highlight_definitions = {
-              enable = true,
-              clear_on_cursor_move = true,
-            },
             smart_rename = {
               enable = true,
               keymaps = {
@@ -186,22 +182,14 @@ require("lazy").setup(
     },
 
     -- Colorscheme
-    -- https://github.com/navarasu/onedark.nvim
+    -- https://github.com/loctvl842/monokai-pro.nvim
     {
-      "navarasu/onedark.nvim",
+      "loctvl842/monokai-pro.nvim",
       config = function()
-        local onedark = require(colorschemeName)
-        onedark.setup {
-          style = "darker",
-          code_style = {
-            comments = "italic",
-            keywords = "bold",
-            functions = "italic",
-            strings = "none",
-            variables = "none",
-          },
+        require(colorschemeName).setup {
+          filter = "spectrum",
         }
-        onedark.load()
+        vim.cmd.colorscheme(colorschemeName)
       end,
     },
 
