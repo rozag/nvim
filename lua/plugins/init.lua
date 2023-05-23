@@ -575,6 +575,20 @@ require("lazy").setup(
       end,
     },
 
+    -- [[ Statusline ]]
+    -- https://github.com/nvim-lualine/lualine.nvim
+    {
+      "nvim-lualine/lualine.nvim",
+      opts = {
+        options = {
+          icons_enabled = true,
+          theme = colorschemeName,
+          -- component_separators = "|",
+          -- section_separators = "",
+        },
+      },
+    },
+
   },
 
   -- [[ Options ]]
