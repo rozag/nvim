@@ -434,48 +434,125 @@ require("lazy").setup(
     ----------------------------------------------------------------------------
     -- NOTE: From kickstart
     ----------------------------------------------------------------------------
-    -- [[ Fuzzy Finder (files, lsp, etc) ]]
+    -- [[ Telescope - fuzzy finder (files, lsp, etc) ]]
     -- https://github.com/nvim-telescope/telescope.nvim
     {
       "nvim-telescope/telescope.nvim",
       branch = "0.1.x",
       dependencies = { "nvim-lua/plenary.nvim" },
       config = function()
-        -- [[ Configure Telescope ]]
-        -- See `:help telescope` and `:help telescope.setup()`
         require("telescope").setup {
           defaults = {
-            mappings = {
-              i = {
-                ["<C-u>"] = false,
-                ["<C-d>"] = false,
+            vimgrep_arguments = {
+              "rg",
+              "-L",
+              "--color=never",
+              "--no-heading",
+              "--with-filename",
+              "--line-number",
+              "--column",
+              "--smart-case",
+            },
+            prompt_prefix = "   ",
+            selection_caret = "  ",
+            entry_prefix = "  ",
+            initial_mode = "insert",
+            selection_strategy = "reset",
+            sorting_strategy = "ascending",
+            layout_strategy = "horizontal",
+            layout_config = {
+              horizontal = {
+                prompt_position = "top",
+                preview_width = 0.6,
+                results_width = 0.4,
               },
+              vertical = {
+                mirror = true,
+              },
+              width = 0.90,
+              height = 0.90,
+              preview_cutoff = 120,
+            },
+            file_ignore_patterns = {
+              "node_modules",
+              "vendor", -- TODO: these could be part of lang specific layer
+            },
+            path_display = { "truncate" },
+            winblend = 0,
+            color_devicons = true,
+            set_env = { ["COLORTERM"] = "truecolor" },
+            file_previewer = require("telescope.previewers").vim_buffer_cat.new,
+            grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
+            qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
+            buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
+            mappings = {
+              n = { ["q"] = require("telescope.actions").close },
             },
           },
         }
 
-        -- Enable telescope fzf native, if installed
-        pcall(require("telescope").load_extension, "fzf")
+        vim.keymap.set(
+          "n",
+          "<leader>?",
+          require("telescope.builtin").oldfiles,
+          { desc = "[?] Find recently opened files" }
+        )
+        vim.keymap.set(
+          "n",
+          "<leader><space>",
+          require("telescope.builtin").buffers,
+          { desc = "[ ] Find existing buffers" }
+        )
+        vim.keymap.set(
+          "n",
+          "<leader>/",
+          function()
+            require("telescope.builtin").current_buffer_fuzzy_find(
+              require("telescope.themes").get_dropdown {
+                previewer = true,
+              }
+            )
+          end,
+          { desc = "[/] Fuzzily search in current buffer" }
+        )
+        vim.keymap.set(
+          "n",
+          "<leader>gf",
+          require("telescope.builtin").git_files,
+          { desc = "Search [G]it [F]iles" }
+        )
+        vim.keymap.set(
+          "n",
+          "<leader>sf",
+          require("telescope.builtin").find_files,
+          { desc = "[S]earch [F]iles" }
+        )
+        vim.keymap.set(
+          "n",
+          "<leader>sh",
+          require("telescope.builtin").help_tags,
+          { desc = "[S]earch [H]elp" }
+        )
+        vim.keymap.set(
+          "n",
+          "<leader>sw",
+          require("telescope.builtin").grep_string,
+          { desc = "[S]earch current [W]ord" }
+        )
+        vim.keymap.set(
+          "n",
+          "<leader>sg",
+          require("telescope.builtin").live_grep,
+          { desc = "[S]earch by [G]rep" }
+        )
+        vim.keymap.set(
+          "n",
+          "<leader>sd",
+          require("telescope.builtin").diagnostics,
+          { desc = "[S]earch [D]iagnostics" }
+        )
 
-        -- See `:help telescope.builtin`
-        vim.keymap.set("n", "<leader>?", require("telescope.builtin").oldfiles, { desc = "[?] Find recently opened files" })
-        vim.keymap.set("n", "<leader><space>", require("telescope.builtin").buffers, { desc = "[ ] Find existing buffers" })
-        vim.keymap.set("n", "<leader>/", function()
-          -- You can pass additional configuration to telescope to change theme, layout, etc.
-          require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown {
-            -- winblend = 10,
-            previewer = true,
-          })
-        end, { desc = "[/] Fuzzily search in current buffer" })
-
-        vim.keymap.set("n", "<leader>gf", require("telescope.builtin").git_files, { desc = "Search [G]it [F]iles" })
-        vim.keymap.set("n", "<leader>sf", require("telescope.builtin").find_files, { desc = "[S]earch [F]iles" })
-        vim.keymap.set("n", "<leader>sh", require("telescope.builtin").help_tags, { desc = "[S]earch [H]elp" })
-        vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[S]earch current [W]ord" })
-        vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[S]earch by [G]rep" })
-        vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[S]earch [D]iagnostics" })
-
-        -- NOTE: they also do the following in LSP setup
+        -- TODO: they also do the following in LSP setup
         -- nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
         -- nmap("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
         -- nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
@@ -489,85 +566,15 @@ require("lazy").setup(
     -- https://github.com/nvim-telescope/telescope-fzf-native.nvim
     {
       "nvim-telescope/telescope-fzf-native.nvim",
-      -- NOTE: If you are having trouble with this installation,
-      --       refer to the README for telescope-fzf-native for more instructions.
       build = "make",
       cond = function()
         return vim.fn.executable "make" == 1
       end,
+      config = function()
+        require("telescope").load_extension("fzf")
+      end,
     },
 
-    ----------------------------------------------------------------------------
-    -- NOTE: From NvChad
-    ----------------------------------------------------------------------------
-    -- https://github.com/nvim-telescope/telescope.nvim
-    -- {
-    --   "nvim-telescope/telescope.nvim",
-    --   cmd = "Telescope",
-    --   opts = function()
-    --     return {
-    --       defaults = {
-    --         vimgrep_arguments = {
-    --           "rg",
-    --           "-L",
-    --           "--color=never",
-    --           "--no-heading",
-    --           "--with-filename",
-    --           "--line-number",
-    --           "--column",
-    --           "--smart-case",
-    --         },
-    --         prompt_prefix = "   ",
-    --         selection_caret = "  ",
-    --         entry_prefix = "  ",
-    --         initial_mode = "insert",
-    --         selection_strategy = "reset",
-    --         sorting_strategy = "ascending",
-    --         layout_strategy = "horizontal",
-    --         layout_config = {
-    --           horizontal = {
-    --             prompt_position = "top",
-    --             preview_width = 0.55,
-    --             results_width = 0.8,
-    --           },
-    --           vertical = {
-    --             mirror = false,
-    --           },
-    --           width = 0.87,
-    --           height = 0.80,
-    --           preview_cutoff = 120,
-    --         },
-    --         file_sorter = require("telescope.sorters").get_fuzzy_file,
-    --         file_ignore_patterns = { "node_modules" },
-    --         generic_sorter = require("telescope.sorters").get_generic_fuzzy_sorter,
-    --         path_display = { "truncate" },
-    --         winblend = 0,
-    --         border = {},
-    --         borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-    --         color_devicons = true,
-    --         set_env = { ["COLORTERM"] = "truecolor" }, -- default = nil,
-    --         file_previewer = require("telescope.previewers").vim_buffer_cat.new,
-    --         grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
-    --         qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
-    --         -- Developer configurations: Not meant for general override
-    --         buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
-    --         mappings = {
-    --           n = { ["q"] = require("telescope.actions").close },
-    --         },
-    --       },
-    --       extensions_list = { "themes", "terms" },
-    --     }
-    --   end,
-    --   config = function(_, opts)
-    --     local telescope = require("telescope")
-    --     telescope.setup(opts)
-
-    --     -- load extensions
-    --     for _, ext in ipairs(opts.extensions_list) do
-    --       telescope.load_extension(ext)
-    --     end
-    --   end,
-    -- },
   },
 
   -- [[ Options ]]
