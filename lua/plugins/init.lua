@@ -589,18 +589,30 @@ require("lazy").setup(
           },
           sections = {
             lualine_a = {
-              { "mode", separator = { left = "" }, right_padding = 2 },
+              {
+                "mode",
+                separator = { left = " ", right = "" },
+                padding = 1,
+              },
             },
-            lualine_b = { "branch", "diff", "diagnostics" },
-            lualine_c = { "filename" },
+            lualine_b = { "diff", "diagnostics" },
+            lualine_c = {
+              { "filename", path = 1 },
+            },
             lualine_x = {},
             lualine_y = { "filetype", "progress" },
             lualine_z = {
-              { 'location', separator = { right = '' }, left_padding = 2 },
+              {
+                "location",
+                separator = { left = "", right = " " },
+                padding = 0,
+              },
             },
           },
           inactive_sections = {
-            lualine_a = { "filename" },
+            lualine_a = {
+              { "filename", path = 1 },
+            },
             lualine_b = {},
             lualine_c = {},
             lualine_x = {},

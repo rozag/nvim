@@ -48,10 +48,6 @@ vim.opt.completeopt = 'menuone,noselect'
 -- Enables 24-bit RGB color in the TUI
 vim.opt.termguicolors = true
 
--- Global statusline. The value of this option influences when the last window
--- will have a status line, 3 -> always and ONLY the last window
-vim.opt.laststatus = 3
-
 -- If in Insert, Replace or Visual mode put a message on the last line.
 vim.opt.showmode = false
 
