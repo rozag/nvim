@@ -431,9 +431,6 @@ require("lazy").setup(
       end,
     },
 
-    ----------------------------------------------------------------------------
-    -- NOTE: From kickstart
-    ----------------------------------------------------------------------------
     -- [[ Telescope - fuzzy finder (files, lsp, etc) ]]
     -- https://github.com/nvim-telescope/telescope.nvim
     {
