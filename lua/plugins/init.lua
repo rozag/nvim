@@ -656,6 +656,22 @@ require("lazy").setup(
       end,
     },
 
+    -- [[ Stuff for Mason ]]
+    -- https://github.com/williamboman/mason-lspconfig.nvim
+    {
+      "williamboman/mason-lspconfig.nvim",
+      config = function()
+        require("mason-lspconfig").setup {
+          ensure_installed = {
+            "gopls", -- gopls
+            "lua_ls", -- lua-language-server
+            "pyright", -- pyright
+            "rust_analyzer", -- rust-analyzer
+            "tsserver", -- typescript-language-server
+          },
+        }
+      end,
+    },
   },
 
   -- [[ Options ]]
