@@ -475,10 +475,14 @@ require("lazy").setup(
             path_display = { "truncate" },
             winblend = 0,
             set_env = { ["COLORTERM"] = "truecolor" },
-            file_previewer = require("telescope.previewers").vim_buffer_cat.new,
-            grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
-            qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
-            buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
+            file_previewer = require("telescope.previewers")
+              .vim_buffer_cat.new,
+            grep_previewer = require("telescope.previewers")
+              .vim_buffer_vimgrep.new,
+            qflist_previewer = require("telescope.previewers")
+              .vim_buffer_qflist.new,
+            buffer_previewer_maker = require("telescope.previewers")
+              .buffer_previewer_maker,
             mappings = {
               n = { ["q"] = require("telescope.actions").close },
             },
@@ -545,11 +549,6 @@ require("lazy").setup(
           require("telescope.builtin").diagnostics,
           { desc = "[S]earch [D]iagnostics" }
         )
-
-        -- TODO: they also do the following in LSP setup
-        -- nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-        -- nmap("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-        -- nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
       end,
     },
 
@@ -691,6 +690,192 @@ require("lazy").setup(
       end,
     },
 
+    -- [[ Completions ]]
+    -- https://github.com/hrsh7th/nvim-cmp
+    {
+      "hrsh7th/nvim-cmp",
+      event = "InsertEnter",
+      dependencies = {
+        -- Snippet plugin
+        {
+          "L3MON4D3/LuaSnip",
+          dependencies = {
+            "rafamadriz/friendly-snippets",
+          },
+          opts = {
+            history = true,
+            updateevents = "TextChanged,TextChangedI",
+          },
+          config = function()
+            local luasnip = require("luasnip")
+            luasnip.config.set_config {
+              history = true,
+              updateevents = "TextChanged,TextChangedI",
+            }
+
+            require("luasnip.loaders.from_vscode").lazy_load()
+            require("luasnip.loaders.from_vscode").lazy_load {
+              paths = vim.g.vscode_snippets_path or ""
+            }
+
+            require("luasnip.loaders.from_snipmate").load()
+            require("luasnip.loaders.from_snipmate").lazy_load {
+              paths = vim.g.snipmate_snippets_path or ""
+            }
+
+            require("luasnip.loaders.from_lua").load()
+            require("luasnip.loaders.from_lua").lazy_load {
+              paths = vim.g.lua_snippets_path or ""
+            }
+
+            vim.api.nvim_create_autocmd(
+              "InsertLeave",
+              {
+                callback = function()
+                  local currentBuf = vim.api.nvim_get_current_buf()
+                  local ses = luasnip.session
+                  if ses.current_nodes[currentBuf] and not ses.jump_active then
+                    luasnip.unlink_current()
+                  end
+                end,
+              }
+            )
+          end,
+        },
+
+        -- Autopairing of (){}[], etc.
+        {
+          "windwp/nvim-autopairs",
+          config = function()
+            require("nvim-autopairs").setup {
+              fast_wrap = {},
+              disable_filetype = {
+                "TelescopePrompt",
+                "vim",
+              },
+            }
+
+            local cmpAutopairs = require("nvim-autopairs.completion.cmp")
+            require("cmp").event:on(
+              "confirm_done",
+              cmpAutopairs.on_confirm_done()
+            )
+          end,
+        },
+
+        -- cmp sources plugins
+        {
+          "saadparwaiz1/cmp_luasnip",
+          "hrsh7th/cmp-nvim-lua",
+          "hrsh7th/cmp-nvim-lsp",
+          "hrsh7th/cmp-buffer",
+          "hrsh7th/cmp-path",
+        },
+      },
+      config = function()
+        local function border(hl_name)
+          return {
+            { "╭", hl_name },
+            { "─", hl_name },
+            { "╮", hl_name },
+            { "│", hl_name },
+            { "╯", hl_name },
+            { "─", hl_name },
+            { "╰", hl_name },
+            { "│", hl_name },
+          }
+        end
+
+        local cmp = require("cmp")
+        cmp.setup {
+          completion = {
+            completeopt = "menu,menuone",
+          },
+          window = {
+            completion = {
+              side_padding = 1,
+              winhighlight = "Normal:CmpPmenu,Search:PmenuSel",
+              scrollbar = false,
+              border = border("CmpBorder"),
+            },
+            documentation = {
+              border = border("CmpDocBorder"),
+              winhighlight = "Normal:CmpDoc",
+            },
+          },
+          snippet = {
+            expand = function(args)
+              require("luasnip").lsp_expand(args.body)
+            end,
+          },
+
+          mapping = {
+            ["<C-p>"] = cmp.mapping.select_prev_item(),
+            ["<C-n>"] = cmp.mapping.select_next_item(),
+            ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+            ["<C-f>"] = cmp.mapping.scroll_docs(4),
+            ["<C-Space>"] = cmp.mapping.complete(),
+            ["<C-e>"] = cmp.mapping.close(),
+            ["<CR>"] = cmp.mapping.confirm {
+              behavior = cmp.ConfirmBehavior.Replace,
+              select = false,
+            },
+            ["<Tab>"] = cmp.mapping(
+              function(fallback)
+                if cmp.visible() then
+                  cmp.select_next_item()
+                elseif require("luasnip").expand_or_jumpable() then
+                  vim.fn.feedkeys(
+                    vim.api.nvim_replace_termcodes(
+                      "<Plug>luasnip-expand-or-jump",
+                      true,
+                      true,
+                      true
+                    ),
+                    ""
+                  )
+                else
+                  fallback()
+                end
+              end, {
+                "i",
+                "s",
+              }
+            ),
+            ["<S-Tab>"] = cmp.mapping(
+              function(fallback)
+                if cmp.visible() then
+                  cmp.select_prev_item()
+                elseif require("luasnip").jumpable(-1) then
+                  vim.fn.feedkeys(
+                    vim.api.nvim_replace_termcodes(
+                      "<Plug>luasnip-jump-prev",
+                      true,
+                      true,
+                      true
+                    ),
+                    ""
+                  )
+                else
+                  fallback()
+                end
+              end, {
+                "i",
+                "s",
+              }
+            ),
+          },
+          sources = {
+            { name = "nvim_lsp" },
+            { name = "luasnip" },
+            { name = "buffer" },
+            { name = "nvim_lua" },
+            { name = "path" },
+          },
+        }
+      end,
+    },
+
     -- [[ LSP configuration ]]
     -- https://github.com/neovim/nvim-lspconfig
     {
@@ -699,8 +884,8 @@ require("lazy").setup(
         local lspconfig = require("lspconfig")
 
         local capabilities = vim.lsp.protocol.make_client_capabilities()
-        -- local cmpNvimLsp = require("cmp_nvim_lsp") -- TODO: uncomment
-        -- capabilities = cmpNvimLsp.default_capabilities(capabilities)
+        local cmpNvimLsp = require("cmp_nvim_lsp")
+        capabilities = cmpNvimLsp.default_capabilities(capabilities)
         capabilities.textDocument.completion.completionItem = {
           documentationFormat = { "markdown", "plaintext" },
           snippetSupport = true,
@@ -832,8 +1017,6 @@ require("lazy").setup(
   -- [[ Options ]]
   -- https://github.com/folke/lazy.nvim#%EF%B8%8F-configuration
   {
-    -- defaults = { lazy = true },
-
     install = { colorscheme = { colorschemeName } },
 
     ui = {
