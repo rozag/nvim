@@ -672,6 +672,161 @@ require("lazy").setup(
         }
       end,
     },
+
+    -- [[ LSP progress indicator ]]
+    -- https://github.com/j-hui/fidget.nvim
+    {
+      "j-hui/fidget.nvim",
+      config = function()
+        require("fidget").setup()
+      end,
+    },
+
+    -- [[ Neovim development stuff ]]
+    -- https://github.com/folke/neodev.nvim
+    {
+      "folke/neodev.nvim",
+      config = function()
+        require("neodev").setup()
+      end,
+    },
+
+    -- [[ LSP configuration ]]
+    -- https://github.com/neovim/nvim-lspconfig
+    {
+      "neovim/nvim-lspconfig",
+      config = function()
+        local lspconfig = require("lspconfig")
+
+        local capabilities = vim.lsp.protocol.make_client_capabilities()
+        -- local cmpNvimLsp = require("cmp_nvim_lsp") -- TODO: uncomment
+        -- capabilities = cmpNvimLsp.default_capabilities(capabilities)
+        capabilities.textDocument.completion.completionItem = {
+          documentationFormat = { "markdown", "plaintext" },
+          snippetSupport = true,
+          preselectSupport = true,
+          insertReplaceSupport = true,
+          labelDetailsSupport = true,
+          deprecatedSupport = true,
+          commitCharactersSupport = true,
+          tagSupport = { valueSet = { 1 } },
+          resolveSupport = {
+            properties = {
+              "documentation",
+              "detail",
+              "additionalTextEdits",
+            },
+          },
+        }
+
+        -- This function gets run when an LSP connects to a particular buffer.
+        local onAttach = function(_, bufnr)
+          local nmap = function(keys, func, desc)
+            if desc then
+              desc = "LSP: " .. desc
+            end
+
+            vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
+          end
+
+          -- TODO: review these mappings, they're from kickstart
+          nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+          nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+
+          nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+          nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+          nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
+
+          local telescopeBuiltin = require("telescope.builtin")
+          nmap("gr", telescopeBuiltin.lsp_references, "[G]oto [R]eferences")
+          nmap(
+            "<leader>ds",
+            telescopeBuiltin.lsp_document_symbols,
+            "[D]ocument [S]ymbols"
+          )
+          nmap(
+            "<leader>ws",
+            telescopeBuiltin.lsp_dynamic_workspace_symbols,
+            "[W]orkspace [S]ymbols"
+          )
+
+          nmap("K", vim.lsp.buf.hover, "Hover Documentation")
+          nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
+
+          nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+          nmap(
+            "<leader>wa",
+            vim.lsp.buf.add_workspace_folder,
+            "[W]orkspace [A]dd Folder"
+          )
+          nmap(
+            "<leader>wr",
+            vim.lsp.buf.remove_workspace_folder,
+            "[W]orkspace [R]emove Folder"
+          )
+          nmap(
+            "<leader>wl",
+            function()
+              print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+            end,
+            "[W]orkspace [L]ist Folders"
+          )
+
+          vim.api.nvim_buf_create_user_command(
+            bufnr,
+            "Format",
+            function(_)
+              vim.lsp.buf.format()
+            end,
+            { desc = "Format current buffer with LSP" }
+          )
+        end
+
+        lspconfig.gopls.setup {
+          capabilities = capabilities,
+          on_attach = onAttach,
+          settings = {},
+        }
+        lspconfig.lua_ls.setup {
+          capabilities = capabilities,
+          on_attach = onAttach,
+          settings = {
+            Lua = {
+              diagnostics = {
+                globals = { "vim" },
+              },
+              workspace = {
+                checkThirdParty = false,
+                library = {
+                  [vim.fn.expand "$VIMRUNTIME/lua"] = true,
+                  [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
+                  [vim.fn.stdpath "data" .. "/lazy/lazy.nvim/lua/lazy"] = true,
+                },
+                maxPreload = 100000,
+                preloadFileSize = 10000,
+              },
+              telemetry = { enable = false },
+            },
+          },
+        }
+        lspconfig.pyright.setup {
+          capabilities = capabilities,
+          on_attach = onAttach,
+          settings = {},
+        }
+        lspconfig.rust_analyzer.setup {
+          capabilities = capabilities,
+          on_attach = onAttach,
+          settings = {},
+        }
+        lspconfig.tsserver.setup {
+          capabilities = capabilities,
+          on_attach = onAttach,
+          settings = {},
+        }
+      end,
+    },
+
   },
 
   -- [[ Options ]]
