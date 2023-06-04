@@ -19,7 +19,7 @@ local colorschemeName = "monokai-pro"
 -- [[ Install and configure plugins via lazy.nvim ]]
 -- https://github.com/folke/lazy.nvim
 require("lazy").setup(
-  -- [[ Plugins ]]
+-- [[ Plugins ]]
   {
     -- [[ Sort of stdlib ]]
     -- https://github.com/nvim-lua/plenary.nvim
@@ -35,6 +35,7 @@ require("lazy").setup(
       },
       build = ":TSUpdate",
       config = function()
+        require("orgmode").setup_ts_grammar()
         require("nvim-treesitter.configs").setup {
           ensure_installed = {
             "bash",
@@ -85,6 +86,7 @@ require("lazy").setup(
             "nix",
             "norg",
             "ocaml",
+            "org",
             "proto",
             "python",
             "racket",
@@ -115,6 +117,7 @@ require("lazy").setup(
           highlight = {
             enable = true,
             use_languagetree = true,
+            additional_vim_regex_highlighting = { "org" },
           },
           indent = { enable = true },
           incremental_selection = {
@@ -280,10 +283,10 @@ require("lazy").setup(
             callback = function()
               vim.fn.system(
                 "git -C "
-                  .. "\""
-                  .. vim.fn.expand("%:p:h")
-                  .. "\""
-                  .. " rev-parse"
+                .. "\""
+                .. vim.fn.expand("%:p:h")
+                .. "\""
+                .. " rev-parse"
               )
               if vim.v.shell_error == 0 then
                 vim.api.nvim_del_augroup_by_name "GitSignsLazyLoad"
@@ -476,13 +479,13 @@ require("lazy").setup(
             winblend = 0,
             set_env = { ["COLORTERM"] = "truecolor" },
             file_previewer = require("telescope.previewers")
-              .vim_buffer_cat.new,
+                .vim_buffer_cat.new,
             grep_previewer = require("telescope.previewers")
-              .vim_buffer_vimgrep.new,
+                .vim_buffer_vimgrep.new,
             qflist_previewer = require("telescope.previewers")
-              .vim_buffer_qflist.new,
+                .vim_buffer_qflist.new,
             buffer_previewer_maker = require("telescope.previewers")
-              .buffer_previewer_maker,
+                .buffer_previewer_maker,
             mappings = {
               n = { ["q"] = require("telescope.actions").close },
             },
@@ -662,11 +665,11 @@ require("lazy").setup(
       config = function()
         require("mason-lspconfig").setup {
           ensure_installed = {
-            "gopls", -- gopls
-            "lua_ls", -- lua-language-server
-            "pyright", -- pyright
+            "gopls",         -- gopls
+            "lua_ls",        -- lua-language-server
+            "pyright",       -- pyright
             "rust_analyzer", -- rust-analyzer
-            "tsserver", -- typescript-language-server
+            "tsserver",      -- typescript-language-server
           },
         }
       end,
@@ -1009,6 +1012,25 @@ require("lazy").setup(
           on_attach = onAttach,
           settings = {},
         }
+      end,
+    },
+
+    -- [[ TODO ]]
+    {
+      "nvim-orgmode/orgmode",
+      ft = { "org" },
+      config = function()
+        require("orgmode").setup {
+          org_agenda_files = { vim.env.HOME .. "/org-files-exp/agenda/*" },
+          org_default_notes_file = vim.env.HOME .. "/org-files-exp/notes.org",
+        }
+      end,
+    },
+    {
+      "akinsho/org-bullets.nvim",
+      ft = { "org" },
+      config = function()
+        require("org-bullets").setup()
       end,
     },
 
