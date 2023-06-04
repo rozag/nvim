@@ -1026,13 +1026,13 @@ require("lazy").setup(
         }
       end,
     },
-    {
-      "akinsho/org-bullets.nvim",
-      ft = { "org" },
-      config = function()
-        require("org-bullets").setup()
-      end,
-    },
+    -- {
+    --   "akinsho/org-bullets.nvim",
+    --   ft = { "org" },
+    --   config = function()
+    --     require("org-bullets").setup()
+    --   end,
+    -- },
 
   },
 
