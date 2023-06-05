@@ -35,7 +35,6 @@ require("lazy").setup(
       },
       build = ":TSUpdate",
       config = function()
-        require("orgmode").setup_ts_grammar()
         require("nvim-treesitter.configs").setup {
           ensure_installed = {
             "bash",
@@ -86,7 +85,6 @@ require("lazy").setup(
             "nix",
             "norg",
             "ocaml",
-            "org",
             "proto",
             "python",
             "racket",
@@ -117,7 +115,6 @@ require("lazy").setup(
           highlight = {
             enable = true,
             use_languagetree = true,
-            additional_vim_regex_highlighting = { "org" },
           },
           indent = { enable = true },
           incremental_selection = {
@@ -1014,25 +1011,6 @@ require("lazy").setup(
         }
       end,
     },
-
-    -- [[ TODO ]]
-    {
-      "nvim-orgmode/orgmode",
-      ft = { "org" },
-      config = function()
-        require("orgmode").setup {
-          org_agenda_files = { vim.env.HOME .. "/org-files-exp/agenda/*" },
-          org_default_notes_file = vim.env.HOME .. "/org-files-exp/notes.org",
-        }
-      end,
-    },
-    -- {
-    --   "akinsho/org-bullets.nvim",
-    --   ft = { "org" },
-    --   config = function()
-    --     require("org-bullets").setup()
-    --   end,
-    -- },
 
   },
 
