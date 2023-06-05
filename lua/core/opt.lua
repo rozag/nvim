@@ -85,3 +85,7 @@ vim.opt.splitright = true
 -- Go to previous/next line with h,l,left arrow and right arrow when cursor
 -- reaches end/beginning of line.
 vim.opt.whichwrap:append "<>[]hl"
+
+-- Conceal for org mode
+vim.opt.conceallevel = 2
+vim.opt.concealcursor = "nc"
