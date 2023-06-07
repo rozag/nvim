@@ -1012,6 +1012,18 @@ require("lazy").setup(
       end,
     },
 
+    -- [[ Dim inactive windows ]]
+    -- https://github.com/sunjon/Shade.nvim
+    {
+      "sunjon/Shade.nvim",
+      config = function()
+        require("shade").setup{
+          overlay_opacity = 50,
+          opacity_step = 1,
+        }
+      end,
+    },
+
   },
 
   -- [[ Options ]]
