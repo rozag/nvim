@@ -458,8 +458,8 @@ require("lazy").setup(
             layout_config = {
               horizontal = {
                 prompt_position = "top",
-                preview_width = 0.6,
-                results_width = 0.4,
+                preview_width = 0.5,
+                results_width = 0.5,
               },
               vertical = {
                 mirror = true,
@@ -484,7 +484,14 @@ require("lazy").setup(
             buffer_previewer_maker = require("telescope.previewers")
                 .buffer_previewer_maker,
             mappings = {
-              n = { ["q"] = require("telescope.actions").close },
+              n = {
+                ["q"] = require("telescope.actions").close,
+                ["bk"] = require('telescope.actions').delete_buffer,
+              }, -- n
+              i = {
+                ["<C-k>"] = require('telescope.actions').delete_buffer,
+                ["<C-h>"] = "which_key",
+              },
             },
           },
         }
