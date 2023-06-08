@@ -1031,6 +1031,55 @@ require("lazy").setup(
       end,
     },
 
+    -- [[ Suggestions for commands menu ]]
+    -- https://github.com/gelguy/wilder.nvim
+    {
+      "gelguy/wilder.nvim",
+      config = function()
+        local wilder = require("wilder")
+        wilder.setup {
+          modes = { ":", "?" },
+        }
+        -- wilder.set_option(
+        --   "renderer",
+        --   -- wilder.popupmenu_renderer {
+        --   --   highlighter = wilder.basic_highlighter(),
+        --   -- }
+        --   wilder.popupmenu_renderer(
+        --     wilder.popupmenu_border_theme {
+        --       -- highlights = {
+        --       --   border = "Normal",
+        --       -- },
+        --       border = "rounded",
+        --     }
+        --   )
+        -- )
+        wilder.set_option("renderer", wilder.popupmenu_renderer(wilder.popupmenu_border_theme{
+          highlighter = wilder.basic_highlighter(),
+          -- left = {" "},
+          -- right = {" ", wilder.popupmenu_scrollbar({thumb_char = " "})},
+          highlights = {default = "WilderMenu", accent = "WilderAccent"},
+          border = "rounded",
+        }))
+        wilder.set_option(
+          "pipeline",
+          {
+            wilder.branch(
+              -- wilder.python_file_finder_pipeline {
+              --   file_command = { "rg", "--files" },
+              --   dir_command = { "find", ".", "-type", "d", "-printf", "%P\n" },
+              --   filters = { "fuzzy_filter", "difflib_sorter" },
+              -- },
+              wilder.cmdline_pipeline {
+                fuzzy = 1,
+              }
+              -- wilder.python_search_pipeline()
+            ),
+          }
+        )
+      end,
+    },
+
   },
 
   -- [[ Options ]]
