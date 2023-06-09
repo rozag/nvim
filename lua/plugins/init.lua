@@ -1038,43 +1038,44 @@ require("lazy").setup(
       config = function()
         local wilder = require("wilder")
         wilder.setup {
-          modes = { ":", "?" },
+          modes = { ":" },
+          next_key = "<C-n>",
+          previous_key = "<C-p>",
+          accept_key = "<Tab>",
+          reject_key = "<S-Tab>",
         }
-        -- wilder.set_option(
-        --   "renderer",
-        --   -- wilder.popupmenu_renderer {
-        --   --   highlighter = wilder.basic_highlighter(),
-        --   -- }
-        --   wilder.popupmenu_renderer(
-        --     wilder.popupmenu_border_theme {
-        --       -- highlights = {
-        --       --   border = "Normal",
-        --       -- },
-        --       border = "rounded",
-        --     }
-        --   )
-        -- )
-        wilder.set_option("renderer", wilder.popupmenu_renderer(wilder.popupmenu_border_theme{
-          highlighter = wilder.basic_highlighter(),
-          -- left = {" "},
-          -- right = {" ", wilder.popupmenu_scrollbar({thumb_char = " "})},
-          highlights = {default = "WilderMenu", accent = "WilderAccent"},
-          border = "rounded",
-        }))
+        wilder.set_option(
+          "renderer",
+          wilder.popupmenu_renderer(
+            wilder.popupmenu_palette_theme {
+              border = "rounded",
+              max_height = "50%",
+              min_height = "50%",
+              prompt_position = "top",
+              reverse = 0,
+              highlighter = wilder.basic_highlighter(),
+              left = { " ", wilder.popupmenu_devicons() },
+              right = { " ", wilder.popupmenu_scrollbar() },
+              highlights = {
+                default = "WilderMenu",
+                accent = wilder.make_hl(
+                  "WilderAccent",
+                  "Pmenu",
+                  {
+                    { a = 1 },
+                    { a = 1 },
+                    -- TODO: this color should be part of colorscheme layer
+                    { foreground = "#fd618e" }, -- color picked from monokai-pro
+                  }
+                ),
+              },
+            }
+          )
+        )
         wilder.set_option(
           "pipeline",
-          {
-            wilder.branch(
-              -- wilder.python_file_finder_pipeline {
-              --   file_command = { "rg", "--files" },
-              --   dir_command = { "find", ".", "-type", "d", "-printf", "%P\n" },
-              --   filters = { "fuzzy_filter", "difflib_sorter" },
-              -- },
-              wilder.cmdline_pipeline {
-                fuzzy = 1,
-              }
-              -- wilder.python_search_pipeline()
-            ),
+          wilder.cmdline_pipeline {
+            fuzzy = 1,
           }
         )
       end,

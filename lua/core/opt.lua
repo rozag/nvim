@@ -89,3 +89,6 @@ vim.opt.whichwrap:append "<>[]hl"
 -- Conceal for org mode
 vim.opt.conceallevel = 2
 vim.opt.concealcursor = "nc"
+
+-- Wildmenu kbd
+vim.cmd("set wildchar=<C-n>")
