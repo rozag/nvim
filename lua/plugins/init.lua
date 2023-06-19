@@ -367,9 +367,8 @@ require("lazy").setup(
             update_root = false,
           },
           view = {
-            adaptive_size = false,
+            adaptive_size = true,
             side = "left",
-            width = 40,
             preserve_window_proportions = true,
           },
           git = {
