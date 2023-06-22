@@ -2,24 +2,91 @@
 -- https://github.com/folke/lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
+  vim.fn.system {
     "git",
     "clone",
     "--filter=blob:none",
     "https://github.com/folke/lazy.nvim.git",
     "--branch=stable", -- latest stable release
     lazypath,
-  })
+  }
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- [[ Name of colorscheme to reuse in several places ]]
 local colorschemeName = "monokai-pro"
 
+-- TODO: extract on attach and formatting group
+local formattingGroup = vim.api.nvim_create_augroup("LspFormatting", {})
+-- This function gets run when an LSP connects to a particular buffer.
+local lspOnAttach = function(client, bufnr)
+  local nmap = function(keys, func, desc)
+    if desc then
+      desc = "LSP: " .. desc
+    end
+
+    vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
+  end
+
+  -- TODO: review these mappings, they're from kickstart
+  nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+  nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+
+  nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+  nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+  nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
+
+  local telescopeBuiltin = require("telescope.builtin")
+  nmap("gr", telescopeBuiltin.lsp_references, "[G]oto [R]eferences")
+  nmap(
+    "<leader>ds",
+    telescopeBuiltin.lsp_document_symbols,
+    "[D]ocument [S]ymbols"
+  )
+  nmap(
+    "<leader>ws",
+    telescopeBuiltin.lsp_dynamic_workspace_symbols,
+    "[W]orkspace [S]ymbols"
+  )
+
+  nmap("K", vim.lsp.buf.hover, "Hover Documentation")
+  nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
+
+  nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+  nmap(
+    "<leader>wa",
+    vim.lsp.buf.add_workspace_folder,
+    "[W]orkspace [A]dd Folder"
+  )
+  nmap(
+    "<leader>wr",
+    vim.lsp.buf.remove_workspace_folder,
+    "[W]orkspace [R]emove Folder"
+  )
+  nmap("<leader>wl", function()
+    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+  end, "[W]orkspace [L]ist Folders")
+
+  vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
+    vim.lsp.buf.format { async = false }
+  end, { desc = "Format current buffer with LSP" })
+
+  if client.supports_method("textDocument/formatting") then
+    vim.api.nvim_clear_autocmds { group = formattingGroup, buffer = bufnr }
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      group = formattingGroup,
+      buffer = bufnr,
+      callback = function()
+        vim.lsp.buf.format { async = false }
+      end,
+    })
+  end
+end
+
 -- [[ Install and configure plugins via lazy.nvim ]]
 -- https://github.com/folke/lazy.nvim
 require("lazy").setup(
--- [[ Plugins ]]
+  -- [[ Plugins ]]
   {
     -- [[ Sort of stdlib ]]
     -- https://github.com/nvim-lua/plenary.nvim
@@ -270,32 +337,27 @@ require("lazy").setup(
       ft = { "gitcommit", "diff" },
       init = function()
         -- Load gitsigns only when a git file is opened
-        vim.api.nvim_create_autocmd(
-          { "BufRead" },
-          {
-            group = vim.api.nvim_create_augroup(
-              "GitSignsLazyLoad",
-              { clear = true }
-            ),
-            callback = function()
-              vim.fn.system(
-                "git -C "
+        vim.api.nvim_create_autocmd({ "BufRead" }, {
+          group = vim.api.nvim_create_augroup(
+            "GitSignsLazyLoad",
+            { clear = true }
+          ),
+          callback = function()
+            vim.fn.system(
+              "git -C "
                 .. "\""
                 .. vim.fn.expand("%:p:h")
                 .. "\""
                 .. " rev-parse"
-              )
-              if vim.v.shell_error == 0 then
-                vim.api.nvim_del_augroup_by_name "GitSignsLazyLoad"
-                vim.schedule(
-                  function()
-                    require("lazy").load { plugins = { "gitsigns.nvim" } }
-                  end
-                )
-              end
-            end,
-          }
-        )
+            )
+            if vim.v.shell_error == 0 then
+              vim.api.nvim_del_augroup_by_name("GitSignsLazyLoad")
+              vim.schedule(function()
+                require("lazy").load { plugins = { "gitsigns.nvim" } }
+              end)
+            end
+          end,
+        })
       end,
       config = function()
         require("gitsigns").setup {
@@ -355,7 +417,7 @@ require("lazy").setup(
         require("nvim-tree").setup {
           filters = {
             dotfiles = false,
-            exclude = { vim.fn.stdpath "config" .. "/lua/custom" },
+            exclude = { vim.fn.stdpath("config") .. "/lua/custom" },
           },
           disable_netrw = true,
           hijack_netrw = true,
@@ -437,6 +499,8 @@ require("lazy").setup(
       branch = "0.1.x",
       dependencies = { "nvim-lua/plenary.nvim" },
       config = function()
+        local previewers = require("telescope.previewers")
+        local actions = require("telescope.actions")
         require("telescope").setup {
           defaults = {
             vimgrep_arguments = {
@@ -474,85 +538,77 @@ require("lazy").setup(
             path_display = { "truncate" },
             winblend = 0,
             set_env = { ["COLORTERM"] = "truecolor" },
-            file_previewer = require("telescope.previewers")
-                .vim_buffer_cat.new,
-            grep_previewer = require("telescope.previewers")
-                .vim_buffer_vimgrep.new,
-            qflist_previewer = require("telescope.previewers")
-                .vim_buffer_qflist.new,
-            buffer_previewer_maker = require("telescope.previewers")
-                .buffer_previewer_maker,
+            file_previewer = previewers.vim_buffer_cat.new,
+            grep_previewer = previewers.vim_buffer_vimgrep.new,
+            qflist_previewer = previewers.vim_buffer_qflist.new,
+            buffer_previewer_maker = previewers.buffer_previewer_maker,
             mappings = {
               n = {
-                ["q"] = require("telescope.actions").close,
-                ["bk"] = require('telescope.actions').delete_buffer,
+                ["q"] = actions.close,
+                ["bk"] = actions.delete_buffer,
               }, -- n
               i = {
-                ["<C-k>"] = require('telescope.actions').delete_buffer,
+                ["<C-k>"] = actions.delete_buffer,
                 ["<C-h>"] = "which_key",
               },
             },
           },
         }
 
+        local builtin = require("telescope.builtin")
         vim.keymap.set(
           "n",
           "<leader>?",
-          require("telescope.builtin").oldfiles,
+          builtin.oldfiles,
           { desc = "[?] Find recently opened files" }
         )
         vim.keymap.set(
           "n",
           "<leader><space>",
-          require("telescope.builtin").buffers,
+          builtin.buffers,
           { desc = "[ ] Find existing buffers" }
         )
-        vim.keymap.set(
-          "n",
-          "<leader>/",
-          function()
-            require("telescope.builtin").current_buffer_fuzzy_find(
-              require("telescope.themes").get_dropdown {
-                previewer = true,
-              }
-            )
-          end,
-          { desc = "[/] Fuzzily search in current buffer" }
-        )
+        vim.keymap.set("n", "<leader>/", function()
+          builtin.current_buffer_fuzzy_find(
+            require("telescope.themes").get_dropdown {
+              previewer = true,
+            }
+          )
+        end, { desc = "[/] Fuzzily search in current buffer" })
         vim.keymap.set(
           "n",
           "<leader>gf",
-          require("telescope.builtin").git_files,
+          builtin.git_files,
           { desc = "Search [G]it [F]iles" }
         )
         vim.keymap.set(
           "n",
           "<leader>sf",
-          require("telescope.builtin").find_files,
+          builtin.find_files,
           { desc = "[S]earch [F]iles" }
         )
         vim.keymap.set(
           "n",
           "<leader>sh",
-          require("telescope.builtin").help_tags,
+          builtin.help_tags,
           { desc = "[S]earch [H]elp" }
         )
         vim.keymap.set(
           "n",
           "<leader>sw",
-          require("telescope.builtin").grep_string,
+          builtin.grep_string,
           { desc = "[S]earch current [W]ord" }
         )
         vim.keymap.set(
           "n",
           "<leader>sg",
-          require("telescope.builtin").live_grep,
+          builtin.live_grep,
           { desc = "[S]earch by [G]rep" }
         )
         vim.keymap.set(
           "n",
           "<leader>sd",
-          require("telescope.builtin").diagnostics,
+          builtin.diagnostics,
           { desc = "[S]earch [D]iagnostics" }
         )
       end,
@@ -567,7 +623,7 @@ require("lazy").setup(
       "nvim-telescope/telescope-fzf-native.nvim",
       build = "make",
       cond = function()
-        return vim.fn.executable "make" == 1
+        return vim.fn.executable("make") == 1
       end,
       config = function()
         require("telescope").load_extension("fzf")
@@ -616,7 +672,7 @@ require("lazy").setup(
             lualine_c = {},
             lualine_x = {},
             lualine_y = {},
-            lualine_z = { "location" }
+            lualine_z = { "location" },
           },
         }
       end,
@@ -668,11 +724,11 @@ require("lazy").setup(
       config = function()
         require("mason-lspconfig").setup {
           ensure_installed = {
-            "gopls",         -- gopls
-            "lua_ls",        -- lua-language-server
-            "pyright",       -- pyright
-            "rust_analyzer", -- rust-analyzer
-            "tsserver",      -- typescript-language-server
+            "gopls", -- gopls
+            "lua_ls", -- lua-language-server
+            -- "pyright",       -- pyright
+            -- "rust_analyzer", -- rust-analyzer
+            -- "tsserver",      -- typescript-language-server
           },
         }
       end,
@@ -696,87 +752,82 @@ require("lazy").setup(
       end,
     },
 
+    -- [[ Snippet engine ]]
+    -- https://github.com/L3MON4D3/LuaSnip
+    {
+      "L3MON4D3/LuaSnip",
+      dependencies = {
+        "rafamadriz/friendly-snippets",
+      },
+      opts = {
+        history = true,
+        updateevents = "TextChanged,TextChangedI",
+      },
+      config = function()
+        local luasnip = require("luasnip")
+        luasnip.config.set_config {
+          history = true,
+          updateevents = "TextChanged,TextChangedI",
+        }
+
+        require("luasnip.loaders.from_vscode").lazy_load()
+        require("luasnip.loaders.from_vscode").lazy_load {
+          paths = vim.g.vscode_snippets_path or "",
+        }
+
+        require("luasnip.loaders.from_snipmate").load()
+        require("luasnip.loaders.from_snipmate").lazy_load {
+          paths = vim.g.snipmate_snippets_path or "",
+        }
+
+        require("luasnip.loaders.from_lua").load()
+        require("luasnip.loaders.from_lua").lazy_load {
+          paths = vim.g.lua_snippets_path or "",
+        }
+
+        vim.api.nvim_create_autocmd("InsertLeave", {
+          callback = function()
+            local currentBuf = vim.api.nvim_get_current_buf()
+            local ses = luasnip.session
+            if ses.current_nodes[currentBuf] and not ses.jump_active then
+              luasnip.unlink_current()
+            end
+          end,
+        })
+      end,
+    },
+
+    -- [[ Autopairing of (){}[], etc. ]]
+    -- https://github.com/windwp/nvim-autopairs
+    {
+      "windwp/nvim-autopairs",
+      config = function()
+        require("nvim-autopairs").setup {
+          fast_wrap = {},
+          disable_filetype = {
+            "TelescopePrompt",
+            "vim",
+          },
+        }
+
+        local cmpAutopairs = require("nvim-autopairs.completion.cmp")
+        require("cmp").event:on("confirm_done", cmpAutopairs.on_confirm_done())
+      end,
+    },
+
     -- [[ Completions ]]
     -- https://github.com/hrsh7th/nvim-cmp
     {
       "hrsh7th/nvim-cmp",
       event = "InsertEnter",
       dependencies = {
-        -- Snippet plugin
-        {
-          "L3MON4D3/LuaSnip",
-          dependencies = {
-            "rafamadriz/friendly-snippets",
-          },
-          opts = {
-            history = true,
-            updateevents = "TextChanged,TextChangedI",
-          },
-          config = function()
-            local luasnip = require("luasnip")
-            luasnip.config.set_config {
-              history = true,
-              updateevents = "TextChanged,TextChangedI",
-            }
-
-            require("luasnip.loaders.from_vscode").lazy_load()
-            require("luasnip.loaders.from_vscode").lazy_load {
-              paths = vim.g.vscode_snippets_path or ""
-            }
-
-            require("luasnip.loaders.from_snipmate").load()
-            require("luasnip.loaders.from_snipmate").lazy_load {
-              paths = vim.g.snipmate_snippets_path or ""
-            }
-
-            require("luasnip.loaders.from_lua").load()
-            require("luasnip.loaders.from_lua").lazy_load {
-              paths = vim.g.lua_snippets_path or ""
-            }
-
-            vim.api.nvim_create_autocmd(
-              "InsertLeave",
-              {
-                callback = function()
-                  local currentBuf = vim.api.nvim_get_current_buf()
-                  local ses = luasnip.session
-                  if ses.current_nodes[currentBuf] and not ses.jump_active then
-                    luasnip.unlink_current()
-                  end
-                end,
-              }
-            )
-          end,
-        },
-
-        -- Autopairing of (){}[], etc.
-        {
-          "windwp/nvim-autopairs",
-          config = function()
-            require("nvim-autopairs").setup {
-              fast_wrap = {},
-              disable_filetype = {
-                "TelescopePrompt",
-                "vim",
-              },
-            }
-
-            local cmpAutopairs = require("nvim-autopairs.completion.cmp")
-            require("cmp").event:on(
-              "confirm_done",
-              cmpAutopairs.on_confirm_done()
-            )
-          end,
-        },
-
-        -- cmp sources plugins
-        {
-          "saadparwaiz1/cmp_luasnip",
-          "hrsh7th/cmp-nvim-lua",
-          "hrsh7th/cmp-nvim-lsp",
-          "hrsh7th/cmp-buffer",
-          "hrsh7th/cmp-path",
-        },
+        "L3MON4D3/LuaSnip",
+        "windwp/nvim-autopairs",
+        "saadparwaiz1/cmp_luasnip",
+        "hrsh7th/cmp-nvim-lua",
+        "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/cmp-buffer",
+        "hrsh7th/cmp-path",
       },
       config = function()
         local function border(hl_name)
@@ -826,50 +877,46 @@ require("lazy").setup(
               behavior = cmp.ConfirmBehavior.Replace,
               select = false,
             },
-            ["<Tab>"] = cmp.mapping(
-              function(fallback)
-                if cmp.visible() then
-                  cmp.select_next_item()
-                elseif require("luasnip").expand_or_jumpable() then
-                  vim.fn.feedkeys(
-                    vim.api.nvim_replace_termcodes(
-                      "<Plug>luasnip-expand-or-jump",
-                      true,
-                      true,
-                      true
-                    ),
-                    ""
-                  )
-                else
-                  fallback()
-                end
-              end, {
-                "i",
-                "s",
-              }
-            ),
-            ["<S-Tab>"] = cmp.mapping(
-              function(fallback)
-                if cmp.visible() then
-                  cmp.select_prev_item()
-                elseif require("luasnip").jumpable(-1) then
-                  vim.fn.feedkeys(
-                    vim.api.nvim_replace_termcodes(
-                      "<Plug>luasnip-jump-prev",
-                      true,
-                      true,
-                      true
-                    ),
-                    ""
-                  )
-                else
-                  fallback()
-                end
-              end, {
-                "i",
-                "s",
-              }
-            ),
+            ["<Tab>"] = cmp.mapping(function(fallback)
+              if cmp.visible() then
+                cmp.select_next_item()
+              elseif require("luasnip").expand_or_jumpable() then
+                vim.fn.feedkeys(
+                  vim.api.nvim_replace_termcodes(
+                    "<Plug>luasnip-expand-or-jump",
+                    true,
+                    true,
+                    true
+                  ),
+                  ""
+                )
+              else
+                fallback()
+              end
+            end, {
+              "i",
+              "s",
+            }),
+            ["<S-Tab>"] = cmp.mapping(function(fallback)
+              if cmp.visible() then
+                cmp.select_prev_item()
+              elseif require("luasnip").jumpable(-1) then
+                vim.fn.feedkeys(
+                  vim.api.nvim_replace_termcodes(
+                    "<Plug>luasnip-jump-prev",
+                    true,
+                    true,
+                    true
+                  ),
+                  ""
+                )
+              else
+                fallback()
+              end
+            end, {
+              "i",
+              "s",
+            }),
           },
           sources = {
             { name = "nvim_lsp" },
@@ -910,77 +957,14 @@ require("lazy").setup(
           },
         }
 
-        -- This function gets run when an LSP connects to a particular buffer.
-        local onAttach = function(_, bufnr)
-          local nmap = function(keys, func, desc)
-            if desc then
-              desc = "LSP: " .. desc
-            end
-
-            vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-          end
-
-          -- TODO: review these mappings, they're from kickstart
-          nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-          nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-
-          nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-          nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
-          nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
-
-          local telescopeBuiltin = require("telescope.builtin")
-          nmap("gr", telescopeBuiltin.lsp_references, "[G]oto [R]eferences")
-          nmap(
-            "<leader>ds",
-            telescopeBuiltin.lsp_document_symbols,
-            "[D]ocument [S]ymbols"
-          )
-          nmap(
-            "<leader>ws",
-            telescopeBuiltin.lsp_dynamic_workspace_symbols,
-            "[W]orkspace [S]ymbols"
-          )
-
-          nmap("K", vim.lsp.buf.hover, "Hover Documentation")
-          nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
-
-          nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-          nmap(
-            "<leader>wa",
-            vim.lsp.buf.add_workspace_folder,
-            "[W]orkspace [A]dd Folder"
-          )
-          nmap(
-            "<leader>wr",
-            vim.lsp.buf.remove_workspace_folder,
-            "[W]orkspace [R]emove Folder"
-          )
-          nmap(
-            "<leader>wl",
-            function()
-              print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-            end,
-            "[W]orkspace [L]ist Folders"
-          )
-
-          vim.api.nvim_buf_create_user_command(
-            bufnr,
-            "Format",
-            function(_)
-              vim.lsp.buf.format()
-            end,
-            { desc = "Format current buffer with LSP" }
-          )
-        end
-
         lspconfig.gopls.setup {
           capabilities = capabilities,
-          on_attach = onAttach,
+          on_attach = lspOnAttach,
           settings = {},
         }
         lspconfig.lua_ls.setup {
           capabilities = capabilities,
-          on_attach = onAttach,
+          on_attach = lspOnAttach,
           settings = {
             Lua = {
               diagnostics = {
@@ -989,9 +973,9 @@ require("lazy").setup(
               workspace = {
                 checkThirdParty = false,
                 library = {
-                  [vim.fn.expand "$VIMRUNTIME/lua"] = true,
-                  [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
-                  [vim.fn.stdpath "data" .. "/lazy/lazy.nvim/lua/lazy"] = true,
+                  [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+                  [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
+                  [vim.fn.stdpath("data") .. "/lazy/lazy.nvim/lua/lazy"] = true,
                 },
                 maxPreload = 100000,
                 preloadFileSize = 10000,
@@ -1000,20 +984,82 @@ require("lazy").setup(
             },
           },
         }
-        lspconfig.pyright.setup {
-          capabilities = capabilities,
-          on_attach = onAttach,
-          settings = {},
-        }
-        lspconfig.rust_analyzer.setup {
-          capabilities = capabilities,
-          on_attach = onAttach,
-          settings = {},
-        }
-        lspconfig.tsserver.setup {
-          capabilities = capabilities,
-          on_attach = onAttach,
-          settings = {},
+        -- lspconfig.pyright.setup {
+        --   capabilities = capabilities,
+        --   on_attach = lspOnAttach,
+        --   settings = {},
+        -- }
+        -- lspconfig.rust_analyzer.setup {
+        --   capabilities = capabilities,
+        --   on_attach = lspOnAttach,
+        --   settings = {},
+        -- }
+        -- lspconfig.tsserver.setup {
+        --   capabilities = capabilities,
+        --   on_attach = lspOnAttach,
+        --   settings = {},
+        -- }
+      end,
+    },
+
+    -- [[ LSP improvements ]]
+    -- https://github.com/jose-elias-alvarez/null-ls.nvim
+    -- Available builtins:
+    -- github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md
+    {
+      "jose-elias-alvarez/null-ls.nvim",
+      config = function()
+        local nu = require("null-ls")
+        nu.setup {
+          on_attach = lspOnAttach,
+          sources = {
+            -- [[ Code actions ]]
+            -- Injects code actions for Git operations at the current cursor
+            -- position (stage / preview / reset hunks, blame, etc.).
+            -- https://github.com/lewis6991/gitsigns.nvim
+            nu.builtins.code_actions.gitsigns,
+            -- Go tool to modify struct field tags.
+            -- https://github.com/fatih/gomodifytags
+            nu.builtins.code_actions.gomodifytags,
+            -- impl generates method stubs for implementing a Go interface.
+            -- https://github.com/josharian/impl
+            nu.builtins.code_actions.impl,
+
+            -- [[ Completion ]]
+            -- Snippet engine for Neovim, written in Lua.
+            -- https://github.com/L3MON4D3/LuaSnip
+            nu.builtins.completion.luasnip,
+
+            -- [[ Diagnostics ]]
+            -- A Go linter aggregator.
+            -- https://golangci-lint.run/
+            nu.builtins.diagnostics.golangci_lint,
+            -- Fast, configurable, extensible, flexible, and beautiful linter
+            -- for Go.
+            -- https://revive.run/
+            nu.builtins.diagnostics.revive,
+            -- Advanced Go linter.
+            -- https://staticcheck.io/
+            nu.builtins.diagnostics.staticcheck,
+            -- Uses inbuilt Lua code to detect lines with trailing whitespace
+            -- and show a diagnostic warning on each line where it's present.
+            nu.builtins.diagnostics.trail_space,
+
+            -- [[ Formatting ]]
+            -- Formats go programs.
+            -- https://pkg.go.dev/cmd/gofmt
+            nu.builtins.formatting.gofmt,
+            -- Updates your Go import lines, adding missing ones and removing
+            -- unreferenced ones.
+            -- https://pkg.go.dev/golang.org/x/tools/cmd/goimports
+            nu.builtins.formatting.goimports,
+            -- Command-line JSON processor.
+            -- https://github.com/stedolan/jq
+            nu.builtins.formatting.jq,
+            -- An opinionated code formatter for Lua.
+            -- https://github.com/JohnnyMorganz/StyLua
+            nu.builtins.formatting.stylua,
+          },
         }
       end,
     },
@@ -1023,7 +1069,7 @@ require("lazy").setup(
     {
       "sunjon/Shade.nvim",
       config = function()
-        require("shade").setup{
+        require("shade").setup {
           overlay_opacity = 50,
           opacity_step = 1,
         }
@@ -1045,31 +1091,25 @@ require("lazy").setup(
         }
         wilder.set_option(
           "renderer",
-          wilder.popupmenu_renderer(
-            wilder.popupmenu_palette_theme {
-              border = "rounded",
-              max_height = "50%",
-              min_height = "50%",
-              prompt_position = "top",
-              reverse = 0,
-              highlighter = wilder.basic_highlighter(),
-              left = { " ", wilder.popupmenu_devicons() },
-              right = { " ", wilder.popupmenu_scrollbar() },
-              highlights = {
-                default = "WilderMenu",
-                accent = wilder.make_hl(
-                  "WilderAccent",
-                  "Pmenu",
-                  {
-                    { a = 1 },
-                    { a = 1 },
-                    -- TODO: this color should be part of colorscheme layer
-                    { foreground = "#fd618e" }, -- color picked from monokai-pro
-                  }
-                ),
-              },
-            }
-          )
+          wilder.popupmenu_renderer(wilder.popupmenu_palette_theme {
+            border = "rounded",
+            max_height = "50%",
+            min_height = "50%",
+            prompt_position = "top",
+            reverse = 0,
+            highlighter = wilder.basic_highlighter(),
+            left = { " ", wilder.popupmenu_devicons() },
+            right = { " ", wilder.popupmenu_scrollbar() },
+            highlights = {
+              default = "WilderMenu",
+              accent = wilder.make_hl("WilderAccent", "Pmenu", {
+                { a = 1 },
+                { a = 1 },
+                -- TODO: this color should be part of colorscheme layer
+                { foreground = "#fd618e" }, -- color picked from monokai-pro
+              }),
+            },
+          })
         )
         wilder.set_option(
           "pipeline",
@@ -1079,7 +1119,6 @@ require("lazy").setup(
         )
       end,
     },
-
   },
 
   -- [[ Options ]]

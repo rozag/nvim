@@ -43,7 +43,7 @@ vim.opt.timeout = true
 vim.opt.timeoutlen = 400
 
 -- Set completeopt to have a better completion experience
-vim.opt.completeopt = 'menuone,noselect'
+vim.opt.completeopt = "menuone,noselect"
 
 -- Enables 24-bit RGB color in the TUI
 vim.opt.termguicolors = true
@@ -84,7 +84,7 @@ vim.opt.splitright = true
 
 -- Go to previous/next line with h,l,left arrow and right arrow when cursor
 -- reaches end/beginning of line.
-vim.opt.whichwrap:append "<>[]hl"
+vim.opt.whichwrap:append("<>[]hl")
 
 -- Conceal for org mode
 vim.opt.conceallevel = 2
