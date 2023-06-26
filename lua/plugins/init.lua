@@ -67,6 +67,8 @@ local lspOnAttach = function(client, bufnr)
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, "[W]orkspace [L]ist Folders")
 
+  -- TODO: Cmd+L to run format?
+  -- TODO: Map :nohl to something?
   vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
     vim.lsp.buf.format { async = false }
   end, { desc = "Format current buffer with LSP" })
@@ -86,7 +88,7 @@ end
 -- [[ Install and configure plugins via lazy.nvim ]]
 -- https://github.com/folke/lazy.nvim
 require("lazy").setup(
--- [[ Plugins ]]
+  -- [[ Plugins ]]
   {
     -- [[ Sort of stdlib ]]
     -- https://github.com/nvim-lua/plenary.nvim
@@ -345,10 +347,10 @@ require("lazy").setup(
           callback = function()
             vim.fn.system(
               "git -C "
-              .. "\""
-              .. vim.fn.expand("%:p:h")
-              .. "\""
-              .. " rev-parse"
+                .. "\""
+                .. vim.fn.expand("%:p:h")
+                .. "\""
+                .. " rev-parse"
             )
             if vim.v.shell_error == 0 then
               vim.api.nvim_del_augroup_by_name("GitSignsLazyLoad")
@@ -641,11 +643,11 @@ require("lazy").setup(
           max_size = 40,
           client_format = function(client_name, spinner, series_messages)
             return #series_messages > 0 and (client_name .. " " .. spinner)
-                or nil
+              or nil
           end,
           format = function(client_messages)
             return #client_messages > 0 and (table.concat(client_messages, " "))
-                or ""
+              or ""
           end,
         }
       end,
@@ -705,10 +707,10 @@ require("lazy").setup(
         }
         vim.cmd(
           "\naugroup lualine_augroup"
-          .. "\n  autocmd!"
-          .. "\n  autocmd User LspProgressStatusUpdated lua "
-          .. "require('lualine').refresh()"
-          .. "\naugroup END"
+            .. "\n  autocmd!"
+            .. "\n  autocmd User LspProgressStatusUpdated lua "
+            .. "require('lualine').refresh()"
+            .. "\naugroup END"
         )
       end,
     },
@@ -759,7 +761,7 @@ require("lazy").setup(
       config = function()
         require("mason-lspconfig").setup {
           ensure_installed = {
-            "gopls",  -- gopls
+            "gopls", -- gopls
             "lua_ls", -- lua-language-server
             -- "pyright",       -- pyright
             -- "rust_analyzer", -- rust-analyzer
@@ -1173,6 +1175,35 @@ require("lazy").setup(
         require("trouble").setup {
           mode = "document_diagnostics",
         }
+      end,
+    },
+
+    -- [[ Seamless tmux+nvim navigation ]]
+    -- https://github.com/aserowy/tmux.nvim
+    {
+      "aserowy/tmux.nvim",
+      config = function()
+        local tmux = require("tmux")
+        tmux.setup {
+          copy_sync = {
+            enable = false,
+          },
+          navigation = {
+            enable_default_keybindings = false,
+          },
+          resize = {
+            enable_default_keybindings = false,
+          },
+        }
+        -- TODO: extract bindings
+        vim.keymap.set("n", "<C-h>", tmux.move_left)
+        vim.keymap.set("n", "<C-Left>", tmux.move_left)
+        vim.keymap.set("n", "<C-k>", tmux.move_top)
+        vim.keymap.set("n", "<C-Up>", tmux.move_top)
+        vim.keymap.set("n", "<C-l>", tmux.move_right)
+        vim.keymap.set("n", "<C-Right>", tmux.move_right)
+        vim.keymap.set("n", "<C-j>", tmux.move_bottom)
+        vim.keymap.set("n", "<C-Down>", tmux.move_bottom)
       end,
     },
   },
