@@ -86,7 +86,7 @@ end
 -- [[ Install and configure plugins via lazy.nvim ]]
 -- https://github.com/folke/lazy.nvim
 require("lazy").setup(
-  -- [[ Plugins ]]
+-- [[ Plugins ]]
   {
     -- [[ Sort of stdlib ]]
     -- https://github.com/nvim-lua/plenary.nvim
@@ -345,10 +345,10 @@ require("lazy").setup(
           callback = function()
             vim.fn.system(
               "git -C "
-                .. "\""
-                .. vim.fn.expand("%:p:h")
-                .. "\""
-                .. " rev-parse"
+              .. "\""
+              .. vim.fn.expand("%:p:h")
+              .. "\""
+              .. " rev-parse"
             )
             if vim.v.shell_error == 0 then
               vim.api.nvim_del_augroup_by_name("GitSignsLazyLoad")
@@ -434,7 +434,7 @@ require("lazy").setup(
             preserve_window_proportions = true,
           },
           git = {
-            enable = false,
+            enable = true,
             ignore = true,
           },
           filesystem_watchers = {
@@ -630,10 +630,36 @@ require("lazy").setup(
       end,
     },
 
+    -- [[ LSP progress indicator ]]
+    -- https://github.com/linrongbin16/lsp-progress.nvim
+    {
+      "linrongbin16/lsp-progress.nvim",
+      event = { "VimEnter" },
+      dependencies = { "nvim-tree/nvim-web-devicons" },
+      config = function()
+        require("lsp-progress").setup {
+          max_size = 40,
+          client_format = function(client_name, spinner, series_messages)
+            return #series_messages > 0 and (client_name .. " " .. spinner)
+                or nil
+          end,
+          format = function(client_messages)
+            return #client_messages > 0 and (table.concat(client_messages, " "))
+                or ""
+          end,
+        }
+      end,
+    },
+
     -- [[ Statusline ]]
     -- https://github.com/nvim-lualine/lualine.nvim
     {
       "nvim-lualine/lualine.nvim",
+      event = { "VimEnter" },
+      dependencies = {
+        "nvim-tree/nvim-web-devicons",
+        "linrongbin16/lsp-progress.nvim",
+      },
       config = function()
         require("lualine").setup {
           options = {
@@ -654,7 +680,9 @@ require("lazy").setup(
             lualine_c = {
               { "filename", path = 1 },
             },
-            lualine_x = {},
+            lualine_x = {
+              require("lsp-progress").progress,
+            },
             lualine_y = { "filetype", "progress" },
             lualine_z = {
               {
@@ -675,6 +703,13 @@ require("lazy").setup(
             lualine_z = { "location" },
           },
         }
+        vim.cmd(
+          "\naugroup lualine_augroup"
+          .. "\n  autocmd!"
+          .. "\n  autocmd User LspProgressStatusUpdated lua "
+          .. "require('lualine').refresh()"
+          .. "\naugroup END"
+        )
       end,
     },
 
@@ -724,22 +759,13 @@ require("lazy").setup(
       config = function()
         require("mason-lspconfig").setup {
           ensure_installed = {
-            "gopls", -- gopls
+            "gopls",  -- gopls
             "lua_ls", -- lua-language-server
             -- "pyright",       -- pyright
             -- "rust_analyzer", -- rust-analyzer
             -- "tsserver",      -- typescript-language-server
           },
         }
-      end,
-    },
-
-    -- [[ LSP progress indicator ]]
-    -- https://github.com/j-hui/fidget.nvim
-    {
-      "j-hui/fidget.nvim",
-      config = function()
-        require("fidget").setup()
       end,
     },
 
@@ -1129,10 +1155,23 @@ require("lazy").setup(
         -- TODO: keybindings for TodoQuickFix and TodoTelescope (TodoTrouble?)
         require("todo-comments").setup {
           highlight = {
-            before = "fg",
+            before = "",
             keyword = "bg",
             after = "fg",
           },
+        }
+      end,
+    },
+
+    -- [[ Trouble: a panel for diagnostics, refs, etc. ]]
+    -- https://github.com/folke/trouble.nvim
+    {
+      "folke/trouble.nvim",
+      dependencies = { "nvim-tree/nvim-web-devicons" },
+      config = function()
+        -- TODO: A lot of custom kbd and integrations available in their doc
+        require("trouble").setup {
+          mode = "document_diagnostics",
         }
       end,
     },
