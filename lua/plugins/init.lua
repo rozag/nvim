@@ -1119,6 +1119,23 @@ require("lazy").setup(
         )
       end,
     },
+
+    -- [[ Highlight and search TODO comments ]]
+    -- https://github.com/folke/todo-comments.nvim
+    {
+      "folke/todo-comments.nvim",
+      dependencies = { "nvim-lua/plenary.nvim" },
+      config = function()
+        -- TODO: keybindings for TodoQuickFix and TodoTelescope (TodoTrouble?)
+        require("todo-comments").setup {
+          highlight = {
+            before = "fg",
+            keyword = "bg",
+            after = "fg",
+          },
+        }
+      end,
+    },
   },
 
   -- [[ Options ]]
