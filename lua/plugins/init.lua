@@ -1206,6 +1206,37 @@ require("lazy").setup(
         vim.keymap.set("n", "<C-Down>", tmux.move_bottom)
       end,
     },
+
+    -- [[ Github Copilot ]]
+    -- https://github.com/zbirenbaum/copilot.lua
+    {
+      "zbirenbaum/copilot.lua",
+      cmd = { "Copilot" },
+      event = "InsertEnter",
+      config = function()
+        require("copilot").setup {
+          panel = {
+            enabled = false,
+          },
+          suggestion = {
+            enabled = true,
+            auto_trigger = true,
+            -- TODO: extract bindings
+            keymap = {
+              -- NOTE: use "C-v[your key]" in insert mode to see these key codes
+              accept = "<C-Down>", -- C-j
+              next = "<C-Right>", -- C-l
+              prev = "<C-Left>", -- C-h
+              dismiss = "<C-]>",
+            },
+          },
+          filetypes = {
+            yaml = true,
+            markdown = true,
+          },
+        }
+      end,
+    },
   },
 
   -- [[ Options ]]
