@@ -43,11 +43,12 @@ local lspOnAttach = function(client, bufnr)
     telescopeBuiltin.lsp_document_symbols,
     "[D]ocument [S]ymbols"
   )
-  nmap(
-    "<leader>ws",
-    telescopeBuiltin.lsp_dynamic_workspace_symbols,
-    "[W]orkspace [S]ymbols"
-  )
+  -- TODO: remap or smth b/c of conflict
+  -- nmap(
+  --   "<leader>ws",
+  --   telescopeBuiltin.lsp_dynamic_workspace_symbols,
+  --   "[W]orkspace [S]ymbols"
+  -- )
 
   nmap("K", vim.lsp.buf.hover, "Hover Documentation")
   nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
