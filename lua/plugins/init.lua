@@ -69,7 +69,7 @@ local lspOnAttach = function(client, bufnr)
   end, "[W]orkspace [L]ist Folders")
 
   -- TODO: Cmd+L to run format?
-  -- TODO: Map :nohl to something?
+  -- TODO: Map :nohl to something? ^C?
   vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
     vim.lsp.buf.format { async = false }
   end, { desc = "Format current buffer with LSP" })
@@ -551,6 +551,7 @@ require("lazy").setup(
                 ["bk"] = actions.delete_buffer,
               }, -- n
               i = {
+                -- TODO: think about smth else here, these two conflict w/ tmux
                 ["<C-k>"] = actions.delete_buffer,
                 ["<C-h>"] = "which_key",
               },

@@ -9,6 +9,12 @@ local M = {}
 
 -- [[ General keybindings ]]
 M.general = function()
+  -- Without leader key
+  nmap("^[[C-Tab", vim.cmd.bnext, "[b]uffer [n]ext")           -- C-Tab
+  nmap("^[[C-S-Tab", vim.cmd.bprevious, "[b]uffer [p]revious") -- C-S-Tab
+  nmap("^[[M-s", vim.cmd.write, "[b]uffer [s]ave")             -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "[b]uffer [S]ave all")        -- Cmd-S-s
+
   -- Window-related keybindings
   wk.register { ["<leader>w"] = { name = "+window" } }
   nmap("<leader>ws", vim.cmd.split, "[w]indow [s]plit")
@@ -17,7 +23,25 @@ M.general = function()
   nmap("<leader>w=", function()
     vim.cmd("vertical wincmd =")
     vim.cmd("horizontal wincmd =")
-  end, "[w]indows [=] equalize size")
+  end, "[w]indows [=]equalize in size")
+
+  -- Buffer-related keybindings
+  wk.register { ["<leader>b"] = { name = "+buffer" } }
+  nmap("<leader>bn", vim.cmd.bnext, "[b]uffer [n]ext")
+  nmap("<leader>bp", vim.cmd.bprevious, "[b]uffer [p]revious")
+  nmap("<leader>bn", vim.cmd.enew, "[b]uffer [n]ew")
+  nmap("<leader>bk", vim.cmd.bdelete, "[b]uffer [k]ill")
+  nmap("<leader>bs", vim.cmd.write, "[b]uffer [s]ave")
+  nmap("<leader>bS", vim.cmd.wall, "[b]uffer [S]ave all")
+
+  -- TODO: use for format
+  -- - { key: L, mods: Command, chars: "^[[M-l" }
+
+  -- TODO: use for comments
+  -- - { key: Slash, mods: Command, chars: "^[[M-/" }
+
+  -- TODO: use for tree
+  -- - { key: Key1, mods: Option, chars: "^[[A-1" }
 
   -- TODO: general keybindings
 end
