@@ -10,10 +10,12 @@ local M = {}
 -- [[ General keybindings ]]
 M.general = function()
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "[b]uffer [n]ext")           -- C-Tab
-  nmap("^[[C-S-Tab", vim.cmd.bprevious, "[b]uffer [p]revious") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "[b]uffer [s]ave")             -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "[b]uffer [S]ave all")        -- Cmd-S-s
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
+  nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
+  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
+  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
+  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
 
   -- Window-related keybindings
   wk.register { ["<leader>w"] = { name = "+window" } }
