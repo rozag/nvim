@@ -9,6 +9,9 @@ local M = {}
 
 -- [[ General keybindings ]]
 M.general = function()
+  -- Map <Esc> to exit terminal mode
+  vim.cmd("tnoremap <Esc> <C-\\><C-n>")
+
   -- Without leader key
   nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
