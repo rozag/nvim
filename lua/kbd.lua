@@ -71,6 +71,10 @@ M.general = function()
   nmap("<leader>bs", vim.cmd.write, "[b]uffer [s]ave")
   nmap("<leader>bS", vim.cmd.wall, "[b]uffer [S]ave all")
 
+  -- Open commands
+  wk.register { ["<leader>o"] = { name = "+open" } }
+  nmap("<leader>ot", vim.cmd.terminal, "[o]pen [t]erminal")
+
   -- TODO: use for format
   -- - { key: L, mods: Command, chars: "^[[M-l" }
 
@@ -79,8 +83,6 @@ M.general = function()
 
   -- TODO: use for tree
   -- - { key: Key1, mods: Option, chars: "^[[A-1" }
-
-  -- TODO: SPC-o-t to open terminal
 
   -- TODO: general keybindings
 end
