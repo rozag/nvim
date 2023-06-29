@@ -1279,6 +1279,7 @@ require("lazy").setup(
         vim.g.gitblame_delay = 500
         vim.g.gitblame_display_virtual_text = 1
         vim.g.gitblame_enabled = 1
+        vim.g.gitblame_set_extmark_options = { hl_mode = "combine" }
       end,
     },
   },
