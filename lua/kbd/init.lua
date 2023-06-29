@@ -19,6 +19,7 @@ M.general = function()
   nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
   nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
   nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
+  nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
 
   -- Window-related keybindings
   wk.register { ["<leader>w"] = { name = "+window" } }
