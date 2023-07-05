@@ -35,7 +35,15 @@ M.general = function()
     expr = true,
   })
 
-  -- Map <Esc> to exit terminal mode
+  -- Map jj to <Esc> in insert mode
+  vim.keymap.set("i", "jj", "<Esc>", {
+    desc = "map jj to <Esc>",
+    noremap = true,
+    silent = true,
+  })
+
+  -- Terminal remappings
+  vim.cmd("tnoremap jj <C-\\><C-n>")
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
