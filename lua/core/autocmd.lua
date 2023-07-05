@@ -17,25 +17,25 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- [[ Line width limit via colorcolumn ]]
 -- NOTE: using column index + 1 to be an "untouchable" visual border
-local fillColumnIndicatorGroup =
+local fill_col_indicator_group =
   vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
-local function bindFileTypeToFillColumnIndicatorLimit(type, limit)
+local function bind_file_type_to_fill_col_indicator_limit(type, limit)
   vim.api.nvim_create_autocmd("FileType", {
     pattern = type,
-    group = fillColumnIndicatorGroup,
+    group = fill_col_indicator_group,
     callback = function()
       vim.opt.colorcolumn = limit
     end,
   })
 end
-bindFileTypeToFillColumnIndicatorLimit("dart", "81")
-bindFileTypeToFillColumnIndicatorLimit("dockerfile", "81")
-bindFileTypeToFillColumnIndicatorLimit("go", "81")
-bindFileTypeToFillColumnIndicatorLimit("java", "141")
-bindFileTypeToFillColumnIndicatorLimit("kotlin", "141")
-bindFileTypeToFillColumnIndicatorLimit("lua", "81")
-bindFileTypeToFillColumnIndicatorLimit("markdown", "81")
-bindFileTypeToFillColumnIndicatorLimit("org", "81")
-bindFileTypeToFillColumnIndicatorLimit("python", "81")
-bindFileTypeToFillColumnIndicatorLimit("rust", "100")
-bindFileTypeToFillColumnIndicatorLimit("text", "81")
+bind_file_type_to_fill_col_indicator_limit("dart", "81")
+bind_file_type_to_fill_col_indicator_limit("dockerfile", "81")
+bind_file_type_to_fill_col_indicator_limit("go", "81")
+bind_file_type_to_fill_col_indicator_limit("java", "141")
+bind_file_type_to_fill_col_indicator_limit("kotlin", "141")
+bind_file_type_to_fill_col_indicator_limit("lua", "81")
+bind_file_type_to_fill_col_indicator_limit("markdown", "81")
+bind_file_type_to_fill_col_indicator_limit("org", "81")
+bind_file_type_to_fill_col_indicator_limit("python", "81")
+bind_file_type_to_fill_col_indicator_limit("rust", "100")
+bind_file_type_to_fill_col_indicator_limit("text", "81")

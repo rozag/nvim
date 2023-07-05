@@ -1,5 +1,5 @@
 -- TODO: extract plugin access
-local wk = require("which-key")
+local which_key = require("which-key")
 
 local nmap = function(keys, func, desc)
   vim.keymap.set(
@@ -56,7 +56,7 @@ M.general = function()
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
 
   -- Window-related keybindings
-  wk.register { ["<leader>w"] = { name = "+window" } }
+  which_key.register { ["<leader>w"] = { name = "+window" } } -- TODO: nerd icons for these "folders"
   nmap("<leader>ws", vim.cmd.split, "[w]indow [s]plit")
   nmap("<leader>wv", vim.cmd.vsplit, "[w]indow [v]ertical split")
   nmap("<leader>wc", vim.cmd.close, "[w]indow [c]lose")
@@ -71,7 +71,7 @@ M.general = function()
   nmap("<leader>ww", "<C-w>w", "[w]indow [w]cycle")
 
   -- Buffer-related keybindings
-  wk.register { ["<leader>b"] = { name = "+buffer" } }
+  which_key.register { ["<leader>b"] = { name = "+buffer" } }
   nmap("<leader>bn", vim.cmd.bnext, "[b]uffer [n]ext")
   nmap("<leader>bp", vim.cmd.bprevious, "[b]uffer [p]revious")
   nmap("<leader>bN", vim.cmd.enew, "[b]uffer [N]ew")
@@ -80,7 +80,7 @@ M.general = function()
   nmap("<leader>bS", vim.cmd.wall, "[b]uffer [S]ave all")
 
   -- Open commands
-  wk.register { ["<leader>o"] = { name = "+open" } }
+  which_key.register { ["<leader>o"] = { name = "+open" } }
   nmap("<leader>ot", vim.cmd.terminal, "[o]pen [t]erminal")
 
   -- TODO: use for format

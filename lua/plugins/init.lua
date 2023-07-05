@@ -14,12 +14,12 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- [[ Name of colorscheme to reuse in several places ]]
-local colorschemeName = "monokai-pro"
+local colorscheme_name = "monokai-pro"
 
 -- TODO: extract on attach and formatting group
-local formattingGroup = vim.api.nvim_create_augroup("LspFormatting", {})
+local formatting_group = vim.api.nvim_create_augroup("LspFormatting", {})
 -- This function gets run when an LSP connects to a particular buffer.
-local lspOnAttach = function(client, bufnr)
+local lsp_on_attach = function(client, bufnr)
   local nmap = function(keys, func, desc)
     if desc then
       desc = "LSP: " .. desc
@@ -36,17 +36,17 @@ local lspOnAttach = function(client, bufnr)
   nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
   nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
 
-  local telescopeBuiltin = require("telescope.builtin")
-  nmap("gr", telescopeBuiltin.lsp_references, "[G]oto [R]eferences")
+  local telescope_builtin = require("telescope.builtin")
+  nmap("gr", telescope_builtin.lsp_references, "[G]oto [R]eferences")
   nmap(
     "<leader>ds",
-    telescopeBuiltin.lsp_document_symbols,
+    telescope_builtin.lsp_document_symbols,
     "[D]ocument [S]ymbols"
   )
   -- TODO: remap or smth b/c of conflict
   -- nmap(
   --   "<leader>ws",
-  --   telescopeBuiltin.lsp_dynamic_workspace_symbols,
+  --   telescope_builtin.lsp_dynamic_workspace_symbols,
   --   "[W]orkspace [S]ymbols"
   -- )
   -- nmap(
@@ -74,9 +74,9 @@ local lspOnAttach = function(client, bufnr)
   end, { desc = "Format current buffer with LSP" })
 
   if client.supports_method("textDocument/formatting") then
-    vim.api.nvim_clear_autocmds { group = formattingGroup, buffer = bufnr }
+    vim.api.nvim_clear_autocmds { group = formatting_group, buffer = bufnr }
     vim.api.nvim_create_autocmd("BufWritePre", {
-      group = formattingGroup,
+      group = formatting_group,
       buffer = bufnr,
       callback = function()
         vim.lsp.buf.format { async = false }
@@ -255,10 +255,10 @@ require("lazy").setup(
     {
       "loctvl842/monokai-pro.nvim",
       config = function()
-        require(colorschemeName).setup {
+        require(colorscheme_name).setup {
           filter = "spectrum",
         }
-        vim.cmd.colorscheme(colorschemeName)
+        vim.cmd.colorscheme(colorscheme_name)
 
         -- Column limit indicator appearance, have to do it after colorscheme.
         vim.cmd("highlight ColorColumn ctermbg=0 guibg=#353435")
@@ -667,7 +667,7 @@ require("lazy").setup(
         require("lualine").setup {
           options = {
             icons_enabled = true,
-            theme = colorschemeName,
+            theme = colorscheme_name,
             component_separators = "|",
             section_separators = { left = "", right = "" },
             disabled_filetypes = { "NvimTree" },
@@ -840,8 +840,8 @@ require("lazy").setup(
           },
         }
 
-        local cmpAutopairs = require("nvim-autopairs.completion.cmp")
-        require("cmp").event:on("confirm_done", cmpAutopairs.on_confirm_done())
+        local autopairs = require("nvim-autopairs.completion.cmp")
+        require("cmp").event:on("confirm_done", autopairs.on_confirm_done())
       end,
     },
 
@@ -993,8 +993,8 @@ require("lazy").setup(
         local lspconfig = require("lspconfig")
 
         local capabilities = vim.lsp.protocol.make_client_capabilities()
-        local cmpNvimLsp = require("cmp_nvim_lsp")
-        capabilities = cmpNvimLsp.default_capabilities(capabilities)
+        capabilities =
+          require("cmp_nvim_lsp").default_capabilities(capabilities)
         capabilities.textDocument.completion.completionItem = {
           documentationFormat = { "markdown", "plaintext" },
           snippetSupport = true,
@@ -1015,12 +1015,12 @@ require("lazy").setup(
 
         lspconfig.gopls.setup {
           capabilities = capabilities,
-          on_attach = lspOnAttach,
+          on_attach = lsp_on_attach,
           settings = {},
         }
         lspconfig.lua_ls.setup {
           capabilities = capabilities,
-          on_attach = lspOnAttach,
+          on_attach = lsp_on_attach,
           settings = {
             Lua = {
               diagnostics = {
@@ -1042,17 +1042,17 @@ require("lazy").setup(
         }
         -- lspconfig.pyright.setup {
         --   capabilities = capabilities,
-        --   on_attach = lspOnAttach,
+        --   on_attach = lsp_on_attach,
         --   settings = {},
         -- }
         -- lspconfig.rust_analyzer.setup {
         --   capabilities = capabilities,
-        --   on_attach = lspOnAttach,
+        --   on_attach = lsp_on_attach,
         --   settings = {},
         -- }
         -- lspconfig.tsserver.setup {
         --   capabilities = capabilities,
-        --   on_attach = lspOnAttach,
+        --   on_attach = lsp_on_attach,
         --   settings = {},
         -- }
       end,
@@ -1065,56 +1065,56 @@ require("lazy").setup(
     {
       "jose-elias-alvarez/null-ls.nvim",
       config = function()
-        local nu = require("null-ls")
-        nu.setup {
-          on_attach = lspOnAttach,
+        local null_ls = require("null-ls")
+        null_ls.setup {
+          on_attach = lsp_on_attach,
           sources = {
             -- [[ Code actions ]]
             -- Injects code actions for Git operations at the current cursor
             -- position (stage / preview / reset hunks, blame, etc.).
             -- https://github.com/lewis6991/gitsigns.nvim
-            nu.builtins.code_actions.gitsigns,
+            null_ls.builtins.code_actions.gitsigns,
             -- Go tool to modify struct field tags.
             -- https://github.com/fatih/gomodifytags
-            nu.builtins.code_actions.gomodifytags,
+            null_ls.builtins.code_actions.gomodifytags,
             -- impl generates method stubs for implementing a Go interface.
             -- https://github.com/josharian/impl
-            nu.builtins.code_actions.impl,
+            null_ls.builtins.code_actions.impl,
 
             -- [[ Completion ]]
             -- Snippet engine for Neovim, written in Lua.
             -- https://github.com/L3MON4D3/LuaSnip
-            nu.builtins.completion.luasnip,
+            null_ls.builtins.completion.luasnip,
 
             -- [[ Diagnostics ]]
             -- A Go linter aggregator.
             -- https://golangci-lint.run/
-            nu.builtins.diagnostics.golangci_lint,
+            null_ls.builtins.diagnostics.golangci_lint,
             -- Fast, configurable, extensible, flexible, and beautiful linter
             -- for Go.
             -- https://revive.run/
-            nu.builtins.diagnostics.revive,
+            null_ls.builtins.diagnostics.revive,
             -- Advanced Go linter.
             -- https://staticcheck.io/
-            nu.builtins.diagnostics.staticcheck,
+            null_ls.builtins.diagnostics.staticcheck,
             -- Uses inbuilt Lua code to detect lines with trailing whitespace
             -- and show a diagnostic warning on each line where it's present.
-            nu.builtins.diagnostics.trail_space,
+            null_ls.builtins.diagnostics.trail_space,
 
             -- [[ Formatting ]]
             -- Formats go programs.
             -- https://pkg.go.dev/cmd/gofmt
-            nu.builtins.formatting.gofmt,
+            null_ls.builtins.formatting.gofmt,
             -- Updates your Go import lines, adding missing ones and removing
             -- unreferenced ones.
             -- https://pkg.go.dev/golang.org/x/tools/cmd/goimports
-            nu.builtins.formatting.goimports,
+            null_ls.builtins.formatting.goimports,
             -- Command-line JSON processor.
             -- https://github.com/stedolan/jq
-            nu.builtins.formatting.jq,
+            null_ls.builtins.formatting.jq,
             -- An opinionated code formatter for Lua.
             -- https://github.com/JohnnyMorganz/StyLua
-            nu.builtins.formatting.stylua,
+            null_ls.builtins.formatting.stylua,
           },
         }
       end,
@@ -1287,7 +1287,7 @@ require("lazy").setup(
   -- [[ Options ]]
   -- https://github.com/folke/lazy.nvim#%EF%B8%8F-configuration
   {
-    install = { colorscheme = { colorschemeName } },
+    install = { colorscheme = { colorscheme_name } },
 
     ui = {
       icons = {
