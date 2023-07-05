@@ -47,12 +47,12 @@ M.general = function()
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer")           -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
-  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
-  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
+  nmap("^[[M-s", vim.cmd.write, "save buffer")             -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers")       -- Cmd-S-s
+  nmap("^[[M-z", vim.cmd.undo, "undo")                     -- Cmd-z
+  nmap("^[[M-S-z", vim.cmd.redo, "redo")                   -- Cmd-S-z
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
 
   -- Window-related keybindings
@@ -82,6 +82,9 @@ M.general = function()
   -- Open commands
   which_key.register { ["<leader>o"] = { name = "+open" } }
   nmap("<leader>ot", vim.cmd.terminal, "[o]pen [t]erminal")
+  nmap("<leader>ol", function()
+    vim.cmd("Lazy")
+  end, "[o]pen [l]azy plugin manager")
 
   -- TODO: use for format
   -- - { key: L, mods: Command, chars: "^[[M-l" }
