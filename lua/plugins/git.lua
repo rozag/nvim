@@ -93,7 +93,7 @@ M.lazy_defs = {
     config = function()
       vim.g.gitblame_date_format = "%Y-%m-%d"
       vim.g.gitblame_message_template =
-      "    󰊢 <author> • <date> • <summary> "
+        "    󰊢 <author> • <date> • <summary> "
       vim.g.gitblame_message_when_not_committed = "    󰊢 Not Committed Yet "
       vim.g.gitblame_delay = 500
       vim.g.gitblame_display_virtual_text = 1
