@@ -131,7 +131,6 @@ local plugins = {
           "commonlisp",
           "cpp",
           "css",
-          "cuda",
           "dart",
           "diff",
           "dockerfile",
@@ -596,7 +595,7 @@ local plugins = {
         end,
         format = function(client_messages)
           return #client_messages > 0 and (table.concat(client_messages, " "))
-              or ""
+            or ""
         end,
       }
     end,
@@ -657,10 +656,10 @@ local plugins = {
       }
       vim.cmd(
         "\naugroup lualine_augroup"
-        .. "\n  autocmd!"
-        .. "\n  autocmd User LspProgressStatusUpdated lua "
-        .. "require('lualine').refresh()"
-        .. "\naugroup END"
+          .. "\n  autocmd!"
+          .. "\n  autocmd User LspProgressStatusUpdated lua "
+          .. "require('lualine').refresh()"
+          .. "\naugroup END"
       )
     end,
   },
@@ -711,7 +710,7 @@ local plugins = {
     config = function()
       require("mason-lspconfig").setup {
         ensure_installed = {
-          "gopls",  -- gopls
+          "gopls", -- gopls
           "lua_ls", -- lua-language-server
           -- "pyright",       -- pyright
           -- "rust_analyzer", -- rust-analyzer
@@ -1200,8 +1199,8 @@ local plugins = {
           keymap = {
             -- NOTE: use "C-v[your key]" in insert mode to see these key codes
             accept = "<C-Down>", -- C-j
-            next = "<C-Right>",  -- C-l
-            prev = "<C-Left>",   -- C-h
+            next = "<C-Right>", -- C-l
+            prev = "<C-Left>", -- C-h
             dismiss = "<C-]>",
           },
         },
