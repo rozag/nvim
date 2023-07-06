@@ -107,6 +107,17 @@ M.plugins = {
     prev = "<C-Left>", -- C-h
     dismiss = "<C-]>",
   },
+  tmux = function()
+    local tmux = require("plugins.tmux").require_module.tmux()
+    nmap("<C-h>", tmux.move_left, "move to window on the left")
+    nmap("<C-Left>", tmux.move_left, "move to window on the left")
+    nmap("<C-k>", tmux.move_top, "move to window on the top")
+    nmap("<C-Up>", tmux.move_top, "move to window on the top")
+    nmap("<C-l>", tmux.move_right, "move to window on the right")
+    nmap("<C-Right>", tmux.move_right, "move to window on the right")
+    nmap("<C-j>", tmux.move_bottom, "move to window on the bottom")
+    nmap("<C-Down>", tmux.move_bottom, "move to window on the bottom")
+  end,
 }
 
 return M

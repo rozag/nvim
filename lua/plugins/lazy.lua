@@ -1,10 +1,3 @@
--- Inserts all items from table items into table tbl.
-local tbl_insert_all = function(tbl, items)
-  for _, item in ipairs(items) do
-    table.insert(tbl, item)
-  end
-end
-
 local M = {}
 
 M.ids = {
@@ -1146,43 +1139,23 @@ local plugins = {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
       -- TODO: A lot of custom kbd and integrations available in their doc
+      -- TODO: how to send results from telescope to trouble?
       require("trouble").setup {
         mode = "document_diagnostics",
       }
     end,
   },
-
-  -- [[ Seamless tmux+nvim navigation ]]
-  -- https://github.com/aserowy/tmux.nvim
-  {
-    "aserowy/tmux.nvim",
-    config = function()
-      local tmux = require("tmux")
-      tmux.setup {
-        copy_sync = {
-          enable = false,
-        },
-        navigation = {
-          enable_default_keybindings = false,
-        },
-        resize = {
-          enable_default_keybindings = false,
-        },
-      }
-      -- TODO: extract bindings
-      vim.keymap.set("n", "<C-h>", tmux.move_left)
-      vim.keymap.set("n", "<C-Left>", tmux.move_left)
-      vim.keymap.set("n", "<C-k>", tmux.move_top)
-      vim.keymap.set("n", "<C-Up>", tmux.move_top)
-      vim.keymap.set("n", "<C-l>", tmux.move_right)
-      vim.keymap.set("n", "<C-Right>", tmux.move_right)
-      vim.keymap.set("n", "<C-j>", tmux.move_bottom)
-      vim.keymap.set("n", "<C-Down>", tmux.move_bottom)
-    end,
-  },
 }
 
 M.setup = function()
+  -- Inserts all items from table items into table tbl.
+  local function tbl_insert_all(tbl, items)
+    for _, item in ipairs(items) do
+      table.insert(tbl, item)
+    end
+  end
+
+  tbl_insert_all(plugins, require("plugins.tmux").lazy_defs)
   tbl_insert_all(plugins, require("plugins.copilot").lazy_defs)
   tbl_insert_all(plugins, require("plugins.git").lazy_defs)
 
