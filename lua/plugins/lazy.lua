@@ -1,3 +1,5 @@
+local utils = require("utils")
+
 local M = {}
 
 M.ids = {
@@ -298,20 +300,22 @@ local plugins = {
   {
     "lukas-reineke/indent-blankline.nvim",
     config = function()
+      local filetype_exclude = {
+        "checkhealth",
+        "help",
+        "man",
+        "terminal",
+        "",
+        "lazy", -- TODO: extract filetypes
+        "lspinfo", -- TODO: extract filetypes
+        "mason", -- TODO: extract filetypes
+        "TelescopePrompt", -- TODO: extract filetypes
+        "TelescopeResults", -- TODO: extract filetypes
+      }
+      utils.tbl_insert_all(filetype_exclude, require("plugins.tree").filetypes)
       require("indent_blankline").setup {
         indentLine_enabled = 1,
-        filetype_exclude = {
-          "help",
-          "terminal",
-          "lazy",
-          "lspinfo",
-          "TelescopePrompt",
-          "TelescopeResults",
-          "mason",
-          "nvdash",
-          "nvcheatsheet",
-          "",
-        },
+        filetype_exclude = filetype_exclude,
         buftype_exclude = { "terminal" },
         show_trailing_blankline_indent = false,
         show_first_indent_level = true,
@@ -347,91 +351,6 @@ local plugins = {
     "nvim-tree/nvim-web-devicons",
     config = function()
       require("nvim-web-devicons").setup()
-    end,
-  },
-
-  -- [[ File managing, picker etc. ]]
-  -- https://github.com/nvim-tree/nvim-tree.lua
-  {
-    "nvim-tree/nvim-tree.lua",
-    lazy = true,
-    cmd = { "NvimTreeToggle", "NvimTreeFocus" },
-    config = function()
-      require("nvim-tree").setup {
-        filters = {
-          dotfiles = false,
-          exclude = { vim.fn.stdpath("config") .. "/lua/custom" },
-        },
-        disable_netrw = true,
-        hijack_netrw = true,
-        hijack_cursor = true,
-        hijack_unnamed_buffer_when_opening = false,
-        sync_root_with_cwd = true,
-        update_focused_file = {
-          enable = true,
-          update_root = false,
-        },
-        view = {
-          adaptive_size = true,
-          side = "left",
-          preserve_window_proportions = true,
-        },
-        git = {
-          enable = true,
-          ignore = true,
-        },
-        filesystem_watchers = {
-          enable = true,
-        },
-        actions = {
-          open_file = {
-            resize_window = true,
-          },
-        },
-        renderer = {
-          root_folder_label = false,
-          highlight_git = true,
-          highlight_opened_files = "all",
-
-          indent_markers = {
-            enable = false,
-          },
-
-          icons = {
-            show = {
-              file = true,
-              folder = true,
-              folder_arrow = true,
-              git = true,
-            },
-
-            glyphs = {
-              default = "󰈚",
-              symlink = "",
-              folder = {
-                default = "󰉋",
-                empty = "",
-                empty_open = "",
-                open = "",
-                symlink = "",
-                symlink_open = "",
-                arrow_open = "",
-                arrow_closed = "",
-              },
-              git = {
-                unstaged = "✗",
-                staged = "✓",
-                unmerged = "",
-                renamed = "➜",
-                untracked = "★",
-                deleted = "",
-                ignored = "◌",
-              },
-            },
-          },
-        },
-      }
-      vim.g.nvimtree_side = "left"
     end,
   },
 
@@ -610,7 +529,7 @@ local plugins = {
           theme = colorscheme_name,
           component_separators = "|",
           section_separators = { left = "", right = "" },
-          disabled_filetypes = { "NvimTree" },
+          disabled_filetypes = { "NvimTree" }, -- TODO: extract and reuse
         },
         sections = {
           lualine_a = {
@@ -1148,16 +1067,10 @@ local plugins = {
 }
 
 M.setup = function()
-  -- Inserts all items from table items into table tbl.
-  local function tbl_insert_all(tbl, items)
-    for _, item in ipairs(items) do
-      table.insert(tbl, item)
-    end
-  end
-
-  tbl_insert_all(plugins, require("plugins.tmux").lazy_defs)
-  tbl_insert_all(plugins, require("plugins.copilot").lazy_defs)
-  tbl_insert_all(plugins, require("plugins.git").lazy_defs)
+  utils.tbl_insert_all(plugins, require("plugins.tree").lazy_defs)
+  utils.tbl_insert_all(plugins, require("plugins.tmux").lazy_defs)
+  utils.tbl_insert_all(plugins, require("plugins.copilot").lazy_defs)
+  utils.tbl_insert_all(plugins, require("plugins.git").lazy_defs)
 
   -- [[ Install and configure plugins via lazy.nvim ]]
   -- https://github.com/folke/lazy.nvim

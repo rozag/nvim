@@ -1,3 +1,7 @@
+-- NOTE: bindings that start with ^[[ are from custom Alacritty setup for macOS
+
+-- NOTE: use "C-v[your key]" in insert mode to see the key codes nvim receives
+
 -- TODO: extract plugin access
 local which_key = require("which-key")
 
@@ -92,16 +96,12 @@ M.general = function()
   -- TODO: use for comments
   -- - { key: Slash, mods: Command, chars: "^[[M-/" }
 
-  -- TODO: use for tree
-  -- - { key: Key1, mods: Option, chars: "^[[A-1" }
-
   -- TODO: general keybindings
 end
 
 -- [[ Plugin-specific keybindings ]]
 M.plugins = {
   copilot = {
-    -- NOTE: use "C-v[your key]" in insert mode to see these key codes
     accept = "<C-Down>", -- C-j
     next = "<C-Right>", -- C-l
     prev = "<C-Left>", -- C-h
@@ -117,6 +117,18 @@ M.plugins = {
     nmap("<C-Right>", tmux.move_right, "move to window on the right")
     nmap("<C-j>", tmux.move_bottom, "move to window on the bottom")
     nmap("<C-Down>", tmux.move_bottom, "move to window on the bottom")
+  end,
+  tree = function()
+    local function open_tree()
+      local api = require("plugins.tree").require_module.nvim_tree_api()
+      if api.tree.is_tree_buf() then
+        api.tree.toggle()
+      else
+        api.tree.focus()
+      end
+    end
+    nmap("<leader>of", open_tree, "[o]pen [f]ile tree")
+    nmap("^[[A-1", open_tree, "[o]pen [f]ile tree")
   end,
 }
 

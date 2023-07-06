@@ -1,6 +1,4 @@
-local function substring_after_last(str, delim)
-  return string.match(str, ".*" .. delim .. "(.*)")
-end
+local utils = require("utils")
 
 local M = {}
 
@@ -40,7 +38,9 @@ M.lazy_defs = {
             vim.api.nvim_del_augroup_by_name("GitSignsLazyLoad")
             vim.schedule(function()
               require("plugins.lazy").require_module.lazy().load {
-                plugins = { substring_after_last(M.ids.gitsigns, "/") },
+                plugins = {
+                  utils.substring_after_last(M.ids.gitsigns, "/"),
+                },
               }
             end)
           end
