@@ -38,10 +38,8 @@ M.lazy_defs = {
           )
           if vim.v.shell_error == 0 then
             vim.api.nvim_del_augroup_by_name("GitSignsLazyLoad")
-            -- TODO: `require("plugins").require_module.lazy()` should be
-            -- instead of require
             vim.schedule(function()
-              require("lazy").load {
+              require("plugins.lazy").require_module.lazy().load {
                 plugins = { substring_after_last(M.ids.gitsigns, "/") },
               }
             end)
@@ -95,7 +93,7 @@ M.lazy_defs = {
     config = function()
       vim.g.gitblame_date_format = "%Y-%m-%d"
       vim.g.gitblame_message_template =
-        "    󰊢 <author> • <date> • <summary> "
+      "    󰊢 <author> • <date> • <summary> "
       vim.g.gitblame_message_when_not_committed = "    󰊢 Not Committed Yet "
       vim.g.gitblame_delay = 500
       vim.g.gitblame_display_virtual_text = 1

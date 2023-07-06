@@ -5,20 +5,34 @@ local tbl_insert_all = function(tbl, items)
   end
 end
 
--- [[ Install lazy.nvim package manager ]]
--- https://github.com/folke/lazy.nvim
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system {
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
-    lazypath,
-  }
+local M = {}
+
+M.ids = {
+  lazy = "folke/lazy.nvim",
+}
+
+M.require_module = {
+  lazy = function()
+    return require("lazy")
+  end,
+}
+
+M.install = function()
+  -- [[ Install lazy.nvim package manager ]]
+  -- https://github.com/folke/lazy.nvim
+  local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+  if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system {
+      "git",
+      "clone",
+      "--filter=blob:none",
+      "https://github.com/" .. M.ids.lazy .. ".git",
+      "--branch=stable", -- latest stable release
+      lazypath,
+    }
+  end
+  vim.opt.rtp:prepend(lazypath)
 end
-vim.opt.rtp:prepend(lazypath)
 
 -- [[ Name of colorscheme to reuse in several places ]]
 local colorscheme_name = "monokai-pro"
@@ -1200,76 +1214,80 @@ local plugins = {
   },
 }
 
-tbl_insert_all(plugins, require("plugins.git").lazy_defs)
+M.setup = function()
+  tbl_insert_all(plugins, require("plugins.git").lazy_defs)
 
--- [[ Install and configure plugins via lazy.nvim ]]
--- https://github.com/folke/lazy.nvim
-require("lazy").setup(
-  plugins,
+  -- [[ Install and configure plugins via lazy.nvim ]]
+  -- https://github.com/folke/lazy.nvim
+  M.require_module.lazy().setup(
+    plugins,
 
-  -- [[ Options ]]
-  -- https://github.com/folke/lazy.nvim#%EF%B8%8F-configuration
-  {
-    install = { colorscheme = { colorscheme_name } },
+    -- [[ Options ]]
+    -- https://github.com/folke/lazy.nvim#%EF%B8%8F-configuration
+    {
+      install = { colorscheme = { colorscheme_name } },
 
-    ui = {
-      icons = {
-        cmd = " ",
-        config = "",
-        event = "",
-        ft = " ",
-        init = " ",
-        import = " ",
-        keys = " ",
-        lazy = "󰒲 ",
-        loaded = "●",
-        not_loaded = "○",
-        plugin = " ",
-        runtime = " ",
-        source = " ",
-        start = "",
-        task = "✔ ",
-        list = {
-          "●",
-          "➜",
-          "★",
-          "‒",
+      ui = {
+        icons = {
+          cmd = " ",
+          config = "",
+          event = "",
+          ft = " ",
+          init = " ",
+          import = " ",
+          keys = " ",
+          lazy = "󰒲 ",
+          loaded = "●",
+          not_loaded = "○",
+          plugin = " ",
+          runtime = " ",
+          source = " ",
+          start = "",
+          task = "✔ ",
+          list = {
+            "●",
+            "➜",
+            "★",
+            "‒",
+          },
         },
       },
-    },
 
-    performance = {
-      rtp = {
-        disabled_plugins = {
-          "2html_plugin",
-          "tohtml",
-          "getscript",
-          "getscriptPlugin",
-          "gzip",
-          "logipat",
-          "netrw",
-          "netrwPlugin",
-          "netrwSettings",
-          "netrwFileHandlers",
-          "matchit",
-          "tar",
-          "tarPlugin",
-          "rrhelper",
-          "spellfile_plugin",
-          "vimball",
-          "vimballPlugin",
-          "zip",
-          "zipPlugin",
-          "tutor",
-          "rplugin",
-          "syntax",
-          "synmenu",
-          "optwin",
-          "compiler",
-          "bugreport",
-          "ftplugin",
+      performance = {
+        rtp = {
+          disabled_plugins = {
+            "2html_plugin",
+            "tohtml",
+            "getscript",
+            "getscriptPlugin",
+            "gzip",
+            "logipat",
+            "netrw",
+            "netrwPlugin",
+            "netrwSettings",
+            "netrwFileHandlers",
+            "matchit",
+            "tar",
+            "tarPlugin",
+            "rrhelper",
+            "spellfile_plugin",
+            "vimball",
+            "vimballPlugin",
+            "zip",
+            "zipPlugin",
+            "tutor",
+            "rplugin",
+            "syntax",
+            "synmenu",
+            "optwin",
+            "compiler",
+            "bugreport",
+            "ftplugin",
+          },
         },
       },
-    },
-  }
-)
+    }
+  )
+end
+
+return M

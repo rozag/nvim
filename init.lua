@@ -2,7 +2,9 @@
 require("core")
 
 -- [[ 3rd-party plugins and their configurations ]]
-require("plugins")
+local lazy = require("plugins.lazy")
+lazy.install()
+lazy.setup()
 
 -- [[ All the keybindings ]]
 require("kbd").general()
