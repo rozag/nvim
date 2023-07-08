@@ -13,6 +13,8 @@ end
 
 local M = {}
 
+M.leader_key = " "
+
 -- [[ General keybindings ]]
 M.general = function()
   -- TODO: extract plugin access
@@ -51,12 +53,12 @@ M.general = function()
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer")           -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
-  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
-  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
+  nmap("^[[M-s", vim.cmd.write, "save buffer")             -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers")       -- Cmd-S-s
+  nmap("^[[M-z", vim.cmd.undo, "undo")                     -- Cmd-z
+  nmap("^[[M-S-z", vim.cmd.redo, "redo")                   -- Cmd-S-z
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
 
   -- Window-related keybindings
@@ -103,8 +105,8 @@ end
 M.plugins = {
   copilot = {
     accept = "<C-Down>", -- C-j
-    next = "<C-Right>", -- C-l
-    prev = "<C-Left>", -- C-h
+    next = "<C-Right>",  -- C-l
+    prev = "<C-Left>",   -- C-h
     dismiss = "<C-]>",
   },
 
