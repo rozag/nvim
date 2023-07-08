@@ -29,9 +29,6 @@ M.install = function()
   vim.opt.rtp:prepend(lazypath)
 end
 
--- [[ Name of colorscheme to reuse in several places ]]
-local colorscheme_name = "monokai-pro"
-
 -- TODO: extract on attach and formatting group
 local formatting_group = vim.api.nvim_create_augroup("LspFormatting", {})
 -- This function gets run when an LSP connects to a particular buffer.
@@ -107,21 +104,6 @@ local plugins = {
   -- https://github.com/nvim-lua/plenary.nvim
   "nvim-lua/plenary.nvim",
 
-  -- [[ Colorscheme ]]
-  -- https://github.com/loctvl842/monokai-pro.nvim
-  {
-    "loctvl842/monokai-pro.nvim",
-    config = function()
-      require(colorscheme_name).setup {
-        filter = "spectrum",
-      }
-      vim.cmd.colorscheme(colorscheme_name)
-
-      -- Column limit indicator appearance, have to do it after colorscheme.
-      vim.cmd("highlight ColorColumn ctermbg=0 guibg=#353435")
-    end,
-  },
-
   -- [[ Comments: `gcc` & `gc` while in visual ]]
   -- https://github.com/numToStr/Comment.nvim
   {
@@ -151,10 +133,10 @@ local plugins = {
         "man",
         "terminal",
         "",
-        "lazy", -- TODO: extract filetypes
-        "lspinfo", -- TODO: extract filetypes
-        "mason", -- TODO: extract filetypes
-        "TelescopePrompt", -- TODO: extract filetypes
+        "lazy",             -- TODO: extract filetypes
+        "lspinfo",          -- TODO: extract filetypes
+        "mason",            -- TODO: extract filetypes
+        "TelescopePrompt",  -- TODO: extract filetypes
         "TelescopeResults", -- TODO: extract filetypes
       }
       utils.table.insert_all(
@@ -179,7 +161,7 @@ local plugins = {
     "NvChad/nvim-colorizer.lua",
     config = function()
       local colorizer = require("colorizer")
-      colorizer.setup()
+      colorizer.setup(nil)
       colorizer.attach_to_buffer(0)
     end,
   },
@@ -209,6 +191,7 @@ local plugins = {
     branch = "0.1.x",
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
+      -- TODO: SPC-o-???? -> :Telescope - might be useful raw
       local previewers = require("telescope.previewers")
       local actions = require("telescope.actions")
       require("telescope").setup {
@@ -355,7 +338,7 @@ local plugins = {
         end,
         format = function(client_messages)
           return #client_messages > 0 and (table.concat(client_messages, " "))
-            or ""
+              or ""
         end,
       }
     end,
@@ -374,7 +357,7 @@ local plugins = {
       require("lualine").setup {
         options = {
           icons_enabled = true,
-          theme = colorscheme_name,
+          theme = require("plugins.colorscheme").name,
           component_separators = "|",
           section_separators = { left = "", right = "" },
           disabled_filetypes = { "NvimTree" }, -- TODO: extract and reuse
@@ -416,10 +399,10 @@ local plugins = {
       }
       vim.cmd(
         "\naugroup lualine_augroup"
-          .. "\n  autocmd!"
-          .. "\n  autocmd User LspProgressStatusUpdated lua "
-          .. "require('lualine').refresh()"
-          .. "\naugroup END"
+        .. "\n  autocmd!"
+        .. "\n  autocmd User LspProgressStatusUpdated lua "
+        .. "require('lualine').refresh()"
+        .. "\naugroup END"
       )
     end,
   },
@@ -470,7 +453,7 @@ local plugins = {
     config = function()
       require("mason-lspconfig").setup {
         ensure_installed = {
-          "gopls", -- gopls
+          "gopls",  -- gopls
           "lua_ls", -- lua-language-server
           -- "pyright",       -- pyright
           -- "rust_analyzer", -- rust-analyzer
@@ -542,7 +525,7 @@ local plugins = {
       require("nvim-autopairs").setup {
         fast_wrap = {},
         disable_filetype = {
-          "TelescopePrompt",
+          "TelescopePrompt", -- TODO: extract file type
           "vim",
         },
       }
@@ -870,8 +853,7 @@ local plugins = {
             accent = wilder.make_hl("WilderAccent", "Pmenu", {
               { a = 1 },
               { a = 1 },
-              -- TODO: this color should be part of colorscheme layer
-              { foreground = "#fd618e" }, -- color picked from monokai-pro
+              { foreground = require("plugins.colorscheme").color_accent1 },
             }),
           },
         })
@@ -918,6 +900,7 @@ local plugins = {
 }
 
 M.setup = function()
+  utils.table.insert_all(plugins, require("plugins.colorscheme").lazy_defs)
   utils.table.insert_all(plugins, require("plugins.treesitter").lazy_defs)
   utils.table.insert_all(plugins, require("plugins.tree").lazy_defs)
   utils.table.insert_all(plugins, require("plugins.tmux").lazy_defs)
@@ -932,7 +915,7 @@ M.setup = function()
     -- [[ Options ]]
     -- https://github.com/folke/lazy.nvim#%EF%B8%8F-configuration
     {
-      install = { colorscheme = { colorscheme_name } },
+      install = { colorscheme = { require("plugins.colorscheme").name } },
 
       ui = {
         icons = {
