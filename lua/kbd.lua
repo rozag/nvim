@@ -2,9 +2,6 @@
 
 -- NOTE: use "C-v[your key]" in insert mode to see the key codes nvim receives
 
--- TODO: extract plugin access
-local which_key = require("which-key")
-
 local nmap = function(keys, func, desc)
   vim.keymap.set(
     "n",
@@ -18,6 +15,9 @@ local M = {}
 
 -- [[ General keybindings ]]
 M.general = function()
+  -- TODO: extract plugin access
+  local which_key = require("which-key")
+
   -- Better default experience with <Space> as leader key
   vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", {
     desc = "map <Space> to <Nop>",
@@ -107,6 +107,7 @@ M.plugins = {
     prev = "<C-Left>", -- C-h
     dismiss = "<C-]>",
   },
+
   tmux = function()
     local tmux = require("plugins.tmux").require_module.tmux()
     nmap("<C-h>", tmux.move_left, "move to window on the left")
@@ -118,6 +119,7 @@ M.plugins = {
     nmap("<C-j>", tmux.move_bottom, "move to window on the bottom")
     nmap("<C-Down>", tmux.move_bottom, "move to window on the bottom")
   end,
+
   tree = function()
     local function open_tree()
       local api = require("plugins.tree").require_module.nvim_tree_api()
@@ -130,6 +132,54 @@ M.plugins = {
     nmap("<leader>of", open_tree, "[o]pen [f]ile tree")
     nmap("^[[A-1", open_tree, "[o]pen [f]ile tree")
   end,
+
+  treesitter = {
+    incremental_selection_keymaps = {
+      init_selection = "<CR>",
+      node_incremental = "<CR>",
+      scope_incremental = "<TAB>",
+      node_decremental = "<S-TAB>",
+    },
+    textobjects = {
+      selection_keymaps = {
+        ["aa"] = "@parameter.outer",
+        ["ia"] = "@parameter.inner",
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner",
+      },
+      move_keymaps = {
+        goto_next_start = {
+          ["]m"] = "@function.outer",
+          ["]]"] = "@class.outer",
+        },
+        goto_next_end = {
+          ["]M"] = "@function.outer",
+          ["]["] = "@class.outer",
+        },
+        goto_previous_start = {
+          ["[m"] = "@function.outer",
+          ["[["] = "@class.outer",
+        },
+        goto_previous_end = {
+          ["[M"] = "@function.outer",
+          ["[]"] = "@class.outer",
+        },
+      },
+      swap_keymaps = {
+        swap_next = {
+          ["<leader>a"] = "@parameter.inner",
+        },
+        swap_previous = {
+          ["<leader>A"] = "@parameter.inner",
+        },
+      },
+    },
+    refactor_keymaps = {
+      smart_rename = "grr",
+    },
+  },
 }
 
 return M

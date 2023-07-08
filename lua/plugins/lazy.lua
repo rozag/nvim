@@ -36,7 +36,7 @@ local colorscheme_name = "monokai-pro"
 local formatting_group = vim.api.nvim_create_augroup("LspFormatting", {})
 -- This function gets run when an LSP connects to a particular buffer.
 local lsp_on_attach = function(client, bufnr)
-  local nmap = function(keys, func, desc)
+  local function nmap(keys, func, desc)
     if desc then
       desc = "LSP: " .. desc
     end
@@ -106,161 +106,6 @@ local plugins = {
   -- [[ Sort of stdlib ]]
   -- https://github.com/nvim-lua/plenary.nvim
   "nvim-lua/plenary.nvim",
-
-  -- [[ tree-sitter ]]
-  -- https://github.com/nvim-treesitter/nvim-treesitter
-  {
-    "nvim-treesitter/nvim-treesitter",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
-      "nvim-treesitter/nvim-treesitter-refactor",
-    },
-    build = ":TSUpdate",
-    config = function()
-      require("nvim-treesitter.configs").setup {
-        ensure_installed = {
-          "bash",
-          "c",
-          "clojure",
-          "cmake",
-          "commonlisp",
-          "cpp",
-          "css",
-          "dart",
-          "diff",
-          "dockerfile",
-          "elixir",
-          "elm",
-          "erlang",
-          "git_config",
-          "git_rebase",
-          "gitattributes",
-          "gitcommit",
-          "gitignore",
-          "glsl",
-          "go",
-          "gomod",
-          "gosum",
-          "gowork",
-          "graphql",
-          "html",
-          "htmldjango",
-          "http",
-          "ini",
-          "java",
-          "javascript",
-          "jq",
-          "jsdoc",
-          "json",
-          "json5",
-          "jsonc",
-          "kotlin",
-          "latex",
-          "lua",
-          "luadoc",
-          "luap",
-          "luau",
-          "make",
-          "markdown",
-          "ninja",
-          "nix",
-          "norg",
-          "ocaml",
-          "proto",
-          "python",
-          "racket",
-          "regex",
-          "ruby",
-          "rust",
-          "scala",
-          "scheme",
-          "scss",
-          "smali",
-          "solidity",
-          "sql",
-          "starlark",
-          "swift",
-          "terraform",
-          "toml",
-          "tsx",
-          "typescript",
-          "verilog",
-          "vim",
-          "vimdoc",
-          "wgsl",
-          "yaml",
-          "zig",
-        },
-        sync_install = true,
-        auto_install = true,
-        highlight = {
-          enable = true,
-          use_languagetree = true,
-        },
-        indent = { enable = true },
-        incremental_selection = {
-          enable = true,
-          keymaps = {
-            init_selection = "<CR>",
-            node_incremental = "<CR>",
-            scope_incremental = "<TAB>",
-            node_decremental = "<S-TAB>",
-          },
-        },
-        textobjects = {
-          select = {
-            enable = true,
-            lookahead = true,
-            keymaps = {
-              ["aa"] = "@parameter.outer",
-              ["ia"] = "@parameter.inner",
-              ["af"] = "@function.outer",
-              ["if"] = "@function.inner",
-              ["ac"] = "@class.outer",
-              ["ic"] = "@class.inner",
-            },
-          },
-          move = {
-            enable = true,
-            set_jumps = true,
-            goto_next_start = {
-              ["]m"] = "@function.outer",
-              ["]]"] = "@class.outer",
-            },
-            goto_next_end = {
-              ["]M"] = "@function.outer",
-              ["]["] = "@class.outer",
-            },
-            goto_previous_start = {
-              ["[m"] = "@function.outer",
-              ["[["] = "@class.outer",
-            },
-            goto_previous_end = {
-              ["[M"] = "@function.outer",
-              ["[]"] = "@class.outer",
-            },
-          },
-          swap = {
-            enable = true,
-            swap_next = {
-              ["<leader>a"] = "@parameter.inner",
-            },
-            swap_previous = {
-              ["<leader>A"] = "@parameter.inner",
-            },
-          },
-        },
-        refactor = {
-          smart_rename = {
-            enable = true,
-            keymaps = {
-              smart_rename = "grr",
-            },
-          },
-        },
-      }
-    end,
-  },
 
   -- [[ Colorscheme ]]
   -- https://github.com/loctvl842/monokai-pro.nvim
@@ -848,6 +693,9 @@ local plugins = {
   -- https://github.com/neovim/nvim-lspconfig
   {
     "neovim/nvim-lspconfig",
+    dependencies = {
+      "folke/neodev.nvim",
+    },
     config = function()
       local lspconfig = require("lspconfig")
 
@@ -1067,6 +915,7 @@ local plugins = {
 }
 
 M.setup = function()
+  utils.tbl_insert_all(plugins, require("plugins.treesitter").lazy_defs)
   utils.tbl_insert_all(plugins, require("plugins.tree").lazy_defs)
   utils.tbl_insert_all(plugins, require("plugins.tmux").lazy_defs)
   utils.tbl_insert_all(plugins, require("plugins.copilot").lazy_defs)
