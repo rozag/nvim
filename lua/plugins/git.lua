@@ -39,7 +39,7 @@ M.lazy_defs = {
             vim.schedule(function()
               require("plugins.lazy").require_module.lazy().load {
                 plugins = {
-                  utils.substring_after_last(M.ids.gitsigns, "/"),
+                  utils.strings.substring_after_last(M.ids.gitsigns, "/"),
                 },
               }
             end)

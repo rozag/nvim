@@ -24,7 +24,7 @@ local M = {}
 
 M.treesitter_grammars = {}
 for _, lang in pairs(langs) do
-  utils.tbl_insert_all(M.treesitter_grammars, lang.treesitter_grammars)
+  utils.table.insert_all(M.treesitter_grammars, lang.treesitter_grammars)
 end
 
 return M

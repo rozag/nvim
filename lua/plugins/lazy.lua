@@ -157,7 +157,10 @@ local plugins = {
         "TelescopePrompt", -- TODO: extract filetypes
         "TelescopeResults", -- TODO: extract filetypes
       }
-      utils.tbl_insert_all(filetype_exclude, require("plugins.tree").filetypes)
+      utils.table.insert_all(
+        filetype_exclude,
+        require("plugins.tree").filetypes
+      )
       require("indent_blankline").setup {
         indentLine_enabled = 1,
         filetype_exclude = filetype_exclude,
@@ -915,11 +918,11 @@ local plugins = {
 }
 
 M.setup = function()
-  utils.tbl_insert_all(plugins, require("plugins.treesitter").lazy_defs)
-  utils.tbl_insert_all(plugins, require("plugins.tree").lazy_defs)
-  utils.tbl_insert_all(plugins, require("plugins.tmux").lazy_defs)
-  utils.tbl_insert_all(plugins, require("plugins.copilot").lazy_defs)
-  utils.tbl_insert_all(plugins, require("plugins.git").lazy_defs)
+  utils.table.insert_all(plugins, require("plugins.treesitter").lazy_defs)
+  utils.table.insert_all(plugins, require("plugins.tree").lazy_defs)
+  utils.table.insert_all(plugins, require("plugins.tmux").lazy_defs)
+  utils.table.insert_all(plugins, require("plugins.copilot").lazy_defs)
+  utils.table.insert_all(plugins, require("plugins.git").lazy_defs)
 
   -- [[ Install and configure plugins via lazy.nvim ]]
   -- https://github.com/folke/lazy.nvim
