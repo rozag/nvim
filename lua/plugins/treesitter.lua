@@ -13,6 +13,9 @@ M.require_module = {
   treesitter_configs = function()
     return require("nvim-treesitter.configs")
   end,
+  treesitter_install = function()
+    return require("nvim-treesitter.install")
+  end,
 }
 
 local textobjects_move = { enable = true, set_jumps = true }
@@ -99,6 +102,7 @@ M.lazy_defs = {
     },
     build = ":TSUpdate",
     config = function()
+      M.require_module.treesitter_install().compilers = { "gcc" }
       M.require_module.treesitter_configs().setup {
         ensure_installed = ensure_grammars_installed,
         sync_install = true,
