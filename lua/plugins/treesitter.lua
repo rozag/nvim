@@ -38,6 +38,7 @@ local ensure_grammars_installed = {
   "commonlisp",
   "cpp",
   "css",
+  "cuda",
   "diff",
   "elixir",
   "elm",
