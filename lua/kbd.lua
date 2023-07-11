@@ -17,8 +17,7 @@ M.leader_key = " "
 
 -- [[ General keybindings ]]
 M.general = function()
-  -- TODO: extract plugin access
-  local which_key = require("which-key")
+  local which_key = require("plugins.editing").require_module.which_key()
 
   -- Better default experience with <Space> as leader key
   vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", {
@@ -53,13 +52,23 @@ M.general = function()
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer")           -- C-Tab
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "save buffer")             -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers")       -- Cmd-S-s
-  nmap("^[[M-z", vim.cmd.undo, "undo")                     -- Cmd-z
-  nmap("^[[M-S-z", vim.cmd.redo, "redo")                   -- Cmd-S-z
+  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
+  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
+  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
+  vim.keymap.set("i", "^[[M-z", vim.cmd.undo, {
+    desc = "undo",
+    noremap = true,
+    silent = true,
+  }) -- Cmd-z
+  vim.keymap.set("i", "^[[M-S-z", vim.cmd.redo, {
+    desc = "redo",
+    noremap = true,
+    silent = true,
+  }) -- Cmd-S-z
 
   -- Window-related keybindings
   which_key.register { ["<leader>w"] = { name = "+window" } } -- TODO: nerd icons for these "folders"
@@ -105,8 +114,8 @@ end
 M.plugins = {
   copilot = {
     accept = "<C-Down>", -- C-j
-    next = "<C-Right>",  -- C-l
-    prev = "<C-Left>",   -- C-h
+    next = "<C-Right>", -- C-l
+    prev = "<C-Left>", -- C-h
     dismiss = "<C-]>",
   },
 

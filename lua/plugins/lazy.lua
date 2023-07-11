@@ -113,15 +113,6 @@ local plugins = {
     end,
   },
 
-  -- [[ Surround: `yse"` & `cs"b` ]]
-  -- https://github.com/kylechui/nvim-surround
-  {
-    "kylechui/nvim-surround",
-    config = function()
-      require("nvim-surround").setup()
-    end,
-  },
-
   -- [[ Indentation guides ]]
   -- https://github.com/lukas-reineke/indent-blankline.nvim
   {
@@ -152,35 +143,6 @@ local plugins = {
         show_current_context = true,
         show_current_context_start = false,
       }
-    end,
-  },
-
-  -- [[ Preview for color literals, highlights #123456 strings ]]
-  -- https://github.com/NvChad/nvim-colorizer.lua
-  {
-    "NvChad/nvim-colorizer.lua",
-    config = function()
-      local colorizer = require("colorizer")
-      colorizer.setup {}
-      colorizer.attach_to_buffer(0)
-    end,
-  },
-
-  -- [[ Show pending keybindings ]]
-  -- https://github.com/folke/which-key.nvim
-  {
-    "folke/which-key.nvim",
-    config = function()
-      require("which-key").setup()
-    end,
-  },
-
-  -- [[ Fancy icons , , , etc. ]]
-  -- https://github.com/nvim-tree/nvim-web-devicons
-  {
-    "nvim-tree/nvim-web-devicons",
-    config = function()
-      require("nvim-web-devicons").setup()
     end,
   },
 
@@ -329,7 +291,7 @@ local plugins = {
   {
     "linrongbin16/lsp-progress.nvim",
     event = { "VimEnter" },
-    dependencies = { "nvim-tree/nvim-web-devicons" },
+    dependencies = { require("plugins.appearance").ids.devicons },
     config = function()
       require("lsp-progress").setup {
         max_size = 40,
@@ -350,7 +312,7 @@ local plugins = {
     "nvim-lualine/lualine.nvim",
     event = { "VimEnter" },
     dependencies = {
-      "nvim-tree/nvim-web-devicons",
+      require("plugins.appearance").ids.devicons,
       "linrongbin16/lsp-progress.nvim",
     },
     config = function()
@@ -774,18 +736,6 @@ local plugins = {
     end,
   },
 
-  -- [[ Dim inactive windows ]]
-  -- https://github.com/sunjon/Shade.nvim
-  {
-    "sunjon/Shade.nvim",
-    config = function()
-      require("shade").setup {
-        overlay_opacity = 50,
-        opacity_step = 1,
-      }
-    end,
-  },
-
   -- [[ Suggestions for commands menu ]]
   -- https://github.com/gelguy/wilder.nvim
   {
@@ -850,7 +800,7 @@ local plugins = {
   -- https://github.com/folke/trouble.nvim
   {
     "folke/trouble.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
+    dependencies = { require("plugins.appearance").ids.devicons },
     config = function()
       -- TODO: A lot of custom kbd and integrations available in their doc
       -- TODO: how to send results from telescope to trouble?
@@ -862,6 +812,8 @@ local plugins = {
 }
 
 M.setup = function()
+  utils.table.insert_all(plugins, require("plugins.appearance").lazy_defs)
+  utils.table.insert_all(plugins, require("plugins.editing").lazy_defs)
   utils.table.insert_all(plugins, require("plugins.snippets").lazy_defs)
   utils.table.insert_all(plugins, require("plugins.colorscheme").lazy_defs)
   utils.table.insert_all(plugins, require("plugins.treesitter").lazy_defs)
