@@ -133,10 +133,10 @@ local plugins = {
         "man",
         "terminal",
         "",
-        "lazy",             -- TODO: extract filetypes
-        "lspinfo",          -- TODO: extract filetypes
-        "mason",            -- TODO: extract filetypes
-        "TelescopePrompt",  -- TODO: extract filetypes
+        "lazy", -- TODO: extract filetypes
+        "lspinfo", -- TODO: extract filetypes
+        "mason", -- TODO: extract filetypes
+        "TelescopePrompt", -- TODO: extract filetypes
         "TelescopeResults", -- TODO: extract filetypes
       }
       utils.table.insert_all(
@@ -161,7 +161,7 @@ local plugins = {
     "NvChad/nvim-colorizer.lua",
     config = function()
       local colorizer = require("colorizer")
-      colorizer.setup(nil)
+      colorizer.setup {}
       colorizer.attach_to_buffer(0)
     end,
   },
@@ -338,7 +338,7 @@ local plugins = {
         end,
         format = function(client_messages)
           return #client_messages > 0 and (table.concat(client_messages, " "))
-              or ""
+            or ""
         end,
       }
     end,
@@ -399,10 +399,10 @@ local plugins = {
       }
       vim.cmd(
         "\naugroup lualine_augroup"
-        .. "\n  autocmd!"
-        .. "\n  autocmd User LspProgressStatusUpdated lua "
-        .. "require('lualine').refresh()"
-        .. "\naugroup END"
+          .. "\n  autocmd!"
+          .. "\n  autocmd User LspProgressStatusUpdated lua "
+          .. "require('lualine').refresh()"
+          .. "\naugroup END"
       )
     end,
   },
@@ -453,7 +453,7 @@ local plugins = {
     config = function()
       require("mason-lspconfig").setup {
         ensure_installed = {
-          "gopls",  -- gopls
+          "gopls", -- gopls
           "lua_ls", -- lua-language-server
           -- "pyright",       -- pyright
           -- "rust_analyzer", -- rust-analyzer
@@ -469,51 +469,6 @@ local plugins = {
     "folke/neodev.nvim",
     config = function()
       require("neodev").setup()
-    end,
-  },
-
-  -- [[ Snippet engine ]]
-  -- https://github.com/L3MON4D3/LuaSnip
-  {
-    "L3MON4D3/LuaSnip",
-    dependencies = {
-      "rafamadriz/friendly-snippets",
-    },
-    opts = {
-      history = true,
-      updateevents = "TextChanged,TextChangedI",
-    },
-    config = function()
-      local luasnip = require("luasnip")
-      luasnip.config.set_config {
-        history = true,
-        updateevents = "TextChanged,TextChangedI",
-      }
-
-      require("luasnip.loaders.from_vscode").lazy_load()
-      require("luasnip.loaders.from_vscode").lazy_load {
-        paths = vim.g.vscode_snippets_path or "",
-      }
-
-      require("luasnip.loaders.from_snipmate").load()
-      require("luasnip.loaders.from_snipmate").lazy_load {
-        paths = vim.g.snipmate_snippets_path or "",
-      }
-
-      require("luasnip.loaders.from_lua").load()
-      require("luasnip.loaders.from_lua").lazy_load {
-        paths = vim.g.lua_snippets_path or "",
-      }
-
-      vim.api.nvim_create_autocmd("InsertLeave", {
-        callback = function()
-          local currentBuf = vim.api.nvim_get_current_buf()
-          local ses = luasnip.session
-          if ses.current_nodes[currentBuf] and not ses.jump_active then
-            luasnip.unlink_current()
-          end
-        end,
-      })
     end,
   },
 
@@ -541,7 +496,7 @@ local plugins = {
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
     dependencies = {
-      "L3MON4D3/LuaSnip",
+      require("plugins.snippets").ids.luasnip,
       "windwp/nvim-autopairs",
       "saadparwaiz1/cmp_luasnip",
       "hrsh7th/cmp-nvim-lua",
@@ -564,6 +519,7 @@ local plugins = {
       end
 
       local cmp = require("cmp")
+      local luasnip = require("plugins.snippets").require_module.luasnip()
       cmp.setup {
         completion = {
           completeopt = "menu,menuone",
@@ -582,7 +538,7 @@ local plugins = {
         },
         snippet = {
           expand = function(args)
-            require("luasnip").lsp_expand(args.body)
+            luasnip.lsp_expand(args.body)
           end,
         },
 
@@ -600,7 +556,7 @@ local plugins = {
           ["<Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_next_item()
-            elseif require("luasnip").expand_or_jumpable() then
+            elseif luasnip.expand_or_jumpable() then
               vim.fn.feedkeys(
                 vim.api.nvim_replace_termcodes(
                   "<Plug>luasnip-expand-or-jump",
@@ -620,7 +576,7 @@ local plugins = {
           ["<S-Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_prev_item()
-            elseif require("luasnip").jumpable(-1) then
+            elseif luasnip.jumpable(-1) then
               vim.fn.feedkeys(
                 vim.api.nvim_replace_termcodes(
                   "<Plug>luasnip-jump-prev",
@@ -640,7 +596,7 @@ local plugins = {
         },
         sources = {
           { name = "nvim_lsp" },
-          { name = "luasnip" },
+          { name = require("plugins.snippets").nvim_cmp_source },
           { name = "buffer" },
           { name = "nvim_lua" },
           { name = "path" },
@@ -650,7 +606,11 @@ local plugins = {
             cmp.config.compare.offset,
             cmp.config.compare.exact,
             cmp.config.compare.score,
-            cmp.config.compare.recently_used,
+
+            -- Wrapped in a function to shut lint up
+            function(entry1, entry2)
+              return cmp.config.compare.recently_used(entry1, entry2)
+            end,
 
             -- From https://github.com/lukas-reineke/cmp-under-comparator
             function(entry1, entry2)
@@ -761,6 +721,8 @@ local plugins = {
       null_ls.setup {
         on_attach = lsp_on_attach,
         sources = {
+          -- TODO: many things here should be linked with other plugins
+
           -- [[ Code actions ]]
           -- Injects code actions for Git operations at the current cursor
           -- position (stage / preview / reset hunks, blame, etc.).
@@ -900,6 +862,7 @@ local plugins = {
 }
 
 M.setup = function()
+  utils.table.insert_all(plugins, require("plugins.snippets").lazy_defs)
   utils.table.insert_all(plugins, require("plugins.colorscheme").lazy_defs)
   utils.table.insert_all(plugins, require("plugins.treesitter").lazy_defs)
   utils.table.insert_all(plugins, require("plugins.tree").lazy_defs)
