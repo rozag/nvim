@@ -12,6 +12,10 @@ M.require_module = {
   end,
 }
 
+M.filetypes = {
+  "lazy",
+}
+
 M.install = function()
   -- [[ Install lazy.nvim package manager ]]
   -- https://github.com/folke/lazy.nvim
@@ -117,15 +121,18 @@ local plugins = {
       local filetype_exclude = {
         "checkhealth",
         "help",
+        "lspinfo",
         "man",
         "terminal",
         "",
-        "lazy", -- TODO: extract filetypes
-        "lspinfo", -- TODO: extract filetypes
         "mason", -- TODO: extract filetypes
         "TelescopePrompt", -- TODO: extract filetypes
         "TelescopeResults", -- TODO: extract filetypes
       }
+      utils.table.append_values(
+        filetype_exclude,
+        require("plugins.lazy").filetypes
+      )
       utils.table.append_values(
         filetype_exclude,
         require("plugins.tree").filetypes
@@ -312,13 +319,19 @@ local plugins = {
       "linrongbin16/lsp-progress.nvim",
     },
     config = function()
+      local disabled_filetypes = {}
+      utils.table.append_values(
+        disabled_filetypes,
+        require("plugins.tree").filetypes
+      )
+
       require("lualine").setup {
         options = {
           icons_enabled = true,
           theme = require("plugins.colorscheme").name,
           component_separators = "|",
           section_separators = { left = "", right = "" },
-          disabled_filetypes = { "NvimTree" }, -- TODO: extract and reuse
+          disabled_filetypes = disabled_filetypes,
         },
         sections = {
           lualine_a = {
@@ -388,16 +401,6 @@ local plugins = {
             package_installed = "󰄳 ",
             package_uninstalled = " 󰚌",
           },
-          keymaps = {
-            toggle_server_expand = "<CR>",
-            install_server = "i",
-            update_server = "u",
-            check_server_version = "c",
-            update_all_servers = "U",
-            check_outdated_servers = "C",
-            uninstall_server = "X",
-            cancel_installation = "<C-c>",
-          },
         },
         max_concurrent_installers = 10,
       }
@@ -406,11 +409,17 @@ local plugins = {
 
   -- [[ Stuff for Mason ]]
   -- https://github.com/williamboman/mason-lspconfig.nvim
+  -- Package list: https://mason-registry.dev/registry/list
   {
     "williamboman/mason-lspconfig.nvim",
+    dependencies = {
+      "williamboman/mason.nvim",
+      "neovim/nvim-lspconfig",
+    },
     config = function()
       require("mason-lspconfig").setup {
         ensure_installed = {
+          -- TODO: should be provided by langs
           "gopls", -- gopls
           "lua_ls", -- lua-language-server
           -- "pyright",       -- pyright
@@ -817,32 +826,32 @@ M.setup = function()
         rtp = {
           disabled_plugins = {
             "2html_plugin",
-            "tohtml",
+            "bugreport",
+            "compiler",
+            "ftplugin",
             "getscript",
             "getscriptPlugin",
             "gzip",
             "logipat",
+            "matchit",
             "netrw",
+            "netrwFileHandlers",
             "netrwPlugin",
             "netrwSettings",
-            "netrwFileHandlers",
-            "matchit",
-            "tar",
-            "tarPlugin",
+            "optwin",
+            "rplugin",
             "rrhelper",
             "spellfile_plugin",
+            "synmenu",
+            "syntax",
+            "tar",
+            "tarPlugin",
+            "tohtml",
+            "tutor",
             "vimball",
             "vimballPlugin",
             "zip",
             "zipPlugin",
-            "tutor",
-            "rplugin",
-            "syntax",
-            "synmenu",
-            "optwin",
-            "compiler",
-            "bugreport",
-            "ftplugin",
           },
         },
       },

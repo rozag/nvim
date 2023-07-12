@@ -52,13 +52,13 @@ M.general = function()
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer")           -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
+  nmap("^[[M-s", vim.cmd.write, "save buffer")             -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers")       -- Cmd-S-s
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
-  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
-  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
+  nmap("^[[M-S-z", vim.cmd.redo, "redo")                   -- Cmd-S-z
+  nmap("^[[M-z", vim.cmd.undo, "undo")                     -- Cmd-z
   vim.keymap.set("i", "^[[M-z", vim.cmd.undo, {
     desc = "undo",
     noremap = true,
@@ -71,7 +71,7 @@ M.general = function()
   }) -- Cmd-S-z
 
   -- Window-related keybindings
-  which_key.register { ["<leader>w"] = { name = "+window" } } -- TODO: nerd icons for these "folders"
+  which_key.register { ["<leader>w"] = { name = "[w]indow" } } -- TODO: nerd icons for these "folders"
   nmap("<leader>ws", vim.cmd.split, "[w]indow [s]plit")
   nmap("<leader>wv", vim.cmd.vsplit, "[w]indow [v]ertical split")
   nmap("<leader>wc", vim.cmd.close, "[w]indow [c]lose")
@@ -86,7 +86,7 @@ M.general = function()
   nmap("<leader>ww", "<C-w>w", "[w]indow [w]cycle")
 
   -- Buffer-related keybindings
-  which_key.register { ["<leader>b"] = { name = "+buffer" } }
+  which_key.register { ["<leader>b"] = { name = "[b]uffer" } }
   nmap("<leader>bn", vim.cmd.bnext, "[b]uffer [n]ext")
   nmap("<leader>bp", vim.cmd.bprevious, "[b]uffer [p]revious")
   nmap("<leader>bN", vim.cmd.enew, "[b]uffer [N]ew")
@@ -95,11 +95,15 @@ M.general = function()
   nmap("<leader>bS", vim.cmd.wall, "[b]uffer [S]ave all")
 
   -- Open commands
-  which_key.register { ["<leader>o"] = { name = "+open" } }
+  which_key.register { ["<leader>o"] = { name = "[o]pen" } }
   nmap("<leader>ot", vim.cmd.terminal, "[o]pen [t]erminal")
   nmap("<leader>ol", function()
     vim.cmd("Lazy")
   end, "[o]pen [l]azy plugin manager")
+  nmap("<leader>oh", vim.cmd.checkhealth, "[o]pen check[h]ealth")
+
+  -- TODO: use for Telescope -> Trouble
+  -- - { key: Return, mods: Command, chars: "^[[M-Return" }
 
   -- TODO: use for format
   -- - { key: L, mods: Command, chars: "^[[M-l" }
@@ -114,8 +118,8 @@ end
 M.plugins = {
   copilot = {
     accept = "<C-Down>", -- C-j
-    next = "<C-Right>", -- C-l
-    prev = "<C-Left>", -- C-h
+    next = "<C-Right>",  -- C-l
+    prev = "<C-Left>",   -- C-h
     dismiss = "<C-]>",
   },
 

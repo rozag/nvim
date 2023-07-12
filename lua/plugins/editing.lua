@@ -29,7 +29,11 @@ M.lazy_defs = {
   {
     M.ids.which_key,
     config = function()
-      M.require_module.which_key().setup()
+      M.require_module.which_key().setup {
+        icons = {
+          group = "  ",
+        },
+      }
     end,
   },
 }

@@ -1,9 +1,11 @@
+local utils = require("utils")
+
 local M = {}
 
 M.ids = {
   colorizer = "NvChad/nvim-colorizer.lua",
   devicons = "nvim-tree/nvim-web-devicons",
-  shade = "sunjon/Shade.nvim",
+  tint = "levouh/tint.nvim",
 }
 
 M.require_module = {
@@ -13,8 +15,8 @@ M.require_module = {
   devicons = function()
     return require("nvim-web-devicons")
   end,
-  shade = function()
-    return require("shade")
+  tint = function()
+    return require("tint")
   end,
 }
 
@@ -40,13 +42,30 @@ M.lazy_defs = {
   },
 
   -- [[ Dim inactive windows ]]
-  -- https://github.com/sunjon/Shade.nvim
+  -- https://github.com/levouh/tint.nvim
   {
-    M.ids.shade,
+    M.ids.tint,
     config = function()
-      M.require_module.shade().setup {
-        overlay_opacity = 50,
-        opacity_step = 1,
+      M.require_module.tint().setup {
+        tint = 0,
+        saturation = 0.2,
+        tint_background_colors = false,
+        window_ignore_function = function(winid)
+          local bufid = vim.api.nvim_win_get_buf(winid)
+
+          local buftype = vim.api.nvim_buf_get_option(bufid, "buftype")
+          local is_terminal = buftype == "terminal"
+
+          local filetype = vim.api.nvim_buf_get_option(bufid, "filetype")
+          local is_tree = utils.table.contains_value(
+            require("plugins.tree").filetypes,
+            filetype
+          )
+
+          local is_floating = vim.api.nvim_win_get_config(winid).relative ~= ""
+
+          return is_terminal or is_tree or is_floating
+        end,
       }
     end,
   },

@@ -21,6 +21,16 @@ M.table = {
       tbl[key] = value
     end
   end,
+
+  -- Returns true if table tbl contains value val.
+  contains_value = function(tbl, val)
+    for _, value in ipairs(tbl) do
+      if val == value then
+        return true
+      end
+    end
+    return false
+  end,
 }
 
 return M
