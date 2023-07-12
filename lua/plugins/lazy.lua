@@ -100,10 +100,6 @@ end
 
 -- [[ Plugins ]]
 local plugins = {
-  -- [[ Sort of stdlib ]]
-  -- https://github.com/nvim-lua/plenary.nvim
-  "nvim-lua/plenary.nvim",
-
   -- [[ Comments: `gcc` & `gc` while in visual ]]
   -- https://github.com/numToStr/Comment.nvim
   {
@@ -130,7 +126,7 @@ local plugins = {
         "TelescopePrompt", -- TODO: extract filetypes
         "TelescopeResults", -- TODO: extract filetypes
       }
-      utils.table.insert_all(
+      utils.table.append_values(
         filetype_exclude,
         require("plugins.tree").filetypes
       )
@@ -151,7 +147,7 @@ local plugins = {
   {
     "nvim-telescope/telescope.nvim",
     branch = "0.1.x",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    dependencies = { require("plugins.stdlib").ids.plenary },
     config = function()
       -- TODO: SPC-o-???? -> :Telescope - might be useful raw
       local previewers = require("telescope.previewers")
@@ -736,54 +732,11 @@ local plugins = {
     end,
   },
 
-  -- [[ Suggestions for commands menu ]]
-  -- https://github.com/gelguy/wilder.nvim
-  {
-    "gelguy/wilder.nvim",
-    config = function()
-      local wilder = require("wilder")
-      wilder.setup {
-        modes = { ":" },
-        next_key = "<C-n>",
-        previous_key = "<C-p>",
-        accept_key = "<Tab>",
-        reject_key = "<S-Tab>",
-      }
-      wilder.set_option(
-        "renderer",
-        wilder.popupmenu_renderer(wilder.popupmenu_palette_theme {
-          border = "rounded",
-          max_height = "50%",
-          min_height = "50%",
-          prompt_position = "top",
-          reverse = 0,
-          highlighter = wilder.basic_highlighter(),
-          left = { " ", wilder.popupmenu_devicons() },
-          right = { " ", wilder.popupmenu_scrollbar() },
-          highlights = {
-            default = "WilderMenu",
-            accent = wilder.make_hl("WilderAccent", "Pmenu", {
-              { a = 1 },
-              { a = 1 },
-              { foreground = require("plugins.colorscheme").color_accent1 },
-            }),
-          },
-        })
-      )
-      wilder.set_option(
-        "pipeline",
-        wilder.cmdline_pipeline {
-          fuzzy = 1,
-        }
-      )
-    end,
-  },
-
   -- [[ Highlight and search TODO comments ]]
   -- https://github.com/folke/todo-comments.nvim
   {
     "folke/todo-comments.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    dependencies = { require("plugins.stdlib").ids.plenary },
     config = function()
       -- TODO: keybindings for TodoQuickFix and TodoTelescope (TodoTrouble?)
       require("todo-comments").setup {
@@ -812,15 +765,17 @@ local plugins = {
 }
 
 M.setup = function()
-  utils.table.insert_all(plugins, require("plugins.appearance").lazy_defs)
-  utils.table.insert_all(plugins, require("plugins.editing").lazy_defs)
-  utils.table.insert_all(plugins, require("plugins.snippets").lazy_defs)
-  utils.table.insert_all(plugins, require("plugins.colorscheme").lazy_defs)
-  utils.table.insert_all(plugins, require("plugins.treesitter").lazy_defs)
-  utils.table.insert_all(plugins, require("plugins.tree").lazy_defs)
-  utils.table.insert_all(plugins, require("plugins.tmux").lazy_defs)
-  utils.table.insert_all(plugins, require("plugins.copilot").lazy_defs)
-  utils.table.insert_all(plugins, require("plugins.git").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.appearance").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.cmdmenu").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.colorscheme").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.copilot").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.editing").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.git").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.snippets").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.stdlib").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.tmux").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.tree").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.treesitter").lazy_defs)
 
   -- [[ Install and configure plugins via lazy.nvim ]]
   -- https://github.com/folke/lazy.nvim

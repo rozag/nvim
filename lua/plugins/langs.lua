@@ -71,7 +71,7 @@ local M = {}
 
 M.treesitter_grammars = {}
 for _, lang in pairs(langs) do
-  utils.table.insert_all(M.treesitter_grammars, lang.treesitter_grammars)
+  utils.table.append_values(M.treesitter_grammars, lang.treesitter_grammars)
 end
 
 -- [[ Line width limit via colorcolumn ]]

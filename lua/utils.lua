@@ -8,10 +8,17 @@ M.strings = {
 }
 
 M.table = {
-  -- Inserts all items from table items into table tbl.
-  insert_all = function(tbl, items)
-    for _, item in ipairs(items) do
-      table.insert(tbl, item)
+  -- Inserts all values from table items into table tbl.
+  append_values = function(tbl, items)
+    for _, value in ipairs(items) do
+      table.insert(tbl, value)
+    end
+  end,
+
+  -- Inserts all keys and values from table items into table tbl.
+  append_keys_values = function(tbl, items)
+    for key, value in pairs(items) do
+      tbl[key] = value
     end
   end,
 }

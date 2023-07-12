@@ -19,13 +19,13 @@ M.require_module = {
 }
 
 local textobjects_move = { enable = true, set_jumps = true }
-utils.table.insert_all(
+utils.table.append_keys_values(
   textobjects_move,
   kbd.plugins.treesitter.textobjects.move_keymaps
 )
 
 local textobjects_swap = { enable = true }
-utils.table.insert_all(
+utils.table.append_keys_values(
   textobjects_swap,
   kbd.plugins.treesitter.textobjects.swap_keymaps
 )
@@ -87,7 +87,7 @@ local ensure_grammars_installed = {
   "yaml",
   "zig",
 }
-utils.table.insert_all(
+utils.table.append_values(
   ensure_grammars_installed,
   require("plugins.langs").treesitter_grammars
 )

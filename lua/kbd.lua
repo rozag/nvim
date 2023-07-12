@@ -191,6 +191,13 @@ M.plugins = {
       smart_rename = "grr",
     },
   },
+
+  wilder = {
+    next_key = "<C-n>",
+    previous_key = "<C-p>",
+    accept_key = "<Tab>",
+    reject_key = "<S-Tab>",
+  },
 }
 
 return M
