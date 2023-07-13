@@ -162,8 +162,16 @@ local plugins = {
     dependencies = { require("plugins.stdlib").ids.plenary },
     config = function()
       -- TODO: SPC-o-???? -> :Telescope - might be useful raw
+
       local previewers = require("telescope.previewers")
       local actions = require("telescope.actions")
+
+      local file_ignore_patterns = {}
+      utils.table.append_values(
+        file_ignore_patterns,
+        require("plugins.langs").telescope_file_ignore_patterns
+      )
+
       require("telescope").setup {
         defaults = {
           vimgrep_arguments = {
@@ -194,10 +202,7 @@ local plugins = {
             height = 0.90,
             preview_cutoff = 120,
           },
-          file_ignore_patterns = {
-            "node_modules",
-            "vendor", -- TODO: these could be part of lang specific layer
-          },
+          file_ignore_patterns = file_ignore_patterns,
           path_display = { "truncate" },
           winblend = 0,
           set_env = { ["COLORTERM"] = "truecolor" },
