@@ -16,6 +16,8 @@ M.filetypes = {
   "lazy",
 }
 
+M.cmd = "Lazy"
+
 M.install = function()
   -- [[ Install lazy.nvim package manager ]]
   -- https://github.com/folke/lazy.nvim
@@ -125,13 +127,16 @@ local plugins = {
         "man",
         "terminal",
         "",
-        "mason", -- TODO: extract filetypes
         "TelescopePrompt", -- TODO: extract filetypes
         "TelescopeResults", -- TODO: extract filetypes
       }
       utils.table.append_values(
         filetype_exclude,
         require("plugins.lazy").filetypes
+      )
+      utils.table.append_values(
+        filetype_exclude,
+        require("plugins.mason").filetypes
       )
       utils.table.append_values(
         filetype_exclude,
@@ -375,58 +380,6 @@ local plugins = {
           .. "require('lualine').refresh()"
           .. "\naugroup END"
       )
-    end,
-  },
-
-  -- [[ Sort of a package manager ]]
-  -- https://github.com/williamboman/mason.nvim
-  -- Package list: https://mason-registry.dev/registry/list
-  {
-    "williamboman/mason.nvim",
-    build = ":MasonUpdate",
-    cmd = {
-      "Mason",
-      "MasonInstall",
-      "MasonInstallAll",
-      "MasonUninstall",
-      "MasonUninstallAll",
-      "MasonLog",
-    },
-    config = function()
-      require("mason").setup {
-        PATH = "skip",
-        ui = {
-          icons = {
-            package_pending = " ",
-            package_installed = "󰄳 ",
-            package_uninstalled = " 󰚌",
-          },
-        },
-        max_concurrent_installers = 10,
-      }
-    end,
-  },
-
-  -- [[ Stuff for Mason ]]
-  -- https://github.com/williamboman/mason-lspconfig.nvim
-  -- Package list: https://mason-registry.dev/registry/list
-  {
-    "williamboman/mason-lspconfig.nvim",
-    dependencies = {
-      "williamboman/mason.nvim",
-      "neovim/nvim-lspconfig",
-    },
-    config = function()
-      require("mason-lspconfig").setup {
-        ensure_installed = {
-          -- TODO: should be provided by langs
-          "gopls", -- gopls
-          "lua_ls", -- lua-language-server
-          -- "pyright",       -- pyright
-          -- "rust_analyzer", -- rust-analyzer
-          -- "tsserver",      -- typescript-language-server
-        },
-      }
     end,
   },
 
@@ -780,6 +733,7 @@ M.setup = function()
   utils.table.append_values(plugins, require("plugins.copilot").lazy_defs)
   utils.table.append_values(plugins, require("plugins.editing").lazy_defs)
   utils.table.append_values(plugins, require("plugins.git").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.mason").lazy_defs)
   utils.table.append_values(plugins, require("plugins.snippets").lazy_defs)
   utils.table.append_values(plugins, require("plugins.stdlib").lazy_defs)
   utils.table.append_values(plugins, require("plugins.tmux").lazy_defs)
