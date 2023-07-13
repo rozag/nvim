@@ -199,6 +199,16 @@ M.plugins = {
     },
   },
 
+  trouble = function()
+    local trouble = require("plugins.trouble")
+    nmap("<leader>or", function()
+      vim.cmd(trouble.cmd_toggle)
+    end, "T[r]ouble")
+    nmap("<leader>od", function()
+      vim.cmd(trouble.cmd_doc_diagnostics)
+    end, "Trouble [d]iagnostics")
+  end,
+
   wilder = {
     next_key = "<C-n>",
     previous_key = "<C-p>",

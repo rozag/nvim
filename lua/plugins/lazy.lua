@@ -127,7 +127,7 @@ local plugins = {
         "man",
         "terminal",
         "",
-        "TelescopePrompt", -- TODO: extract filetypes
+        "TelescopePrompt",  -- TODO: extract filetypes
         "TelescopeResults", -- TODO: extract filetypes
       }
       utils.table.append_values(
@@ -165,6 +165,8 @@ local plugins = {
 
       local previewers = require("telescope.previewers")
       local actions = require("telescope.actions")
+      local trouble =
+          require("plugins.trouble").require_module.trouble_telescope()
 
       local file_ignore_patterns = {}
       utils.table.append_values(
@@ -214,11 +216,13 @@ local plugins = {
             n = {
               ["q"] = actions.close,
               ["bk"] = actions.delete_buffer,
+              ["^[[M-Return"] = trouble.open_with_trouble,
             }, -- n
             i = {
               -- TODO: think about smth else here, these two conflict w/ tmux
               ["<C-k>"] = actions.delete_buffer,
               ["<C-h>"] = "which_key",
+              ["^[[M-Return"] = trouble.open_with_trouble,
             },
           },
         },
@@ -313,7 +317,7 @@ local plugins = {
         end,
         format = function(client_messages)
           return #client_messages > 0 and (table.concat(client_messages, " "))
-            or ""
+              or ""
         end,
       }
     end,
@@ -380,10 +384,10 @@ local plugins = {
       }
       vim.cmd(
         "\naugroup lualine_augroup"
-          .. "\n  autocmd!"
-          .. "\n  autocmd User LspProgressStatusUpdated lua "
-          .. "require('lualine').refresh()"
-          .. "\naugroup END"
+        .. "\n  autocmd!"
+        .. "\n  autocmd User LspProgressStatusUpdated lua "
+        .. "require('lualine').refresh()"
+        .. "\naugroup END"
       )
     end,
   },
@@ -715,20 +719,6 @@ local plugins = {
       }
     end,
   },
-
-  -- [[ Trouble: a panel for diagnostics, refs, etc. ]]
-  -- https://github.com/folke/trouble.nvim
-  {
-    "folke/trouble.nvim",
-    dependencies = { require("plugins.appearance").ids.devicons },
-    config = function()
-      -- TODO: A lot of custom kbd and integrations available in their doc
-      -- TODO: how to send results from telescope to trouble?
-      require("trouble").setup {
-        mode = "document_diagnostics",
-      }
-    end,
-  },
 }
 
 M.setup = function()
@@ -744,6 +734,7 @@ M.setup = function()
   utils.table.append_values(plugins, require("plugins.tmux").lazy_defs)
   utils.table.append_values(plugins, require("plugins.tree").lazy_defs)
   utils.table.append_values(plugins, require("plugins.treesitter").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.trouble").lazy_defs)
 
   -- [[ Install and configure plugins via lazy.nvim ]]
   -- https://github.com/folke/lazy.nvim
