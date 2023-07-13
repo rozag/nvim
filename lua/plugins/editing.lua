@@ -14,6 +14,8 @@ M.require_module = {
   end,
 }
 
+M.cmd_which_key_telescope = "which_key"
+
 M.lazy_defs = {
   -- [[ Surround: `yse"` & `cs"b` ]]
   -- https://github.com/kylechui/nvim-surround

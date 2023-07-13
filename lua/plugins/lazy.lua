@@ -39,35 +39,22 @@ end
 local formatting_group = vim.api.nvim_create_augroup("LspFormatting", {})
 -- This function gets run when an LSP connects to a particular buffer.
 local lsp_on_attach = function(client, bufnr)
-  local function nmap(keys, func, desc)
-    if desc then
-      desc = "LSP: " .. desc
-    end
-
-    vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-  end
+  -- local function nmap(keys, func, desc)
+  --   if desc then
+  --     desc = "LSP: " .. desc
+  --   end
+  --
+  --   vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
+  -- end
 
   -- TODO: review these mappings, they're from kickstart
-  nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-  nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+  -- nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+  -- nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
 
-  nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-  nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
-  nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
+  -- nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+  -- nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+  -- nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
 
-  local telescope_builtin = require("telescope.builtin")
-  nmap("gr", telescope_builtin.lsp_references, "[G]oto [R]eferences")
-  nmap(
-    "<leader>ds",
-    telescope_builtin.lsp_document_symbols,
-    "[D]ocument [S]ymbols"
-  )
-  -- TODO: remap or smth b/c of conflict
-  -- nmap(
-  --   "<leader>ws",
-  --   telescope_builtin.lsp_dynamic_workspace_symbols,
-  --   "[W]orkspace [S]ymbols"
-  -- )
   -- nmap(
   --   "<leader>wa",
   --   vim.lsp.buf.add_workspace_folder,
@@ -82,11 +69,14 @@ local lsp_on_attach = function(client, bufnr)
   --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   -- end, "[W]orkspace [L]ist Folders")
 
-  nmap("K", vim.lsp.buf.hover, "Hover Documentation")
-  nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
+  -- nmap("K", vim.lsp.buf.hover, "Hover Documentation")
+  -- nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
 
-  nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+  -- nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
+  require("kbd").plugins.telescope.lsp_on_attach()
+
+  -- TODO: these 2 things below should be linked with null-ls
   -- TODO: Cmd+L to run format?
   vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
     vim.lsp.buf.format { async = false }
@@ -127,8 +117,6 @@ local plugins = {
         "man",
         "terminal",
         "",
-        "TelescopePrompt",  -- TODO: extract filetypes
-        "TelescopeResults", -- TODO: extract filetypes
       }
       utils.table.append_values(
         filetype_exclude,
@@ -137,6 +125,10 @@ local plugins = {
       utils.table.append_values(
         filetype_exclude,
         require("plugins.mason").filetypes
+      )
+      utils.table.append_values(
+        filetype_exclude,
+        require("plugins.telescope").filetypes
       )
       utils.table.append_values(
         filetype_exclude,
@@ -151,155 +143,6 @@ local plugins = {
         show_current_context = true,
         show_current_context_start = false,
       }
-    end,
-  },
-
-  -- [[ Telescope - fuzzy finder (files, lsp, etc) ]]
-  -- https://github.com/nvim-telescope/telescope.nvim
-  {
-    "nvim-telescope/telescope.nvim",
-    branch = "0.1.x",
-    dependencies = { require("plugins.stdlib").ids.plenary },
-    config = function()
-      -- TODO: SPC-o-???? -> :Telescope - might be useful raw
-
-      local previewers = require("telescope.previewers")
-      local actions = require("telescope.actions")
-      local trouble =
-          require("plugins.trouble").require_module.trouble_telescope()
-
-      local file_ignore_patterns = {}
-      utils.table.append_values(
-        file_ignore_patterns,
-        require("plugins.langs").telescope_file_ignore_patterns
-      )
-
-      require("telescope").setup {
-        defaults = {
-          vimgrep_arguments = {
-            "rg",
-            "-L",
-            "--color=never",
-            "--no-heading",
-            "--with-filename",
-            "--line-number",
-            "--column",
-            "--smart-case",
-          },
-          prompt_prefix = "   ",
-          initial_mode = "insert",
-          selection_strategy = "reset",
-          sorting_strategy = "ascending",
-          layout_strategy = "horizontal",
-          layout_config = {
-            horizontal = {
-              prompt_position = "top",
-              preview_width = 0.5,
-              results_width = 0.5,
-            },
-            vertical = {
-              mirror = true,
-            },
-            width = 0.90,
-            height = 0.90,
-            preview_cutoff = 120,
-          },
-          file_ignore_patterns = file_ignore_patterns,
-          path_display = { "truncate" },
-          winblend = 0,
-          set_env = { ["COLORTERM"] = "truecolor" },
-          file_previewer = previewers.vim_buffer_cat.new,
-          grep_previewer = previewers.vim_buffer_vimgrep.new,
-          qflist_previewer = previewers.vim_buffer_qflist.new,
-          buffer_previewer_maker = previewers.buffer_previewer_maker,
-          mappings = {
-            n = {
-              ["q"] = actions.close,
-              ["bk"] = actions.delete_buffer,
-              ["^[[M-Return"] = trouble.open_with_trouble,
-            }, -- n
-            i = {
-              -- TODO: think about smth else here, these two conflict w/ tmux
-              ["<C-k>"] = actions.delete_buffer,
-              ["<C-h>"] = "which_key",
-              ["^[[M-Return"] = trouble.open_with_trouble,
-            },
-          },
-        },
-      }
-
-      local builtin = require("telescope.builtin")
-      vim.keymap.set(
-        "n",
-        "<leader>?",
-        builtin.oldfiles,
-        { desc = "[?] Find recently opened files" }
-      )
-      vim.keymap.set(
-        "n",
-        "<leader><space>",
-        builtin.buffers,
-        { desc = "[ ] Find existing buffers" }
-      )
-      vim.keymap.set("n", "<leader>/", function()
-        builtin.current_buffer_fuzzy_find(
-          require("telescope.themes").get_dropdown {
-            previewer = true,
-          }
-        )
-      end, { desc = "[/] Fuzzily search in current buffer" })
-      vim.keymap.set(
-        "n",
-        "<leader>gf",
-        builtin.git_files,
-        { desc = "Search [G]it [F]iles" }
-      )
-      vim.keymap.set(
-        "n",
-        "<leader>sf",
-        builtin.find_files,
-        { desc = "[S]earch [F]iles" }
-      )
-      vim.keymap.set(
-        "n",
-        "<leader>sh",
-        builtin.help_tags,
-        { desc = "[S]earch [H]elp" }
-      )
-      vim.keymap.set(
-        "n",
-        "<leader>sw",
-        builtin.grep_string,
-        { desc = "[S]earch current [W]ord" }
-      )
-      vim.keymap.set(
-        "n",
-        "<leader>sg",
-        builtin.live_grep,
-        { desc = "[S]earch by [G]rep" }
-      )
-      vim.keymap.set(
-        "n",
-        "<leader>sd",
-        builtin.diagnostics,
-        { desc = "[S]earch [D]iagnostics" }
-      )
-    end,
-  },
-
-  -- [[ Fuzzy Finder Algorithm ]]
-  -- Requires local dependencies to be built.
-  -- Only load if `make` is available. Make sure you have the system
-  -- requirements installed.
-  -- https://github.com/nvim-telescope/telescope-fzf-native.nvim
-  {
-    "nvim-telescope/telescope-fzf-native.nvim",
-    build = "make",
-    cond = function()
-      return vim.fn.executable("make") == 1
-    end,
-    config = function()
-      require("telescope").load_extension("fzf")
     end,
   },
 
@@ -406,12 +249,15 @@ local plugins = {
   {
     "windwp/nvim-autopairs",
     config = function()
+      local disable_filetype = { "vim" }
+      utils.table.append_values(
+        disable_filetype,
+        require("plugins.telescope").filetypes
+      )
+
       require("nvim-autopairs").setup {
         fast_wrap = {},
-        disable_filetype = {
-          "TelescopePrompt", -- TODO: extract file type
-          "vim",
-        },
+        disable_filetype = disable_filetype,
       }
 
       local autopairs = require("nvim-autopairs.completion.cmp")
@@ -639,7 +485,7 @@ local plugins = {
     end,
   },
 
-  -- [[ LSP improvements ]]
+  -- [[ LSP improvements - linters, formatters, etc. ]]
   -- https://github.com/jose-elias-alvarez/null-ls.nvim
   -- Available builtins:
   -- github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md
@@ -731,6 +577,7 @@ M.setup = function()
   utils.table.append_values(plugins, require("plugins.mason").lazy_defs)
   utils.table.append_values(plugins, require("plugins.snippets").lazy_defs)
   utils.table.append_values(plugins, require("plugins.stdlib").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.telescope").lazy_defs)
   utils.table.append_values(plugins, require("plugins.tmux").lazy_defs)
   utils.table.append_values(plugins, require("plugins.tree").lazy_defs)
   utils.table.append_values(plugins, require("plugins.treesitter").lazy_defs)
@@ -807,6 +654,8 @@ M.setup = function()
       },
     }
   )
+
+  require("kbd").plugins.lazy()
 end
 
 return M

@@ -57,10 +57,12 @@ M.lazy_defs = {
     M.ids.mason_lspconfig,
     config = function()
       local ensure_installed =
-        require("plugins.langs").mason_lspconfig_ensure_installed
+          require("plugins.langs").mason_lspconfig_ensure_installed
       M.require_module.mason_lspconfig().setup {
         ensure_installed = ensure_installed,
       }
+
+      require("kbd").plugins.mason()
     end,
   },
 }

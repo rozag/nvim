@@ -52,13 +52,13 @@ M.general = function()
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer")           -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
+  nmap("^[[M-s", vim.cmd.write, "save buffer")             -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers")       -- Cmd-S-s
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
-  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
-  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
+  nmap("^[[M-S-z", vim.cmd.redo, "redo")                   -- Cmd-S-z
+  nmap("^[[M-z", vim.cmd.undo, "undo")                     -- Cmd-z
   vim.keymap.set("i", "^[[M-z", vim.cmd.undo, {
     desc = "undo",
     noremap = true,
@@ -97,16 +97,10 @@ M.general = function()
   -- Open commands
   which_key.register { ["<leader>o"] = { name = "[o]pen" } }
   nmap("<leader>ot", vim.cmd.terminal, "[t]erminal")
-  nmap("<leader>ol", function()
-    vim.cmd(require("plugins.lazy").cmd)
-  end, "[l]azy plugin manager")
-  nmap("<leader>om", function()
-    vim.cmd(require("plugins.mason").cmd)
-  end, "[m]ason package manager")
   nmap("<leader>oh", vim.cmd.checkhealth, "check[h]ealth")
 
-  -- TODO: use for Telescope -> Trouble
-  -- - { key: Return, mods: Command, chars: "^[[M-Return" }
+  -- Open commands
+  which_key.register { ["<leader>s"] = { name = "Tele[s]cope" } }
 
   -- TODO: use for format
   -- - { key: L, mods: Command, chars: "^[[M-l" }
@@ -121,9 +115,80 @@ end
 M.plugins = {
   copilot = {
     accept = "<C-Down>", -- C-j
-    next = "<C-Right>", -- C-l
-    prev = "<C-Left>", -- C-h
+    next = "<C-Right>",  -- C-l
+    prev = "<C-Left>",   -- C-h
     dismiss = "<C-]>",
+  },
+
+  lazy = function()
+    nmap("<leader>ol", function()
+      vim.cmd(require("plugins.lazy").cmd)
+    end, "[l]azy plugin manager")
+  end,
+
+  mason = function()
+    nmap("<leader>om", function()
+      vim.cmd(require("plugins.mason").cmd)
+    end, "[m]ason package manager")
+  end,
+
+  telescope = {
+    mappings = function()
+      local telescope = require("plugins.telescope")
+      local actions = telescope.require_module.telescope_actions()
+
+      local trouble =
+          require("plugins.trouble").require_module.trouble_telescope()
+      local editing = require("plugins.editing")
+
+      return {
+        -- Normal mode
+        n = {
+          ["^[[A-c"] = actions.delete_buffer,
+          ["^[[A-h"] = editing.cmd_which_key_telescope,
+          ["^[[A-q"] = actions.close,
+          ["^[[M-Return"] = trouble.open_with_trouble,
+        },
+        -- Insert mode
+        i = {
+          ["^[[A-c"] = actions.delete_buffer,
+          ["^[[A-h"] = editing.cmd_which_key_telescope,
+          ["^[[A-q"] = actions.close,
+          ["^[[M-Return"] = trouble.open_with_trouble,
+        },
+      }
+    end,
+
+    core = function()
+      local telescope = require("plugins.telescope")
+      local builtin = telescope.require_module.telescope_builtin()
+      local themes = telescope.require_module.telescope_themes()
+
+      nmap("<leader>os", function()
+        vim.cmd(require("plugins.telescope").cmd)
+      end, "Tele[s]cope")
+
+      nmap("<leader><space>", builtin.git_files, "Find git file")
+      nmap("<leader>,", builtin.buffers, "Find existing buffer")
+      nmap("<leader>b/", function()
+        builtin.current_buffer_fuzzy_find(themes.get_dropdown {
+          previewer = true,
+        })
+      end, "[/]search in current buffer")
+      nmap("<leader>/", builtin.live_grep, "[/]grep in project")
+
+      nmap("<leader>sr", builtin.oldfiles, "[r]ecent files")
+      nmap("<leader>sh", builtin.help_tags, "[h]elp")
+      nmap("<leader>sw", builtin.grep_string, "current [w]ord")
+    end,
+
+    lsp_on_attach = function()
+      -- TODO: work on this section, need more sane mappings
+      local telescope = require("plugins.telescope")
+      local builtin = telescope.require_module.telescope_builtin()
+      nmap("gr", builtin.lsp_references, "[G]oto [R]eferences")
+      nmap("<leader>ds", builtin.lsp_document_symbols, "[D]ocument [S]ymbols")
+    end,
   },
 
   tmux = function()
@@ -186,6 +251,7 @@ M.plugins = {
         },
       },
       swap_keymaps = {
+        -- TODO: move these from leader to somewhere else
         swap_next = {
           ["<leader>a"] = "@parameter.inner",
         },
