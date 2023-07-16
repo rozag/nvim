@@ -102,6 +102,9 @@ M.general = function()
   -- Open commands
   which_key.register { ["<leader>s"] = { name = "Tele[s]cope" } }
 
+  -- Swap arguments
+  which_key.register { ["gs"] = { name = "[s]wap args" } }
+
   -- TODO: use for format
   -- - { key: L, mods: Command, chars: "^[[M-l" }
 
@@ -251,12 +254,11 @@ M.plugins = {
         },
       },
       swap_keymaps = {
-        -- TODO: move these from leader to somewhere else
         swap_next = {
-          ["<leader>a"] = "@parameter.inner",
+          ["gsn"] = "@parameter.inner",
         },
         swap_previous = {
-          ["<leader>A"] = "@parameter.inner",
+          ["gsp"] = "@parameter.inner",
         },
       },
     },
