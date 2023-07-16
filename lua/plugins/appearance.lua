@@ -6,6 +6,7 @@ M.ids = {
   colorizer = "NvChad/nvim-colorizer.lua",
   devicons = "nvim-tree/nvim-web-devicons",
   tint = "levouh/tint.nvim",
+  todo_comments = "folke/todo-comments.nvim",
 }
 
 M.require_module = {
@@ -18,7 +19,13 @@ M.require_module = {
   tint = function()
     return require("tint")
   end,
+  todo_comments = function()
+    return require("todo-comments")
+  end,
 }
+
+M.cmd_todo_telescope = "TodoTelescope"
+M.cmd_todo_trouble = "TodoTrouble"
 
 M.lazy_defs = {
   -- [[ Preview for color literals, highlights #123456 strings ]]
@@ -67,6 +74,23 @@ M.lazy_defs = {
           return is_terminal or is_tree or is_floating
         end,
       }
+    end,
+  },
+
+  -- [[ Highlight and search TODO comments ]]
+  -- https://github.com/folke/todo-comments.nvim
+  {
+    M.ids.todo_comments,
+    dependencies = { require("plugins.stdlib").ids.plenary },
+    config = function()
+      M.require_module.todo_comments().setup {
+        highlight = {
+          before = "",
+          keyword = "bg",
+          after = "fg",
+        },
+      }
+      require("kbd").plugins.todo_comments()
     end,
   },
 }

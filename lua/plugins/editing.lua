@@ -3,6 +3,7 @@ local M = {}
 M.ids = {
   surround = "kylechui/nvim-surround",
   which_key = "folke/which-key.nvim",
+  comment = "numToStr/Comment.nvim",
 }
 
 M.require_module = {
@@ -11,6 +12,9 @@ M.require_module = {
   end,
   which_key = function()
     return require("which-key")
+  end,
+  comment = function()
+    return require("Comment")
   end,
 }
 
@@ -36,6 +40,16 @@ M.lazy_defs = {
           group = "  ",
         },
       }
+    end,
+  },
+
+  -- [[ Comments: `gcc` & `gc` while in visual ]]
+  -- https://github.com/numToStr/Comment.nvim
+  {
+    M.ids.comment,
+    config = function()
+      M.require_module.comment().setup()
+      require("kbd").plugins.comment()
     end,
   },
 }

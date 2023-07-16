@@ -75,15 +75,6 @@ end
 
 -- [[ Plugins ]]
 local plugins = {
-  -- [[ Comments: `gcc` & `gc` while in visual ]]
-  -- https://github.com/numToStr/Comment.nvim
-  {
-    "numToStr/Comment.nvim",
-    config = function()
-      require("Comment").setup()
-    end,
-  },
-
   -- [[ Indentation guides ]]
   -- https://github.com/lukas-reineke/indent-blankline.nvim
   {
@@ -434,23 +425,6 @@ local plugins = {
           -- An opinionated code formatter for Lua.
           -- https://github.com/JohnnyMorganz/StyLua
           null_ls.builtins.formatting.stylua,
-        },
-      }
-    end,
-  },
-
-  -- [[ Highlight and search TODO comments ]]
-  -- https://github.com/folke/todo-comments.nvim
-  {
-    "folke/todo-comments.nvim",
-    dependencies = { require("plugins.stdlib").ids.plenary },
-    config = function()
-      -- TODO: keybindings for TodoQuickFix and TodoTelescope (TodoTrouble?)
-      require("todo-comments").setup {
-        highlight = {
-          before = "",
-          keyword = "bg",
-          after = "fg",
         },
       }
     end,

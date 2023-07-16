@@ -107,15 +107,24 @@ M.general = function()
 
   -- TODO: use for format
   -- - { key: L, mods: Command, chars: "^[[M-l" }
-
-  -- TODO: use for comments
-  -- - { key: Slash, mods: Command, chars: "^[[M-/" }
-
-  -- TODO: there are some conflicting keybindings in checkhealth
 end
 
 -- [[ Plugin-specific keybindings ]]
 M.plugins = {
+  comment = function()
+    vim.keymap.set("n", "^[[M-/", function()
+      return vim.api.nvim_get_vvar("count") == 0
+          and "<Plug>(comment_toggle_linewise_current)"
+        or "<Plug>(comment_toggle_linewise_count)"
+    end, { expr = true, desc = "Comment toggle current line" })
+    vim.keymap.set(
+      "v",
+      "^[[M-/",
+      "<Plug>(comment_toggle_linewise_visual)",
+      { desc = "Comment toggle linewise (visual)" }
+    )
+  end,
+
   copilot = {
     accept = "<C-Down>", -- C-j
     next = "<C-Right>", -- C-l
@@ -205,6 +214,15 @@ M.plugins = {
     nmap("<C-Right>", tmux.move_right, "move to window on the right")
     nmap("<C-j>", tmux.move_bottom, "move to window on the bottom")
     nmap("<C-Down>", tmux.move_bottom, "move to window on the bottom")
+  end,
+
+  todo_comments = function()
+    nmap("<leader>sc", function()
+      vim.cmd(require("plugins.appearance").cmd_todo_telescope)
+    end, "TODO [c]omments")
+    nmap("<leader>oc", function()
+      vim.cmd(require("plugins.appearance").cmd_todo_trouble)
+    end, "Trouble TODO [c]omments")
   end,
 
   tree = function()
