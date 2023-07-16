@@ -50,29 +50,8 @@ local lsp_on_attach = function(client, bufnr)
   -- TODO: review these mappings, they're from kickstart
   -- nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
   -- nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-
-  -- nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-  -- nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
-  -- nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
-
-  -- nmap(
-  --   "<leader>wa",
-  --   vim.lsp.buf.add_workspace_folder,
-  --   "[W]orkspace [A]dd Folder"
-  -- )
-  -- nmap(
-  --   "<leader>wr",
-  --   vim.lsp.buf.remove_workspace_folder,
-  --   "[W]orkspace [R]emove Folder"
-  -- )
-  -- nmap("<leader>wl", function()
-  --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-  -- end, "[W]orkspace [L]ist Folders")
-
   -- nmap("K", vim.lsp.buf.hover, "Hover Documentation")
   -- nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
-
-  -- nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
   require("kbd").plugins.telescope.lsp_on_attach()
 
@@ -160,7 +139,7 @@ local plugins = {
         end,
         format = function(client_messages)
           return #client_messages > 0 and (table.concat(client_messages, " "))
-              or ""
+            or ""
         end,
       }
     end,
@@ -227,10 +206,10 @@ local plugins = {
       }
       vim.cmd(
         "\naugroup lualine_augroup"
-        .. "\n  autocmd!"
-        .. "\n  autocmd User LspProgressStatusUpdated lua "
-        .. "require('lualine').refresh()"
-        .. "\naugroup END"
+          .. "\n  autocmd!"
+          .. "\n  autocmd User LspProgressStatusUpdated lua "
+          .. "require('lualine').refresh()"
+          .. "\naugroup END"
       )
     end,
   },

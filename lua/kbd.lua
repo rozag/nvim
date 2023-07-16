@@ -19,6 +19,9 @@ M.leader_key = " "
 M.general = function()
   local which_key = require("plugins.editing").require_module.which_key()
 
+  -- Swap arguments (for treesitter textobjects bindings)
+  which_key.register { ["gs"] = { name = "[s]wap" } }
+
   -- Better default experience with <Space> as leader key
   vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", {
     desc = "map <Space> to <Nop>",
@@ -52,13 +55,13 @@ M.general = function()
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer")           -- C-Tab
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "save buffer")             -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers")       -- Cmd-S-s
+  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
-  nmap("^[[M-S-z", vim.cmd.redo, "redo")                   -- Cmd-S-z
-  nmap("^[[M-z", vim.cmd.undo, "undo")                     -- Cmd-z
+  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
+  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
   vim.keymap.set("i", "^[[M-z", vim.cmd.undo, {
     desc = "undo",
     noremap = true,
@@ -102,24 +105,21 @@ M.general = function()
   -- Open commands
   which_key.register { ["<leader>s"] = { name = "Tele[s]cope" } }
 
-  -- Swap arguments
-  which_key.register { ["gs"] = { name = "[s]wap args" } }
-
   -- TODO: use for format
   -- - { key: L, mods: Command, chars: "^[[M-l" }
 
   -- TODO: use for comments
   -- - { key: Slash, mods: Command, chars: "^[[M-/" }
 
-  -- TODO: general keybindings
+  -- TODO: there are some conflicting keybindings in checkhealth
 end
 
 -- [[ Plugin-specific keybindings ]]
 M.plugins = {
   copilot = {
     accept = "<C-Down>", -- C-j
-    next = "<C-Right>",  -- C-l
-    prev = "<C-Left>",   -- C-h
+    next = "<C-Right>", -- C-l
+    prev = "<C-Left>", -- C-h
     dismiss = "<C-]>",
   },
 
@@ -137,13 +137,11 @@ M.plugins = {
 
   telescope = {
     mappings = function()
-      local telescope = require("plugins.telescope")
-      local actions = telescope.require_module.telescope_actions()
-
+      local actions =
+        require("plugins.telescope").require_module.telescope_actions()
       local trouble =
-          require("plugins.trouble").require_module.trouble_telescope()
+        require("plugins.trouble").require_module.trouble_telescope()
       local editing = require("plugins.editing")
-
       return {
         -- Normal mode
         n = {
@@ -183,14 +181,17 @@ M.plugins = {
       nmap("<leader>sr", builtin.oldfiles, "[r]ecent files")
       nmap("<leader>sh", builtin.help_tags, "[h]elp")
       nmap("<leader>sw", builtin.grep_string, "current [w]ord")
+      nmap("<leader>su", builtin.resume, "res[u]me previous picker")
     end,
 
     lsp_on_attach = function()
-      -- TODO: work on this section, need more sane mappings
-      local telescope = require("plugins.telescope")
-      local builtin = telescope.require_module.telescope_builtin()
-      nmap("gr", builtin.lsp_references, "[G]oto [R]eferences")
-      nmap("<leader>ds", builtin.lsp_document_symbols, "[D]ocument [S]ymbols")
+      local builtin =
+        require("plugins.telescope").require_module.telescope_builtin()
+      nmap("gr", builtin.lsp_references, "[r]eferences")
+      nmap("gd", builtin.lsp_definitions, "[d]efinition")
+      nmap("gD", builtin.lsp_type_definitions, "type [D]efinition")
+      nmap("gI", builtin.lsp_implementations, "[i]mplementations")
+      nmap("<leader>sd", builtin.lsp_document_symbols, "[d]ocument symbols")
     end,
   },
 
@@ -263,7 +264,7 @@ M.plugins = {
       },
     },
     refactor_keymaps = {
-      smart_rename = "grr",
+      smart_rename = "gm",
     },
   },
 
