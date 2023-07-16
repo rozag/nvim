@@ -7,6 +7,7 @@ M.ids = {
   devicons = "nvim-tree/nvim-web-devicons",
   tint = "levouh/tint.nvim",
   todo_comments = "folke/todo-comments.nvim",
+  indent_blankline = "lukas-reineke/indent-blankline.nvim",
 }
 
 M.require_module = {
@@ -21,6 +22,9 @@ M.require_module = {
   end,
   todo_comments = function()
     return require("todo-comments")
+  end,
+  indent_blankline = function()
+    return require("indent_blankline")
   end,
 }
 
@@ -91,6 +95,47 @@ M.lazy_defs = {
         },
       }
       require("kbd").plugins.todo_comments()
+    end,
+  },
+
+  -- [[ Indentation guides ]]
+  -- https://github.com/lukas-reineke/indent-blankline.nvim
+  {
+    M.ids.indent_blankline,
+    config = function()
+      local filetype_exclude = {
+        "checkhealth",
+        "help",
+        "lspinfo",
+        "man",
+        "terminal",
+        "",
+      }
+      utils.table.append_values(
+        filetype_exclude,
+        require("plugins.lazy").filetypes
+      )
+      utils.table.append_values(
+        filetype_exclude,
+        require("plugins.mason").filetypes
+      )
+      utils.table.append_values(
+        filetype_exclude,
+        require("plugins.telescope").filetypes
+      )
+      utils.table.append_values(
+        filetype_exclude,
+        require("plugins.tree").filetypes
+      )
+      M.require_module.indent_blankline().setup {
+        indentLine_enabled = 1,
+        filetype_exclude = filetype_exclude,
+        buftype_exclude = { "terminal" },
+        show_trailing_blankline_indent = false,
+        show_first_indent_level = true,
+        show_current_context = true,
+        show_current_context_start = false,
+      }
     end,
   },
 }
