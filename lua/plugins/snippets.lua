@@ -27,6 +27,8 @@ M.lazy_defs = {
   -- https://github.com/L3MON4D3/LuaSnip
   {
     M.ids.luasnip,
+    version = "1.*",
+    build = "make install_jsregexp",
     dependencies = {
       M.ids.friendly_snippets,
     },
