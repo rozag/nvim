@@ -111,6 +111,24 @@ end
 
 -- [[ Plugin-specific keybindings ]]
 M.plugins = {
+  cmp = {
+    select_prev = "<C-p>",
+    select_next = "<C-n>",
+    scroll_docs_up = "<C-d>",
+    scroll_docs_down = "<C-f>",
+    toggle_cmp = "<C-Right>",
+    close = "<C-e>",
+    confirm = "<CR>",
+    snippet_expand_or_jump = {
+      key = "<Tab>",
+      modes = { "i", "s" },
+    },
+    snippet_jump_back = {
+      key = "<S-Tab>",
+      modes = { "i", "s" },
+    },
+  },
+
   comment = function()
     vim.keymap.set("n", "^[[M-/", function()
       return vim.api.nvim_get_vvar("count") == 0

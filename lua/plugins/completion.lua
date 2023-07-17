@@ -76,6 +76,7 @@ M.lazy_defs = {
 
       local cmp = M.require_module.cmp()
       local luasnip = M.require_module.luasnip()
+      local kbd_cmp = require("kbd").plugins.cmp
       cmp.setup {
         completion = {
           completeopt = "menu,menuone",
@@ -98,19 +99,18 @@ M.lazy_defs = {
           end,
         },
 
-        -- TODO: extract kbd
         mapping = {
-          ["<C-p>"] = cmp.mapping.select_prev_item(),
-          ["<C-n>"] = cmp.mapping.select_next_item(),
-          ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-          ["<C-f>"] = cmp.mapping.scroll_docs(4),
-          ["<C-Right>"] = cmp.mapping.complete(),
-          ["<C-e>"] = cmp.mapping.close(),
-          ["<CR>"] = cmp.mapping.confirm {
+          [kbd_cmp.select_prev] = cmp.mapping.select_prev_item(),
+          [kbd_cmp.select_next] = cmp.mapping.select_next_item(),
+          [kbd_cmp.scroll_docs_up] = cmp.mapping.scroll_docs(-4),
+          [kbd_cmp.scroll_docs_down] = cmp.mapping.scroll_docs(4),
+          [kbd_cmp.toggle_cmp] = cmp.mapping.complete(),
+          [kbd_cmp.close] = cmp.mapping.close(),
+          [kbd_cmp.confirm] = cmp.mapping.confirm {
             behavior = cmp.ConfirmBehavior.Replace,
             select = false,
           },
-          ["<Tab>"] = cmp.mapping(function(fallback)
+          [kbd_cmp.snippet_expand_or_jump.key] = cmp.mapping(function(fallback)
             if luasnip.expand_or_jumpable() then
               vim.fn.feedkeys(
                 vim.api.nvim_replace_termcodes(
@@ -124,8 +124,8 @@ M.lazy_defs = {
             else
               fallback()
             end
-          end, { "i", "s" }),
-          ["<S-Tab>"] = cmp.mapping(function(fallback)
+          end, kbd_cmp.snippet_expand_or_jump.modes),
+          [kbd_cmp.snippet_jump_back.key] = cmp.mapping(function(fallback)
             if luasnip.jumpable(-1) then
               vim.fn.feedkeys(
                 vim.api.nvim_replace_termcodes(
@@ -139,7 +139,7 @@ M.lazy_defs = {
             else
               fallback()
             end
-          end, { "i", "s" }),
+          end, kbd_cmp.snippet_jump_back.modes),
         },
         sources = {
           { name = "nvim_lsp" },
