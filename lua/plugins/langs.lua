@@ -8,6 +8,7 @@ local langs = {
     treesitter_grammars = { "dart" },
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
+    lsp_settings = {},
   },
 
   dockerfile = {
@@ -15,6 +16,7 @@ local langs = {
     treesitter_grammars = { "dockerfile" },
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
+    lsp_settings = {},
   },
 
   go = {
@@ -29,6 +31,10 @@ local langs = {
       "gopls", -- gopls
     },
     telescope_file_ignore_patterns = { "vendor" },
+    lsp_settings = {
+      server_name = "gopls",
+      settings = {},
+    },
   },
 
   java = {
@@ -36,6 +42,7 @@ local langs = {
     treesitter_grammars = { "java" },
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
+    lsp_settings = {},
   },
 
   javascript = {
@@ -49,6 +56,7 @@ local langs = {
     },
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = { "node_modules" },
+    lsp_settings = {},
   },
 
   kotlin = {
@@ -56,6 +64,7 @@ local langs = {
     treesitter_grammars = { "kotlin" },
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
+    lsp_settings = {},
   },
 
   lua = {
@@ -70,6 +79,27 @@ local langs = {
       "lua_ls", -- lua-language-server
     },
     telescope_file_ignore_patterns = {},
+    lsp_settings = {
+      server_name = "lua_ls",
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { "vim" },
+          },
+          workspace = {
+            checkThirdParty = false,
+            library = {
+              [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+              [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
+              [require("plugins.lazy").libpath] = true,
+            },
+            maxPreload = 100000,
+            preloadFileSize = 10000,
+          },
+          telemetry = { enable = false },
+        },
+      },
+    },
   },
 
   markdown = {
@@ -77,6 +107,7 @@ local langs = {
     treesitter_grammars = { "markdown" },
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
+    lsp_settings = {},
   },
 
   org = {
@@ -84,6 +115,7 @@ local langs = {
     treesitter_grammars = {},
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
+    lsp_settings = {},
   },
 
   python = {
@@ -93,6 +125,10 @@ local langs = {
       -- "pyright", -- pyright
     },
     telescope_file_ignore_patterns = {},
+    lsp_settings = {
+      -- server_name = "pyright",
+      -- settings = {},
+    },
   },
 
   rust = {
@@ -102,6 +138,10 @@ local langs = {
       -- "rust_analyzer", -- rust-analyzer
     },
     telescope_file_ignore_patterns = {},
+    lsp_settings = {
+      -- server_name = "rust_analyzer",
+      -- settings = {},
+    },
   },
 
   text = {
@@ -109,6 +149,7 @@ local langs = {
     treesitter_grammars = {},
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
+    lsp_settings = {},
   },
 
   typescript = {
@@ -121,6 +162,10 @@ local langs = {
       -- "tsserver", -- typescript-language-server
     },
     telescope_file_ignore_patterns = {},
+    lsp_settings = {
+      -- server_name = "tsserver",
+      -- settings = {},
+    },
   },
 }
 
@@ -172,6 +217,16 @@ for _, lang in pairs(langs) do
     M.telescope_file_ignore_patterns,
     lang.telescope_file_ignore_patterns
   )
+end
+
+-- [[ Settings for LSP ]]
+M.lsp_settings = {}
+for _, lang in pairs(langs) do
+  local lsp_settings = lang.lsp_settings
+  local server_name = lsp_settings["server_name"]
+  if server_name ~= nil then
+    M.lsp_settings[server_name] = lsp_settings.settings
+  end
 end
 
 return M

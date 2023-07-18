@@ -156,6 +156,26 @@ M.plugins = {
     end, "[l]azy plugin manager")
   end,
 
+  lsp = {
+    lsp_on_attach = function() -- TODO: pass client and buff number, need them?
+      -- local function nmap(keys, func, desc)
+      --   if desc then
+      --     desc = "LSP: " .. desc
+      --   end
+      --
+      --   vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
+      -- end
+
+      -- TODO: review these mappings, they're from kickstart
+      -- nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+      -- nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+      -- nmap("K", vim.lsp.buf.hover, "Hover Documentation")
+      -- nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
+
+      -- TODO: Cmd+L to run format (require("plugins.lsp").cmd_format)?
+    end,
+  },
+
   mason = function()
     nmap("<leader>om", function()
       vim.cmd(require("plugins.mason").cmd)
