@@ -1,5 +1,3 @@
-local utils = require("utils")
-
 local M = {}
 
 M.ids = {
@@ -18,149 +16,27 @@ M.filetypes = {
 
 M.cmd = "Lazy"
 
+M.lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+M.libpath = M.lazypath .. "/lua/lazy"
+
 M.install = function()
   -- [[ Install lazy.nvim package manager ]]
   -- https://github.com/folke/lazy.nvim
-  local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-  if not vim.loop.fs_stat(lazypath) then
+  if not vim.loop.fs_stat(M.lazypath) then
     vim.fn.system {
       "git",
       "clone",
       "--filter=blob:none",
       "https://github.com/" .. M.ids.lazy .. ".git",
       "--branch=stable", -- latest stable release
-      lazypath,
+      M.lazypath,
     }
   end
-  vim.opt.rtp:prepend(lazypath)
-end
-
--- TODO: extract on attach and formatting group
-local formatting_group = vim.api.nvim_create_augroup("LspFormatting", {})
--- This function gets run when an LSP connects to a particular buffer.
-local lsp_on_attach = function(client, bufnr)
-  -- local function nmap(keys, func, desc)
-  --   if desc then
-  --     desc = "LSP: " .. desc
-  --   end
-  --
-  --   vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-  -- end
-
-  -- TODO: review these mappings, they're from kickstart
-  -- nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-  -- nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-  -- nmap("K", vim.lsp.buf.hover, "Hover Documentation")
-  -- nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
-
-  require("kbd").plugins.telescope.lsp_on_attach()
-
-  -- TODO: these 2 things below should be linked with null-ls
-  -- TODO: Cmd+L to run format?
-  vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
-    vim.lsp.buf.format { async = false }
-  end, { desc = "Format current buffer with LSP" })
-
-  if client.supports_method("textDocument/formatting") then
-    vim.api.nvim_clear_autocmds { group = formatting_group, buffer = bufnr }
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      group = formatting_group,
-      buffer = bufnr,
-      callback = function()
-        vim.lsp.buf.format { async = false }
-      end,
-    })
-  end
+  vim.opt.rtp:prepend(M.lazypath)
 end
 
 -- [[ Plugins ]]
 local plugins = {
-  -- [[ Neovim development stuff ]]
-  -- https://github.com/folke/neodev.nvim
-  {
-    "folke/neodev.nvim",
-    config = function()
-      require("neodev").setup()
-    end,
-  },
-
-  -- [[ LSP configuration ]]
-  -- https://github.com/neovim/nvim-lspconfig
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      "folke/neodev.nvim",
-    },
-    config = function()
-      local lspconfig = require("lspconfig")
-
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = require("plugins.completion").require_module
-        .cmp_nvim_lsp()
-        .default_capabilities(capabilities)
-      capabilities.textDocument.completion.completionItem = {
-        documentationFormat = { "markdown", "plaintext" },
-        snippetSupport = true,
-        preselectSupport = true,
-        insertReplaceSupport = true,
-        labelDetailsSupport = true,
-        deprecatedSupport = true,
-        commitCharactersSupport = true,
-        tagSupport = { valueSet = { 1 } },
-        resolveSupport = {
-          properties = {
-            "documentation",
-            "detail",
-            "additionalTextEdits",
-          },
-        },
-      }
-
-      lspconfig.gopls.setup {
-        capabilities = capabilities,
-        on_attach = lsp_on_attach,
-        settings = {},
-      }
-      lspconfig.lua_ls.setup {
-        capabilities = capabilities,
-        on_attach = lsp_on_attach,
-        settings = {
-          Lua = {
-            diagnostics = {
-              globals = { "vim" },
-            },
-            workspace = {
-              checkThirdParty = false,
-              library = {
-                [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-                [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-                [vim.fn.stdpath("data") .. "/lazy/lazy.nvim/lua/lazy"] = true,
-              },
-              maxPreload = 100000,
-              preloadFileSize = 10000,
-            },
-            telemetry = { enable = false },
-          },
-        },
-      }
-      -- lspconfig.pyright.setup {
-      --   capabilities = capabilities,
-      --   on_attach = lsp_on_attach,
-      --   settings = {},
-      -- }
-      -- lspconfig.rust_analyzer.setup {
-      --   capabilities = capabilities,
-      --   on_attach = lsp_on_attach,
-      --   settings = {},
-      -- }
-      -- lspconfig.tsserver.setup {
-      --   capabilities = capabilities,
-      --   on_attach = lsp_on_attach,
-      --   settings = {},
-      -- }
-    end,
-  },
-
   -- [[ LSP improvements - linters, formatters, etc. ]]
   -- https://github.com/jose-elias-alvarez/null-ls.nvim
   -- Available builtins:
@@ -170,7 +46,7 @@ local plugins = {
     config = function()
       local null_ls = require("null-ls")
       null_ls.setup {
-        on_attach = lsp_on_attach,
+        on_attach = require("plugins.lsp").on_attach,
         sources = {
           -- TODO: many things here should be linked with other plugins
 
@@ -227,6 +103,7 @@ local plugins = {
 }
 
 M.setup = function()
+  local utils = require("utils")
   utils.table.append_values(plugins, require("plugins.appearance").lazy_defs)
   utils.table.append_values(plugins, require("plugins.cmdmenu").lazy_defs)
   utils.table.append_values(plugins, require("plugins.colorscheme").lazy_defs)
@@ -234,6 +111,7 @@ M.setup = function()
   utils.table.append_values(plugins, require("plugins.copilot").lazy_defs)
   utils.table.append_values(plugins, require("plugins.editing").lazy_defs)
   utils.table.append_values(plugins, require("plugins.git").lazy_defs)
+  utils.table.append_values(plugins, require("plugins.lsp").lazy_defs)
   utils.table.append_values(plugins, require("plugins.mason").lazy_defs)
   utils.table.append_values(plugins, require("plugins.statusline").lazy_defs)
   utils.table.append_values(plugins, require("plugins.stdlib").lazy_defs)
