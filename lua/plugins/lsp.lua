@@ -36,7 +36,7 @@ M.on_attach = function(client, bufnr)
   end
 
   local kbd = require("kbd")
-  kbd.plugins.lsp.lsp_on_attach()
+  kbd.plugins.lsp.lsp_on_attach(bufnr)
   kbd.plugins.telescope.lsp_on_attach()
 end
 

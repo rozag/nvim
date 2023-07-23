@@ -55,13 +55,13 @@ M.general = function()
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer")           -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
+  nmap("^[[M-s", vim.cmd.write, "save buffer")             -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers")       -- Cmd-S-s
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
-  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
-  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
+  nmap("^[[M-S-z", vim.cmd.redo, "redo")                   -- Cmd-S-z
+  nmap("^[[M-z", vim.cmd.undo, "undo")                     -- Cmd-z
   vim.keymap.set("i", "^[[M-z", vim.cmd.undo, {
     desc = "undo",
     noremap = true,
@@ -104,9 +104,6 @@ M.general = function()
 
   -- Open commands
   which_key.register { ["<leader>s"] = { name = "Tele[s]cope" } }
-
-  -- TODO: use for format
-  -- - { key: L, mods: Command, chars: "^[[M-l" }
 end
 
 -- [[ Plugin-specific keybindings ]]
@@ -133,7 +130,7 @@ M.plugins = {
     vim.keymap.set("n", "^[[M-/", function()
       return vim.api.nvim_get_vvar("count") == 0
           and "<Plug>(comment_toggle_linewise_current)"
-        or "<Plug>(comment_toggle_linewise_count)"
+          or "<Plug>(comment_toggle_linewise_count)"
     end, { expr = true, desc = "Comment toggle current line" })
     vim.keymap.set(
       "v",
@@ -145,8 +142,8 @@ M.plugins = {
 
   copilot = {
     accept = "<C-Down>", -- C-j
-    next = "<C-Right>", -- C-l
-    prev = "<C-Left>", -- C-h
+    next = "<C-Right>",  -- C-l
+    prev = "<C-Left>",   -- C-h
     dismiss = "<C-]>",
   },
 
@@ -157,22 +154,23 @@ M.plugins = {
   end,
 
   lsp = {
-    lsp_on_attach = function() -- TODO: pass client and buff number, need them?
-      -- local function nmap(keys, func, desc)
-      --   if desc then
-      --     desc = "LSP: " .. desc
-      --   end
-      --
-      --   vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-      -- end
+    lsp_on_attach = function(bufnr)
+      local nmap_lsp = function(keys, func, desc)
+        vim.keymap.set(
+          "n",
+          keys,
+          func,
+          { desc = desc, noremap = true, silent = true, buffer = bufnr }
+        )
+      end
 
-      -- TODO: review these mappings, they're from kickstart
-      -- nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-      -- nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-      -- nmap("K", vim.lsp.buf.hover, "Hover Documentation")
-      -- nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
-
-      -- TODO: Cmd+L to run format (require("plugins.lsp").cmd_format)?
+      nmap_lsp("^[[M-l", function()
+        vim.cmd(require("plugins.lsp").cmd_format)
+      end, "format current buffer")
+      nmap_lsp("gm", vim.lsp.buf.rename, "LSP rename")
+      nmap_lsp("K", vim.lsp.buf.hover, "LSP hover docs")
+      nmap_lsp("^[[A-S-k", vim.lsp.buf.signature_help, "LSP signature docs")
+      nmap_lsp("<leader>oa", vim.lsp.buf.code_action, "LSP code [a]ction")
     end,
   },
 
@@ -185,9 +183,9 @@ M.plugins = {
   telescope = {
     mappings = function()
       local actions =
-        require("plugins.telescope").require_module.telescope_actions()
+          require("plugins.telescope").require_module.telescope_actions()
       local trouble =
-        require("plugins.trouble").require_module.trouble_telescope()
+          require("plugins.trouble").require_module.trouble_telescope()
       local editing = require("plugins.editing")
       return {
         -- Normal mode
@@ -233,7 +231,7 @@ M.plugins = {
 
     lsp_on_attach = function()
       local builtin =
-        require("plugins.telescope").require_module.telescope_builtin()
+          require("plugins.telescope").require_module.telescope_builtin()
       nmap("gr", builtin.lsp_references, "[r]eferences")
       nmap("gd", builtin.lsp_definitions, "[d]efinition")
       nmap("gD", builtin.lsp_type_definitions, "type [D]efinition")
@@ -320,7 +318,7 @@ M.plugins = {
       },
     },
     refactor_keymaps = {
-      smart_rename = "gm",
+      smart_rename = "gM",
     },
   },
 
