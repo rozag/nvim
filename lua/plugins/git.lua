@@ -16,6 +16,17 @@ M.require_module = {
   end,
 }
 
+M.null_ls_sources = function()
+  local builtins = require("plugins.nullls").require_module.null_ls().builtins
+  return {
+    -- [[ Code actions ]]
+    -- Injects code actions for Git operations at the current cursor
+    -- position (stage / preview / reset hunks, blame, etc.).
+    -- https://github.com/lewis6991/gitsigns.nvim
+    builtins.code_actions.gitsigns,
+  }
+end
+
 M.lazy_defs = {
   -- [[ Git releated signs for the gutter + utilities for managing changes ]]
   -- https://github.com/lewis6991/gitsigns.nvim

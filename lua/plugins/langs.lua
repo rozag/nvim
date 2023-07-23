@@ -9,6 +9,9 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
+    null_ls_sources = function()
+      return {}
+    end,
   },
 
   dockerfile = {
@@ -17,6 +20,9 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
+    null_ls_sources = function()
+      return {}
+    end,
   },
 
   go = {
@@ -35,6 +41,40 @@ local langs = {
       server_name = "gopls",
       settings = {},
     },
+    null_ls_sources = function()
+      local null_ls = require("plugins.nullls").require_module.null_ls()
+      local builtins = null_ls.builtins
+      return {
+        -- [[ Code actions ]]
+        -- Go tool to modify struct field tags.
+        -- https://github.com/fatih/gomodifytags
+        builtins.code_actions.gomodifytags,
+        -- impl generates method stubs for implementing a Go interface.
+        -- https://github.com/josharian/impl
+        builtins.code_actions.impl,
+
+        -- [[ Diagnostics ]]
+        -- A Go linter aggregator.
+        -- https://golangci-lint.run/
+        builtins.diagnostics.golangci_lint,
+        -- Fast, configurable, extensible, flexible, and beautiful linter
+        -- for Go.
+        -- https://revive.run/
+        builtins.diagnostics.revive,
+        -- Advanced Go linter.
+        -- https://staticcheck.io/
+        builtins.diagnostics.staticcheck,
+
+        -- [[ Formatting ]]
+        -- Formats go programs.
+        -- https://pkg.go.dev/cmd/gofmt
+        builtins.formatting.gofmt,
+        -- Updates your Go import lines, adding missing ones and removing
+        -- unreferenced ones.
+        -- https://pkg.go.dev/golang.org/x/tools/cmd/goimports
+        builtins.formatting.goimports,
+      }
+    end,
   },
 
   java = {
@@ -43,6 +83,9 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
+    null_ls_sources = function()
+      return {}
+    end,
   },
 
   javascript = {
@@ -57,6 +100,9 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = { "node_modules" },
     lsp_settings = {},
+    null_ls_sources = function()
+      return {}
+    end,
   },
 
   kotlin = {
@@ -65,6 +111,9 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
+    null_ls_sources = function()
+      return {}
+    end,
   },
 
   lua = {
@@ -100,6 +149,21 @@ local langs = {
         },
       },
     },
+    null_ls_sources = function()
+      local null_ls = require("plugins.nullls").require_module.null_ls()
+      local builtins = null_ls.builtins
+      return {
+        -- [[ Diagnostics ]]
+        -- Uses inbuilt Lua code to detect lines with trailing whitespace
+        -- and show a diagnostic warning on each line where it's present.
+        builtins.diagnostics.trail_space,
+
+        -- [[ Formatting ]]
+        -- An opinionated code formatter for Lua.
+        -- https://github.com/JohnnyMorganz/StyLua
+        builtins.formatting.stylua,
+      }
+    end,
   },
 
   markdown = {
@@ -108,6 +172,9 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
+    null_ls_sources = function()
+      return {}
+    end,
   },
 
   org = {
@@ -116,6 +183,9 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
+    null_ls_sources = function()
+      return {}
+    end,
   },
 
   python = {
@@ -129,6 +199,9 @@ local langs = {
       -- server_name = "pyright",
       -- settings = {},
     },
+    null_ls_sources = function()
+      return {}
+    end,
   },
 
   rust = {
@@ -142,6 +215,9 @@ local langs = {
       -- server_name = "rust_analyzer",
       -- settings = {},
     },
+    null_ls_sources = function()
+      return {}
+    end,
   },
 
   text = {
@@ -150,6 +226,9 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
+    null_ls_sources = function()
+      return {}
+    end,
   },
 
   typescript = {
@@ -166,6 +245,9 @@ local langs = {
       -- server_name = "tsserver",
       -- settings = {},
     },
+    null_ls_sources = function()
+      return {}
+    end,
   },
 }
 
@@ -227,6 +309,15 @@ for _, lang in pairs(langs) do
   if server_name ~= nil then
     M.lsp_settings[server_name] = lsp_settings.settings
   end
+end
+
+-- [[ null-ls sources ]]
+M.null_ls_sources = function()
+  local null_ls_sources = {}
+  for _, lang in pairs(langs) do
+    utils.table.append_values(null_ls_sources, lang.null_ls_sources())
+  end
+  return null_ls_sources
 end
 
 return M

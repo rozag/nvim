@@ -45,6 +45,16 @@ M.require_module = {
   end,
 }
 
+M.null_ls_sources = function()
+  local builtins = require("plugins.nullls").require_module.null_ls().builtins
+  return {
+    -- [[ Completion ]]
+    -- Snippet engine for Neovim, written in Lua.
+    -- https://github.com/L3MON4D3/LuaSnip
+    builtins.completion.luasnip,
+  }
+end
+
 M.lazy_defs = {
   -- [[ Completions ]]
   -- https://github.com/hrsh7th/nvim-cmp
