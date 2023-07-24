@@ -53,22 +53,26 @@ local langs = {
         -- https://github.com/josharian/impl
         builtins.code_actions.impl,
 
+        -- TODO: uncomment linters when project is ready
+
         -- [[ Diagnostics ]]
         -- A Go linter aggregator.
         -- https://golangci-lint.run/
-        builtins.diagnostics.golangci_lint,
+        -- builtins.diagnostics.golangci_lint,
         -- Fast, configurable, extensible, flexible, and beautiful linter
         -- for Go.
         -- https://revive.run/
-        builtins.diagnostics.revive,
+        -- builtins.diagnostics.revive,
         -- Advanced Go linter.
         -- https://staticcheck.io/
-        builtins.diagnostics.staticcheck,
+        -- builtins.diagnostics.staticcheck,
+
+        -- TODO: remove gofmt b/c replaced by goimports?
 
         -- [[ Formatting ]]
         -- Formats go programs.
         -- https://pkg.go.dev/cmd/gofmt
-        builtins.formatting.gofmt,
+        -- builtins.formatting.gofmt,
         -- Updates your Go import lines, adding missing ones and removing
         -- unreferenced ones.
         -- https://pkg.go.dev/golang.org/x/tools/cmd/goimports
@@ -256,7 +260,7 @@ local M = {}
 -- [[ Line width limit via colorcolumn ]]
 M.setup_fill_col_indicator = function()
   local fill_col_indicator_group =
-    vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
+      vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
 
   local function bind_file_type_to_fill_col_indicator_limit(type, limit)
     vim.api.nvim_create_autocmd("FileType", {
