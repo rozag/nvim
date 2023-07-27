@@ -67,14 +67,9 @@ local langs = {
         -- https://staticcheck.io/
         -- builtins.diagnostics.staticcheck,
 
-        -- TODO: remove gofmt b/c replaced by goimports?
-
         -- [[ Formatting ]]
-        -- Formats go programs.
-        -- https://pkg.go.dev/cmd/gofmt
-        -- builtins.formatting.gofmt,
         -- Updates your Go import lines, adding missing ones and removing
-        -- unreferenced ones.
+        -- unreferenced ones and formats go programs.
         -- https://pkg.go.dev/golang.org/x/tools/cmd/goimports
         builtins.formatting.goimports,
       }
@@ -242,15 +237,37 @@ local langs = {
       "typescript",
     },
     mason_lspconfig_ensure_installed = {
-      -- "tsserver", -- typescript-language-server
+      "tsserver", -- typescript-language-server
     },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
-      -- server_name = "tsserver",
-      -- settings = {},
+      server_name = "tsserver",
+      settings = {},
     },
     null_ls_sources = function()
-      return {}
+      local null_ls = require("plugins.nullls").require_module.null_ls()
+      local builtins = null_ls.builtins
+      return {
+        -- [[ Code Actions ]]
+        -- Injects actions to fix ESLint issues or ignore broken rules.
+        builtins.code_actions.eslint,
+
+        -- [[ Diagnostics ]]
+        -- Blazing fast linter for JavaScript and TypeScript written in Rust.
+        builtins.diagnostics.deno_lint,
+        -- A linter for the JavaScript ecosystem.
+        builtins.diagnostics.eslint,
+        -- Parses diagnostics from the TypeScript compiler.
+        builtins.diagnostics.tsc,
+
+        -- [[ Formatting ]]
+        -- Find and fix problems in your JavaScript code.
+        -- Prettier is an opinionated code formatter. It enforces a consistent
+        -- style by parsing your code and re-printing it with its own rules
+        -- that take the maximum line length into account, wrapping code when
+        -- necessary.
+        builtins.formatting.prettier,
+      }
     end,
   },
 }
