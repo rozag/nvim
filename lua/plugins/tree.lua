@@ -25,8 +25,8 @@ M.lazy_defs = {
     config = function()
       M.require_module.nvim_tree().setup {
         filters = {
+          git_ignored = false,
           dotfiles = false,
-          exclude = { vim.fn.stdpath("config") .. "/lua/custom" },
         },
         disable_netrw = true,
         hijack_netrw = true,
@@ -44,7 +44,7 @@ M.lazy_defs = {
         },
         git = {
           enable = true,
-          ignore = true,
+          ignore = false,
         },
         filesystem_watchers = {
           enable = true,
