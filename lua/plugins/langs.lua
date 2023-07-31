@@ -253,8 +253,6 @@ local langs = {
         builtins.code_actions.eslint,
 
         -- [[ Diagnostics ]]
-        -- Blazing fast linter for JavaScript and TypeScript written in Rust.
-        builtins.diagnostics.deno_lint,
         -- A linter for the JavaScript ecosystem.
         builtins.diagnostics.eslint,
         -- Parses diagnostics from the TypeScript compiler.
@@ -277,7 +275,7 @@ local M = {}
 -- [[ Line width limit via colorcolumn ]]
 M.setup_fill_col_indicator = function()
   local fill_col_indicator_group =
-      vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
+    vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
 
   local function bind_file_type_to_fill_col_indicator_limit(type, limit)
     vim.api.nvim_create_autocmd("FileType", {
