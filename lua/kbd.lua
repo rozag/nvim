@@ -104,6 +104,12 @@ M.general = function()
 
   -- Open commands
   which_key.register { ["<leader>s"] = { name = "Tele[s]cope" } }
+
+  -- Toggle commands
+  which_key.register { ["<leader>t"] = { name = "[t]oggle" } }
+  nmap("<leader>tb", function()
+    vim.cmd(require("plugins.git").cmd_toggle_gitblame)
+  end, "git [b]lame")
 end
 
 -- [[ Plugin-specific keybindings ]]

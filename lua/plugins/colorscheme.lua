@@ -24,6 +24,7 @@ M.lazy_defs = {
   -- https://github.com/loctvl842/monokai-pro.nvim
   {
     M.ids.monokai_pro,
+    priority = 100,
     config = function()
       M.require_module.monokai_pro().setup {
         filter = "spectrum",
