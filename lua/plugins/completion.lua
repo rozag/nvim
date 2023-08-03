@@ -13,7 +13,6 @@ M.ids = {
   autopairs = "windwp/nvim-autopairs",
 
   luasnip = "L3MON4D3/LuaSnip",
-  friendly_snippets = "rafamadriz/friendly-snippets",
 }
 
 M.require_module = {
@@ -34,26 +33,7 @@ M.require_module = {
   luasnip = function()
     return require("luasnip")
   end,
-  luasnip_loaders_vscode = function()
-    return require("luasnip.loaders.from_vscode")
-  end,
-  luasnip_loaders_snipmate = function()
-    return require("luasnip.loaders.from_snipmate")
-  end,
-  luasnip_loaders_lua = function()
-    return require("luasnip.loaders.from_lua")
-  end,
 }
-
-M.null_ls_sources = function()
-  local builtins = require("plugins.nullls").require_module.null_ls().builtins
-  return {
-    -- [[ Completion ]]
-    -- Snippet engine for Neovim, written in Lua.
-    -- https://github.com/L3MON4D3/LuaSnip
-    builtins.completion.luasnip,
-  }
-end
 
 M.lazy_defs = {
   -- [[ Completions ]]
@@ -153,7 +133,6 @@ M.lazy_defs = {
         },
         sources = {
           { name = "nvim_lsp" },
-          { name = "luasnip" },
           { name = "buffer" },
           { name = "nvim_lua" },
           { name = "path" },
@@ -220,9 +199,6 @@ M.lazy_defs = {
     M.ids.luasnip,
     version = "1.*",
     build = "make install_jsregexp",
-    dependencies = {
-      M.ids.friendly_snippets,
-    },
     opts = {
       history = true,
       updateevents = "TextChanged,TextChangedI",
@@ -232,24 +208,6 @@ M.lazy_defs = {
       luasnip.config.set_config {
         history = true,
         updateevents = "TextChanged,TextChangedI",
-      }
-
-      local from_vscode = M.require_module.luasnip_loaders_vscode()
-      from_vscode.lazy_load()
-      from_vscode.lazy_load {
-        paths = vim.g.vscode_snippets_path or "",
-      }
-
-      local from_snipmate = M.require_module.luasnip_loaders_snipmate()
-      from_snipmate.load()
-      from_snipmate.lazy_load {
-        paths = vim.g.snipmate_snippets_path or "",
-      }
-
-      local from_lua = M.require_module.luasnip_loaders_lua()
-      from_lua.load()
-      from_lua.lazy_load {
-        paths = vim.g.lua_snippets_path or "",
       }
 
       vim.api.nvim_create_autocmd("InsertLeave", {

@@ -131,6 +131,10 @@ local langs = {
       server_name = "lua_ls",
       settings = {
         Lua = {
+          completion = {
+            callSnippet = "Disable",
+            keywordSnippet = "Disable",
+          },
           diagnostics = {
             globals = { "vim" },
           },

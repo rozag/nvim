@@ -52,12 +52,9 @@ M.lazy_defs = {
       local lspconfig = M.require_module.lspconfig()
 
       local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = require("plugins.completion").require_module
-        .cmp_nvim_lsp()
-        .default_capabilities(capabilities)
       capabilities.textDocument.completion.completionItem = {
         documentationFormat = { "markdown", "plaintext" },
-        snippetSupport = true,
+        snippetSupport = false,
         preselectSupport = true,
         insertReplaceSupport = true,
         labelDetailsSupport = true,
@@ -72,6 +69,9 @@ M.lazy_defs = {
           },
         },
       }
+      local cmp_nvim_lsp =
+        require("plugins.completion").require_module.cmp_nvim_lsp()
+      capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
       local langs = require("plugins.langs")
       for server_name, settings in pairs(langs.lsp_settings) do

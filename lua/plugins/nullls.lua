@@ -33,10 +33,6 @@ M.lazy_defs = {
       )
       utils.table.append_values(
         sources,
-        require("plugins.completion").null_ls_sources()
-      )
-      utils.table.append_values(
-        sources,
         require("plugins.langs").null_ls_sources()
       )
 
