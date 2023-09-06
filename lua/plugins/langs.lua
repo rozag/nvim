@@ -3,6 +3,17 @@
 local utils = require("utils")
 
 local langs = {
+  circom = {
+    fill_col_indicator = { type = "circom", limit = "81" },
+    treesitter_grammars = {},
+    mason_lspconfig_ensure_installed = {},
+    telescope_file_ignore_patterns = {},
+    lsp_settings = {},
+    null_ls_sources = function()
+      return {}
+    end,
+  },
+
   dart = {
     fill_col_indicator = { type = "dart", limit = "81" },
     treesitter_grammars = { "dart" },
