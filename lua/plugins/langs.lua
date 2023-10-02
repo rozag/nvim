@@ -222,15 +222,21 @@ local langs = {
     fill_col_indicator = { type = "rust", limit = "100" },
     treesitter_grammars = { "rust", "toml" },
     mason_lspconfig_ensure_installed = {
-      -- "rust_analyzer", -- rust-analyzer
+      "rust_analyzer", -- rust-analyzer
     },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
-      -- server_name = "rust_analyzer",
-      -- settings = {},
+      server_name = "rust_analyzer",
+      settings = {},
     },
     null_ls_sources = function()
-      return {}
+      local null_ls = require("plugins.nullls").require_module.null_ls()
+      local builtins = null_ls.builtins
+      return {
+        -- [[ Formatting ]]
+        -- A tool for formatting rust code according to style guidelines.
+        builtins.formatting.rustfmt,
+      }
     end,
   },
 
@@ -290,7 +296,7 @@ local M = {}
 -- [[ Line width limit via colorcolumn ]]
 M.setup_fill_col_indicator = function()
   local fill_col_indicator_group =
-    vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
+      vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
 
   local function bind_file_type_to_fill_col_indicator_limit(type, limit)
     vim.api.nvim_create_autocmd("FileType", {
