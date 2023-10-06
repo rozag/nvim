@@ -227,7 +227,28 @@ local langs = {
     telescope_file_ignore_patterns = {},
     lsp_settings = {
       server_name = "rust_analyzer",
-      settings = {},
+      settings = {
+        ["rust-analyzer"] = {
+          cargo = {
+            buildScripts = {
+              enable = true,
+            },
+            features = "all",
+          },
+          checkOnSave = {
+            command = "clippy",
+          },
+          imports = {
+            granularity = {
+              group = "module",
+            },
+            prefix = "self",
+          },
+          procMacro = {
+            enable = true,
+          },
+        },
+      },
     },
     null_ls_sources = function()
       local null_ls = require("plugins.nullls").require_module.null_ls()
