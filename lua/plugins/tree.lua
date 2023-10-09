@@ -58,6 +58,7 @@ M.lazy_defs = {
           root_folder_label = false,
           highlight_git = true,
           highlight_opened_files = "all",
+          symlink_destination = false,
 
           indent_markers = {
             enable = false,
