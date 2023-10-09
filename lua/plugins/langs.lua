@@ -233,8 +233,6 @@ local langs = {
             buildScripts = { enable = true },
             features = "all",
           },
-          check = { command = "clippy" },
-          checkOnSave = { command = "clippy" },
           imports = {
             granularity = { group = "module" },
             prefix = "self",
