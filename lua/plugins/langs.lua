@@ -230,22 +230,18 @@ local langs = {
       settings = {
         ["rust-analyzer"] = {
           cargo = {
-            buildScripts = {
-              enable = true,
-            },
+            buildScripts = { enable = true },
             features = "all",
           },
-          checkOnSave = {
-            command = "clippy",
-          },
+          check = { command = "clippy" },
+          checkOnSave = { command = "clippy" },
           imports = {
-            granularity = {
-              group = "module",
-            },
+            granularity = { group = "module" },
             prefix = "self",
           },
           procMacro = {
             enable = true,
+            attributes = { enable = true },
           },
         },
       },
