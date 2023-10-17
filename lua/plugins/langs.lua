@@ -219,7 +219,7 @@ local langs = {
   },
 
   rust = {
-    fill_col_indicator = { type = "rust", limit = "100" },
+    fill_col_indicator = { type = "rust", limit = "101" },
     treesitter_grammars = { "rust", "toml" },
     mason_lspconfig_ensure_installed = {
       "rust_analyzer", -- rust-analyzer
