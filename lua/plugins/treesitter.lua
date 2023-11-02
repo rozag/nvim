@@ -72,7 +72,6 @@ local ensure_grammars_installed = {
   "solidity",
   "sql",
   "swift",
-  "terraform",
   "verilog",
   "vim",
   "vimdoc",

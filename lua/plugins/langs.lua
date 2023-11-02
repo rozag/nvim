@@ -255,6 +255,17 @@ local langs = {
     end,
   },
 
+  terraform = {
+    fill_col_indicator = { type = "terraform", limit = "81" },
+    treesitter_grammars = { "terraform" },
+    mason_lspconfig_ensure_installed = {},
+    telescope_file_ignore_patterns = {},
+    lsp_settings = {},
+    null_ls_sources = function()
+      return {}
+    end,
+  },
+
   text = {
     fill_col_indicator = { type = "text", limit = "81" },
     treesitter_grammars = {},
