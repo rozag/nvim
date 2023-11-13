@@ -3,6 +3,7 @@ local M = {}
 M.ids = {
   telescope = "nvim-telescope/telescope.nvim",
   telescope_fzf = "nvim-telescope/telescope-fzf-native.nvim",
+  telescope_file_browser = "nvim-telescope/telescope-file-browser.nvim",
 }
 
 M.require_module = {
@@ -29,6 +30,9 @@ M.filetypes = {
 }
 
 M.cmd = "Telescope"
+M.cmd_file_browser_current =
+"Telescope file_browser path=%:p:h select_buffer=true"
+M.cmd_file_browser_root = "Telescope file_browser"
 
 M.lazy_defs = {
   -- [[ Telescope - fuzzy finder (files, lsp, etc) ]]
@@ -90,6 +94,17 @@ M.lazy_defs = {
           buffer_previewer_maker = previewers.buffer_previewer_maker,
           mappings = kbd.plugins.telescope.mappings(),
         },
+        extensions = {
+          file_browser = {
+            grouped = true,
+            hidden = {
+              file_browser = true,
+              folder_browser = true,
+            },
+            respect_gitignore = false,
+            follow_symlinks = true,
+          },
+        },
       }
 
       kbd.plugins.telescope.core()
@@ -109,6 +124,17 @@ M.lazy_defs = {
     end,
     config = function()
       M.require_module.telescope().load_extension("fzf")
+    end,
+  },
+
+  {
+    M.ids.telescope_file_browser,
+    dependencies = {
+      M.ids.telescope,
+      require("plugins.stdlib").ids.plenary,
+    },
+    config = function()
+      M.require_module.telescope().load_extension("file_browser")
     end,
   },
 }

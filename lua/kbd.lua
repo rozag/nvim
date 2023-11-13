@@ -230,6 +230,14 @@ M.plugins = {
       nmap("<leader>/", builtin.live_grep, "[/]grep in project")
 
       nmap("<leader>sr", builtin.oldfiles, "[r]ecent files")
+      local open_file_browser_current = function()
+        vim.cmd(require("plugins.telescope").cmd_file_browser_current)
+      end
+      nmap("<leader>sf", open_file_browser_current, "current [f]ile filetree")
+      nmap("^[[A-1", open_file_browser_current, "file tree")
+      nmap("<leader>sF", function()
+        vim.cmd(require("plugins.telescope").cmd_file_browser_root)
+      end, "[F] project root filetree")
       nmap("<leader>sh", builtin.help_tags, "[h]elp")
       nmap("<leader>sw", builtin.grep_string, "current [w]ord")
       nmap("<leader>su", builtin.resume, "res[u]me previous picker")
@@ -277,7 +285,7 @@ M.plugins = {
       end
     end
     nmap("<leader>of", open_tree, "[f]ile tree")
-    nmap("^[[A-1", open_tree, "file tree")
+    -- nmap("^[[A-1", open_tree, "file tree")
   end,
 
   treesitter = {
