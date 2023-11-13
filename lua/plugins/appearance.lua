@@ -24,7 +24,7 @@ M.require_module = {
     return require("todo-comments")
   end,
   indent_blankline = function()
-    return require("indent_blankline")
+    return require("ibl")
   end,
 }
 
@@ -102,6 +102,7 @@ M.lazy_defs = {
   -- https://github.com/lukas-reineke/indent-blankline.nvim
   {
     M.ids.indent_blankline,
+    main = "ibl",
     config = function()
       local filetype_exclude = {
         "checkhealth",
@@ -128,13 +129,14 @@ M.lazy_defs = {
         require("plugins.tree").filetypes
       )
       M.require_module.indent_blankline().setup {
-        indentLine_enabled = 1,
-        filetype_exclude = filetype_exclude,
-        buftype_exclude = { "terminal" },
-        show_trailing_blankline_indent = false,
-        show_first_indent_level = true,
-        show_current_context = true,
-        show_current_context_start = false,
+        enabled = true,
+        exclude = {
+          filetypes = filetype_exclude,
+          buftypes = { "terminal" },
+        },
+        scope = {
+          enabled = false,
+        },
       }
     end,
   },
