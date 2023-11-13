@@ -114,6 +114,10 @@ M.lazy_defs = {
       }
       utils.table.append_values(
         filetype_exclude,
+        require("plugins.dashboard").filetypes
+      )
+      utils.table.append_values(
+        filetype_exclude,
         require("plugins.lazy").filetypes
       )
       utils.table.append_values(
