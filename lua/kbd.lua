@@ -234,7 +234,7 @@ M.plugins = {
         vim.cmd(require("plugins.telescope").cmd_file_browser_current)
       end
       nmap("<leader>sf", open_file_browser_current, "current [f]ile filetree")
-      nmap("^[[A-1", open_file_browser_current, "file tree")
+      nmap("^[[A-2", open_file_browser_current, "file tree")
       nmap("<leader>sF", function()
         vim.cmd(require("plugins.telescope").cmd_file_browser_root)
       end, "[F] project root filetree")
@@ -285,7 +285,7 @@ M.plugins = {
       end
     end
     nmap("<leader>of", open_tree, "[f]ile tree")
-    -- nmap("^[[A-1", open_tree, "file tree")
+    nmap("^[[A-1", open_tree, "file tree")
   end,
 
   treesitter = {
