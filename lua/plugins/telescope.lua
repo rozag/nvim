@@ -31,7 +31,7 @@ M.filetypes = {
 
 M.cmd = "Telescope"
 M.cmd_file_browser_current =
-"Telescope file_browser path=%:p:h select_buffer=true"
+  "Telescope file_browser path=%:p:h select_buffer=true"
 M.cmd_file_browser_root = "Telescope file_browser"
 
 M.lazy_defs = {
@@ -65,6 +65,8 @@ M.lazy_defs = {
             "--line-number",
             "--column",
             "--smart-case",
+            "--no-ignore",
+            "--hidden",
           },
           prompt_prefix = "   ",
           initial_mode = "insert",
