@@ -11,6 +11,15 @@ local nmap = function(keys, func, desc)
   )
 end
 
+local vmap = function(keys, func, desc)
+  vim.keymap.set(
+    "v",
+    keys,
+    func,
+    { desc = desc, noremap = true, silent = true }
+  )
+end
+
 local M = {}
 
 M.leader_key = " "
@@ -24,7 +33,7 @@ M.general = function()
 
   -- Better default experience with <Space> as leader key
   vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", {
-    desc = "map <Space> to <Nop>",
+    desc = "map <Space> to <Nop> in normal and visual modes",
     noremap = true,
     silent = true,
   })
@@ -55,13 +64,13 @@ M.general = function()
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer")           -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
+  nmap("^[[M-s", vim.cmd.write, "save buffer")             -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers")       -- Cmd-S-s
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
-  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
-  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
+  nmap("^[[M-S-z", vim.cmd.redo, "redo")                   -- Cmd-S-z
+  nmap("^[[M-z", vim.cmd.undo, "undo")                     -- Cmd-z
   vim.keymap.set("i", "^[[M-z", vim.cmd.undo, {
     desc = "undo",
     noremap = true,
@@ -105,6 +114,11 @@ M.general = function()
   -- Open commands
   which_key.register { ["<leader>s"] = { name = "Tele[s]cope" } }
 
+  -- Copilot commands
+  which_key.register { ["<leader>c"] = { name = "[c]opilot" } }
+  which_key.register { ["<leader>cc"] = { name = "Copilot [c]hat" } }
+  which_key.register { ["<leader>c"] = { mode = "v", name = "Copilot [c]hat" } }
+
   -- Toggle commands
   which_key.register { ["<leader>t"] = { name = "[t]oggle" } }
   nmap("<leader>tb", function()
@@ -136,7 +150,7 @@ M.plugins = {
     vim.keymap.set("n", "^[[M-/", function()
       return vim.api.nvim_get_vvar("count") == 0
           and "<Plug>(comment_toggle_linewise_current)"
-        or "<Plug>(comment_toggle_linewise_count)"
+          or "<Plug>(comment_toggle_linewise_count)"
     end, { expr = true, desc = "Comment toggle current line" })
     vim.keymap.set(
       "v",
@@ -147,10 +161,74 @@ M.plugins = {
   end,
 
   copilot = {
-    accept = "<C-Down>", -- C-j
-    next = "<C-Right>", -- C-l
-    prev = "<C-Left>", -- C-h
-    dismiss = "<C-]>",
+    mappings = {
+      accept = "<C-Down>", -- C-j
+      next = "<C-Right>",  -- C-l
+      prev = "<C-Left>",   -- C-h
+      dismiss = "<C-]>",
+    },
+    core = function()
+      local copilot = require("plugins.copilot")
+      nmap("<leader>ce", function()
+        vim.cmd(copilot.cmd.enable)
+      end, "[e]nable Copilot")
+      nmap("<leader>cd", function()
+        vim.cmd(copilot.cmd.disable)
+      end, "[d]isable Copilot")
+      nmap("<leader>cs", function()
+        vim.cmd(copilot.cmd.status)
+      end, "Copilot [s]tatus")
+    end,
+    chat = function()
+      local copilot = require("plugins.copilot")
+
+      nmap("<leader>cco", function()
+        vim.cmd(copilot.cmd.chatOpen)
+      end, "[o]pen Copilot chat")
+      nmap("<leader>ccc", function()
+        vim.cmd(copilot.cmd.chatClose)
+      end, "[c]lose Copilot chat")
+      nmap("<leader>ccr", function()
+        vim.cmd(copilot.cmd.chatReset)
+      end, "[r]eset Copilot chat")
+      nmap("<leader>cce", function()
+        vim.cmd(copilot.cmd.chatExplain)
+      end, "Copilot chat [e]xplain")
+      nmap("<leader>ccv", function()
+        vim.cmd(copilot.cmd.chatReview)
+      end, "Copilot chat re[v]iew")
+      nmap("<leader>ccf", function()
+        vim.cmd(copilot.cmd.chatFix)
+      end, "Copilot chat [f]ix")
+      nmap("<leader>ccz", function()
+        vim.cmd(copilot.cmd.chatOptimize)
+      end, "Copilot chat optimi[z]e")
+      nmap("<leader>ccd", function()
+        vim.cmd(copilot.cmd.chatDocs)
+      end, "Copilot chat [d]ocs")
+      nmap("<leader>cct", function()
+        vim.cmd(copilot.cmd.chatTests)
+      end, "Copilot chat [t]ests")
+
+      vmap("<leader>ce", function()
+        vim.cmd(copilot.cmd.chatExplain)
+      end, "Copilot chat [e]xplain")
+      vmap("<leader>cv", function()
+        vim.cmd(copilot.cmd.chatReview)
+      end, "Copilot chat re[v]iew")
+      vmap("<leader>cf", function()
+        vim.cmd(copilot.cmd.chatFix)
+      end, "Copilot chat [f]ix")
+      vmap("<leader>cz", function()
+        vim.cmd(copilot.cmd.chatOptimize)
+      end, "Copilot chat optimi[z]e")
+      vmap("<leader>cd", function()
+        vim.cmd(copilot.cmd.chatDocs)
+      end, "Copilot chat [d]ocs")
+      vmap("<leader>ct", function()
+        vim.cmd(copilot.cmd.chatTests)
+      end, "Copilot chat [t]ests")
+    end,
   },
 
   lazy = function()
@@ -189,9 +267,9 @@ M.plugins = {
   telescope = {
     mappings = function()
       local actions =
-        require("plugins.telescope").require_module.telescope_actions()
+          require("plugins.telescope").require_module.telescope_actions()
       local trouble =
-        require("plugins.trouble").require_module.trouble_telescope()
+          require("plugins.trouble").require_module.trouble_telescope()
       local editing = require("plugins.editing")
       return {
         -- Normal mode
@@ -245,7 +323,7 @@ M.plugins = {
 
     lsp_on_attach = function()
       local builtin =
-        require("plugins.telescope").require_module.telescope_builtin()
+          require("plugins.telescope").require_module.telescope_builtin()
       nmap("gr", builtin.lsp_references, "[r]eferences")
       nmap("gd", builtin.lsp_definitions, "[d]efinition")
       nmap("gD", builtin.lsp_type_definitions, "type [D]efinition")
