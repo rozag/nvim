@@ -206,13 +206,112 @@ local langs = {
     },
     null_ls_sources = function()
       local plug_null_ls = require("plugins.nullls")
-
-      local null_ls = plug_null_ls.require_module.null_ls()
-      local builtins = null_ls.builtins
-
       local methods = plug_null_ls.require_module.null_ls_methods()
-
       local helpers = plug_null_ls.require_module.null_ls_helpers()
+
+      local function ruff_diag()
+        local custom_end_col = {
+          end_col = function(entries, line)
+            if not line then
+              return
+            end
+
+            local start_col = entries["col"]
+            local message = entries["message"]
+            local code = entries["code"]
+            local default_position = start_col + 1
+
+            local pattern = nil
+            local trimmed_line = line:sub(start_col, -1)
+
+            if code == "F841" or code == "F823" then
+              pattern = [[Local variable %`(.*)%`]]
+            elseif code == "F821" or code == "F822" then
+              pattern = [[Undefined name %`(.*)%`]]
+            elseif code == "F401" then
+              pattern = [[%`(.*)%` imported but unused]]
+            elseif code == "F841" then
+              pattern =
+              [[Local variable %`(.*)%` is assigned to but never used]]
+            end
+            if not pattern then
+              return default_position
+            end
+
+            local results = message:match(pattern)
+            local _, end_col = trimmed_line:find(results, 1, true)
+
+            if not end_col then
+              return default_position
+            end
+
+            end_col = end_col + start_col
+            if end_col > tonumber(start_col) then
+              return end_col
+            end
+
+            return default_position
+          end,
+        }
+        return helpers.make_builtin {
+          name = "ruff",
+          meta = {
+            url = "https://github.com/astral-sh/ruff",
+            description = "An extremely fast Python linter, written in Rust.",
+          },
+          method = methods.internal.DIAGNOSTICS,
+          filetypes = { "python" },
+          generator_opts = {
+            command = "ruff",
+            args = {
+              "check",
+              "-n",
+              "-e",
+              "--stdin-filename",
+              "$FILENAME",
+              "-",
+            },
+            format = "line",
+            check_exit_code = function(code)
+              return code == 0
+            end,
+            to_stdin = true,
+            ignore_stderr = true,
+            on_output = helpers.diagnostics.from_pattern(
+              [[(%d+):(%d+): ((%u)%w+) (.*)]],
+              { "row", "col", "code", "severity", "message" },
+              {
+                adapters = {
+                  custom_end_col,
+                },
+                severities = {
+                  -- pycodestyle errors
+                  E = helpers.diagnostics.severities["error"],
+                  -- pycodestyle warnings
+                  W = helpers.diagnostics.severities["warning"],
+                  -- pyflakes
+                  F = helpers.diagnostics.severities["information"],
+                  -- flake8-builtins
+                  A = helpers.diagnostics.severities["information"],
+                  -- flake8-bugbear
+                  B = helpers.diagnostics.severities["warning"],
+                  -- flake8-comprehensions
+                  C = helpers.diagnostics.severities["warning"],
+                  -- flake8-print
+                  T = helpers.diagnostics.severities["information"],
+                  -- pyupgrade
+                  U = helpers.diagnostics.severities["information"],
+                  -- pydocstyle
+                  D = helpers.diagnostics.severities["information"],
+                  -- Meta
+                  M = helpers.diagnostics.severities["information"],
+                },
+              }
+            ),
+          },
+          factory = helpers.generator_factory,
+        }
+      end
 
       local function ruff_fmt()
         return helpers.make_builtin {
@@ -229,6 +328,7 @@ local langs = {
               "format",
               "--stdin-filename",
               "$FILENAME",
+              "-",
             },
             to_stdin = true,
           },
@@ -240,7 +340,7 @@ local langs = {
         -- [[ Diagnostics ]]
         -- An extremely fast Python linter, written in Rust.
         -- https://github.com/astral-sh/ruff
-        builtins.diagnostics.ruff,
+        ruff_diag(),
 
         -- [[ Formatting ]]
         -- An extremely fast Python linter, written in Rust.
