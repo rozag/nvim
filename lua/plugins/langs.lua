@@ -197,15 +197,56 @@ local langs = {
     fill_col_indicator = { type = "python", limit = "81" },
     treesitter_grammars = { "python", "starlark" },
     mason_lspconfig_ensure_installed = {
-      -- "pyright", -- pyright
+      "pyright", -- pyright
     },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
-      -- server_name = "pyright",
-      -- settings = {},
+      server_name = "pyright",
+      settings = {},
     },
     null_ls_sources = function()
-      return {}
+      local plug_null_ls = require("plugins.nullls")
+
+      local null_ls = plug_null_ls.require_module.null_ls()
+      local builtins = null_ls.builtins
+
+      local methods = plug_null_ls.require_module.null_ls_methods()
+
+      local helpers = plug_null_ls.require_module.null_ls_helpers()
+
+      local function ruff_fmt()
+        return helpers.make_builtin {
+          name = "ruff",
+          meta = {
+            url = "https://github.com/astral-sh/ruff",
+            description = "An extremely fast Python linter, written in Rust.",
+          },
+          method = methods.internal.FORMATTING,
+          filetypes = { "python" },
+          generator_opts = {
+            command = "ruff",
+            args = {
+              "format",
+              "--stdin-filename",
+              "$FILENAME",
+            },
+            to_stdin = true,
+          },
+          factory = helpers.formatter_factory,
+        }
+      end
+
+      return {
+        -- [[ Diagnostics ]]
+        -- An extremely fast Python linter, written in Rust.
+        -- https://github.com/astral-sh/ruff
+        builtins.diagnostics.ruff,
+
+        -- [[ Formatting ]]
+        -- An extremely fast Python linter, written in Rust.
+        -- https://github.com/astral-sh/ruff
+        ruff_fmt(),
+      }
     end,
   },
 

@@ -8,6 +8,12 @@ M.require_module = {
   null_ls = function()
     return require("null-ls")
   end,
+  null_ls_methods = function()
+    return require("null-ls.methods")
+  end,
+  null_ls_helpers = function()
+    return require("null-ls.helpers")
+  end,
 }
 
 M.lazy_defs = {
