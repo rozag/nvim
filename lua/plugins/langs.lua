@@ -64,19 +64,10 @@ local langs = {
         -- https://github.com/josharian/impl
         builtins.code_actions.impl,
 
-        -- TODO: uncomment linters when project is ready
-
         -- [[ Diagnostics ]]
         -- A Go linter aggregator.
         -- https://golangci-lint.run/
-        -- builtins.diagnostics.golangci_lint,
-        -- Fast, configurable, extensible, flexible, and beautiful linter
-        -- for Go.
-        -- https://revive.run/
-        -- builtins.diagnostics.revive,
-        -- Advanced Go linter.
-        -- https://staticcheck.io/
-        -- builtins.diagnostics.staticcheck,
+        builtins.diagnostics.golangci_lint,
 
         -- [[ Formatting ]]
         -- Updates your Go import lines, adding missing ones and removing
