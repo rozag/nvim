@@ -206,6 +206,10 @@ local langs = {
     },
     null_ls_sources = function()
       local plug_null_ls = require("plugins.nullls")
+
+      local null_ls = plug_null_ls.require_module.null_ls()
+      local builtins = null_ls.builtins
+
       local methods = plug_null_ls.require_module.null_ls_methods()
       local helpers = plug_null_ls.require_module.null_ls_helpers()
 
@@ -346,6 +350,10 @@ local langs = {
         -- An extremely fast Python linter, written in Rust.
         -- https://github.com/astral-sh/ruff
         ruff_fmt(),
+        -- Python utility / library to sort imports alphabetically and
+        -- automatically separate them into sections and by type.
+        -- https://github.com/PyCQA/isort
+        builtins.formatting.isort,
       }
     end,
   },
