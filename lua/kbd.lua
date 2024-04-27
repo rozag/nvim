@@ -115,9 +115,28 @@ M.general = function()
   which_key.register { ["<leader>s"] = { name = "Tele[s]cope" } }
 
   -- Copilot commands
-  which_key.register { ["<leader>c"] = { name = "[c]opilot" } }
-  which_key.register { ["<leader>cc"] = { name = "Copilot [c]hat" } }
-  which_key.register { ["<leader>c"] = { mode = "v", name = "Copilot [c]hat" } }
+  which_key.register {
+    ["<leader>c"] = {
+      name = "[c]opilot",
+    },
+  }
+  which_key.register {
+    ["<leader>c"] = {
+      mode = "v",
+      name = "[c]opilot",
+    },
+  }
+  which_key.register {
+    ["<leader>cc"] = {
+      name = "Copilot [c]hat",
+    },
+  }
+  which_key.register {
+    ["<leader>cc"] = {
+      mode = "v",
+      name = "Copilot [c]hat",
+    },
+  }
 
   -- Toggle commands
   which_key.register { ["<leader>t"] = { name = "[t]oggle" } }
@@ -210,22 +229,22 @@ M.plugins = {
         vim.cmd(copilot.cmd.chatTests)
       end, "Copilot chat [t]ests")
 
-      vmap("<leader>ce", function()
+      vmap("<leader>cce", function()
         vim.cmd(copilot.cmd.chatExplain)
       end, "Copilot chat [e]xplain")
-      vmap("<leader>cv", function()
+      vmap("<leader>ccv", function()
         vim.cmd(copilot.cmd.chatReview)
       end, "Copilot chat re[v]iew")
-      vmap("<leader>cf", function()
+      vmap("<leader>ccf", function()
         vim.cmd(copilot.cmd.chatFix)
       end, "Copilot chat [f]ix")
-      vmap("<leader>cz", function()
+      vmap("<leader>ccz", function()
         vim.cmd(copilot.cmd.chatOptimize)
       end, "Copilot chat optimi[z]e")
-      vmap("<leader>cd", function()
+      vmap("<leader>ccd", function()
         vim.cmd(copilot.cmd.chatDocs)
       end, "Copilot chat [d]ocs")
-      vmap("<leader>ct", function()
+      vmap("<leader>cct", function()
         vim.cmd(copilot.cmd.chatTests)
       end, "Copilot chat [t]ests")
     end,
