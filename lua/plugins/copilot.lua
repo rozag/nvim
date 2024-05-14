@@ -68,7 +68,15 @@ M.lazy_defs = {
       require("plugins.stdlib").ids.plenary,
     },
     config = function()
-      M.require_module.chat().setup()
+      M.require_module.chat().setup {
+        model = "gpt-4o",
+        window = {
+          layout = "float",
+          width = 0.5,
+          height = 0.9,
+          border = "none",
+        },
+      }
       local kbd = require("kbd")
       kbd.plugins.copilot.chat()
     end,
