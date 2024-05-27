@@ -70,7 +70,6 @@ local ensure_grammars_installed = {
   "scss",
   "smali",
   "solidity",
-  "sql",
   "swift",
   "verilog",
   "vim",

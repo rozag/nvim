@@ -236,7 +236,7 @@ local langs = {
               pattern = [[%`(.*)%` imported but unused]]
             elseif code == "F841" then
               pattern =
-              [[Local variable %`(.*)%` is assigned to but never used]]
+                [[Local variable %`(.*)%` is assigned to but never used]]
             end
             if not pattern then
               return default_position
@@ -395,6 +395,33 @@ local langs = {
     end,
   },
 
+  sql = {
+    fill_col_indicator = { type = "sql", limit = "81" },
+    treesitter_grammars = { "sql" },
+    mason_lspconfig_ensure_installed = {},
+    telescope_file_ignore_patterns = {},
+    lsp_settings = {},
+    null_ls_sources = function()
+      local null_ls = require("plugins.nullls").require_module.null_ls()
+      local builtins = null_ls.builtins
+      return {
+        -- [[ Diagnostics ]]
+        -- A SQL linter and auto-formatter for Humans
+        -- https://github.com/sqlfluff/sqlfluff
+        builtins.diagnostics.sqlfluff.with {
+          extra_args = { "--dialect", "postgres" },
+        },
+
+        -- [[ Formatting ]]
+        -- A SQL linter and auto-formatter for Humans
+        -- https://github.com/sqlfluff/sqlfluff
+        builtins.formatting.sqlfluff.with {
+          extra_args = { "--dialect", "postgres" },
+        },
+      }
+    end,
+  },
+
   terraform = {
     fill_col_indicator = { type = "terraform", limit = "81" },
     treesitter_grammars = { "terraform" },
@@ -462,7 +489,7 @@ local M = {}
 -- [[ Line width limit via colorcolumn ]]
 M.setup_fill_col_indicator = function()
   local fill_col_indicator_group =
-      vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
+    vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
 
   local function bind_file_type_to_fill_col_indicator_limit(type, limit)
     vim.api.nvim_create_autocmd("FileType", {
