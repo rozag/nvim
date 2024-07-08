@@ -13,8 +13,8 @@ M.require_module = {
   end,
 }
 
-M.cmd_toggle = "TroubleToggle"
-M.cmd_doc_diagnostics = "TroubleToggle document_diagnostics"
+M.cmd_toggle = "Trouble"
+M.cmd_doc_diagnostics = "Trouble diagnostics"
 
 M.lazy_defs = {
   -- [[ Trouble: a panel for diagnostics, refs, etc. ]]
