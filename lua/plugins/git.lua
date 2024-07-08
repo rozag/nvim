@@ -61,39 +61,23 @@ M.lazy_defs = {
       })
     end,
     config = function()
+      vim.api.nvim_set_hl(0, "GitSignsAdd", { link = "DiffAdd" })
+      vim.api.nvim_set_hl(0, "GitSignsAddNr", { link = "DiffAdd" })
+      vim.api.nvim_set_hl(0, "GitSignsAddLn", { link = "DiffAdd" })
+      vim.api.nvim_set_hl(0, "GitSignsChange", { link = "DiffChange" })
+      vim.api.nvim_set_hl(0, "GitSignsChangeNr", { link = "DiffChangeDelete" })
+      vim.api.nvim_set_hl(0, "GitSignsChangeLn", { link = "DiffChange" })
+      vim.api.nvim_set_hl(0, "GitSignsDelete", { link = "DiffDelete" })
+      vim.api.nvim_set_hl(0, "GitSignsDeleteNr", { link = "DiffDelete" })
+      vim.api.nvim_set_hl(0, "GitSignsDeleteLn", { link = "DiffDelete" })
       M.require_module.gitsigns().setup {
         signs = {
-          add = {
-            hl = "DiffAdd",
-            text = "│",
-            numhl = "GitSignsAddNr",
-          },
-          change = {
-            hl = "DiffChange",
-            text = "│",
-            numhl = "GitSignsChangeNr",
-          },
-          delete = {
-            hl = "DiffDelete",
-            text = "󰍵",
-            numhl = "GitSignsDeleteNr",
-          },
-          topdelete = {
-            hl = "DiffDelete",
-            text = "‾",
-            numhl = "GitSignsDeleteNr",
-          },
-          changedelete = {
-            hl = "DiffChangeDelete",
-            text = "~",
-            numhl = "GitSignsChangeNr",
-          },
-          untracked = {
-            hl = "GitSignsAdd",
-            text = "│",
-            numhl = "GitSignsAddNr",
-            linehl = "GitSignsAddLn",
-          },
+          add = { text = "│" },
+          change = { text = "│" },
+          delete = { text = "󰍵" },
+          topdelete = { text = "‾" },
+          changedelete = { text = "~" },
+          untracked = { text = "│" },
         },
       }
     end,

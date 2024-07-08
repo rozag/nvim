@@ -9,7 +9,7 @@ M.require_module = {
     return require("trouble")
   end,
   trouble_telescope = function()
-    return require("trouble.providers.telescope")
+    return require("trouble.sources.telescope")
   end,
 }
 
