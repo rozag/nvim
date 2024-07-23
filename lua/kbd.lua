@@ -441,6 +441,9 @@ M.plugins = {
     nmap("<leader>od", function()
       vim.cmd(trouble.cmd_doc_diagnostics)
     end, "Trouble [d]iagnostics")
+    nmap("<leader>oy", function()
+      vim.cmd(trouble.cmd_lsp_document_symbols)
+    end, "Trouble LSP document s[y]mbols")
   end,
 
   wilder = {
