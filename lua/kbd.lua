@@ -29,7 +29,7 @@ M.general = function()
   local which_key = require("plugins.editing").require_module.which_key()
 
   -- Swap arguments (for treesitter textobjects bindings)
-  which_key.register { ["gs"] = { name = "[s]wap" } }
+  which_key.add { "gs", desc = "[s]wap" }
 
   -- Better default experience with <Space> as leader key
   vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", {
@@ -83,7 +83,7 @@ M.general = function()
   }) -- Cmd-S-z
 
   -- Window-related keybindings
-  which_key.register { ["<leader>w"] = { name = "[w]indow" } }
+  which_key.add { "<leader>w", group = "[w]indow" }
   nmap("<leader>ws", vim.cmd.split, "horizontal [s]plit")
   nmap("<leader>wv", vim.cmd.vsplit, "[v]ertical split")
   nmap("<leader>wc", vim.cmd.close, "[c]lose")
@@ -98,7 +98,7 @@ M.general = function()
   nmap("<leader>ww", "<C-w>w", "[w]cycle")
 
   -- Buffer-related keybindings
-  which_key.register { ["<leader>b"] = { name = "[b]uffer" } }
+  which_key.add { "<leader>b", group = "[b]uffer" }
   nmap("<leader>bn", vim.cmd.bnext, "[n]ext")
   nmap("<leader>bp", vim.cmd.bprevious, "[p]revious")
   nmap("<leader>bN", vim.cmd.enew, "[N]ew")
@@ -107,39 +107,21 @@ M.general = function()
   nmap("<leader>bS", vim.cmd.wall, "[S]ave all")
 
   -- Open commands
-  which_key.register { ["<leader>o"] = { name = "[o]pen" } }
+  which_key.add { "<leader>o", group = "[o]pen" }
   nmap("<leader>ot", vim.cmd.terminal, "[t]erminal")
   nmap("<leader>oh", vim.cmd.checkhealth, "check[h]ealth")
 
   -- Open commands
-  which_key.register { ["<leader>s"] = { name = "Tele[s]cope" } }
+  which_key.add { "<leader>s", group = "Tele[s]cope" }
 
   -- Copilot commands
-  which_key.register {
-    ["<leader>c"] = {
-      name = "[c]opilot",
-    },
-  }
-  which_key.register {
-    ["<leader>c"] = {
-      mode = "v",
-      name = "[c]opilot",
-    },
-  }
-  which_key.register {
-    ["<leader>cc"] = {
-      name = "Copilot [c]hat",
-    },
-  }
-  which_key.register {
-    ["<leader>cc"] = {
-      mode = "v",
-      name = "Copilot [c]hat",
-    },
-  }
+  which_key.add { "<leader>c", group = "[c]opilot" }
+  which_key.add { "<leader>c", mode = "v", group = "[c]opilot" }
+  which_key.add { "<leader>cc", group = "Copilot [c]hat" }
+  which_key.add { "<leader>cc", mode = "v", group = "Copilot [c]hat" }
 
   -- Toggle commands
-  which_key.register { ["<leader>t"] = { name = "[t]oggle" } }
+  which_key.add { "<leader>t", group = "[t]oggle" }
   nmap("<leader>tb", function()
     vim.cmd(require("plugins.git").cmd_toggle_gitblame)
   end, "git [b]lame")
