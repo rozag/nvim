@@ -451,11 +451,11 @@ local langs = {
       "typescript",
     },
     mason_lspconfig_ensure_installed = {
-      "tsserver", -- typescript-language-server
+      "ts_ls", -- typescript-language-server
     },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
-      server_name = "tsserver",
+      server_name = "ts_ls",
       settings = {},
     },
     null_ls_sources = function()
