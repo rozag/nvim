@@ -62,11 +62,12 @@ M.lazy_defs = {
   -- https://github.com/CopilotC-Nvim/CopilotChat.nvim
   {
     M.ids.chat,
-    branch = "canary",
+    branch = "main",
     dependencies = {
       M.ids.copilot,
-      require("plugins.stdlib").ids.plenary,
+      { require("plugins.stdlib").ids.plenary, branch = "master" },
     },
+    build = "make tiktoken",
     config = function()
       M.require_module.chat().setup {
         -- debug = true,
