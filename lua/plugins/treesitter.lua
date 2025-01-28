@@ -33,7 +33,6 @@ utils.table.append_keys_values(
 local ensure_grammars_installed = {
   "bash",
   "c",
-  "clojure",
   "cmake",
   "commonlisp",
   "cpp",

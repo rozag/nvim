@@ -14,6 +14,57 @@ local langs = {
     end,
   },
 
+  clojure = {
+    fill_col_indicator = { type = "clojure", limit = "81" },
+    treesitter_grammars = { "clojure" },
+    mason_lspconfig_ensure_installed = {
+      "clojure_lsp", -- Clojure LSP
+    },
+    telescope_file_ignore_patterns = {},
+    lsp_settings = {
+      server_name = "clojure_lsp",
+      settings = {},
+    },
+    null_ls_sources = function()
+      local plug_null_ls = require("plugins.nullls")
+      local builtins = plug_null_ls.require_module.null_ls().builtins
+
+      local methods = plug_null_ls.require_module.null_ls_methods()
+      local helpers = plug_null_ls.require_module.null_ls_helpers()
+
+      local function cljfmt()
+        return helpers.make_builtin {
+          name = "cljfmt",
+          meta = {
+            url = "https://github.com/weavejester/cljfmt",
+            description = "A tool for formatting Clojure code.",
+          },
+          method = methods.internal.FORMATTING,
+          filetypes = { "clojure" },
+          generator_opts = {
+            command = "cljfmt",
+            args = {
+              "fix",
+              "-",
+            },
+            to_stdin = true,
+          },
+          factory = helpers.formatter_factory,
+        }
+      end
+
+      return {
+        -- [[ Diagnostics ]]
+        -- A linter for clojure code that sparks joy.
+        -- https://github.com/clj-kondo/clj-kondo
+        builtins.diagnostics.clj_kondo,
+
+        -- [[ Formatting ]]
+        cljfmt(),
+      }
+    end,
+  },
+
   dart = {
     fill_col_indicator = { type = "dart", limit = "81" },
     treesitter_grammars = { "dart" },
@@ -236,7 +287,7 @@ local langs = {
               pattern = [[%`(.*)%` imported but unused]]
             elseif code == "F841" then
               pattern =
-                [[Local variable %`(.*)%` is assigned to but never used]]
+              [[Local variable %`(.*)%` is assigned to but never used]]
             end
             if not pattern then
               return default_position
@@ -489,7 +540,7 @@ local M = {}
 -- [[ Line width limit via colorcolumn ]]
 M.setup_fill_col_indicator = function()
   local fill_col_indicator_group =
-    vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
+      vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
 
   local function bind_file_type_to_fill_col_indicator_limit(type, limit)
     vim.api.nvim_create_autocmd("FileType", {
