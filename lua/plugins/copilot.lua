@@ -31,6 +31,35 @@ M.cmd = {
   chatTests = "CopilotChatTests",
 }
 
+M.chatOpenFloat = function()
+  M.require_module.chat().open {
+    window = {
+      layout = "float",
+    },
+  }
+end
+M.chatOpenVsplit = function()
+  M.require_module.chat().open {
+    window = {
+      layout = "vertical",
+    },
+  }
+end
+M.chatOpenSplit = function()
+  M.require_module.chat().open {
+    window = {
+      layout = "horizontal",
+    },
+  }
+end
+M.chatOpenReplace = function()
+  M.require_module.chat().open {
+    window = {
+      layout = "replace",
+    },
+  }
+end
+
 M.lazy_defs = {
   -- [[ Github Copilot ]]
   -- https://github.com/zbirenbaum/copilot.lua
@@ -75,7 +104,7 @@ M.lazy_defs = {
         window = {
           layout = "float",
           width = 0.5,
-          height = 0.9,
+          height = 0.5,
           border = "none",
         },
       }

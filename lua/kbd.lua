@@ -119,6 +119,7 @@ M.general = function()
   which_key.add { "<leader>c", mode = "v", group = "[c]opilot" }
   which_key.add { "<leader>cc", group = "Copilot [c]hat" }
   which_key.add { "<leader>cc", mode = "v", group = "Copilot [c]hat" }
+  which_key.add { "<leader>cco", group = "Copilot chat [o]pen" }
 
   -- Toggle commands
   which_key.add { "<leader>t", group = "[t]oggle" }
@@ -183,9 +184,18 @@ M.plugins = {
     chat = function()
       local copilot = require("plugins.copilot")
 
-      nmap("<leader>cco", function()
-        vim.cmd(copilot.cmd.chatOpen)
-      end, "[o]pen Copilot chat")
+      nmap("<leader>ccof", function()
+        copilot.chatOpenFloat()
+      end, "Copilot chat open [f]loat")
+      nmap("<leader>ccov", function()
+        copilot.chatOpenVsplit()
+      end, "Copilot chat open [v]split")
+      nmap("<leader>ccos", function()
+        copilot.chatOpenSplit()
+      end, "Copilot chat open [s]plit")
+      nmap("<leader>ccor", function()
+        copilot.chatOpenReplace()
+      end, "Copilot chat open [r]eplace")
       nmap("<leader>ccc", function()
         vim.cmd(copilot.cmd.chatClose)
       end, "[c]lose Copilot chat")
