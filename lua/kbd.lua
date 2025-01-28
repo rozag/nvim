@@ -127,6 +127,20 @@ M.general = function()
   nmap("<leader>tb", function()
     vim.cmd(require("plugins.git").cmd_toggle_gitblame)
   end, "git [b]lame")
+
+  -- REPL (Conjure) commands
+  which_key.add { "<leader>r", group = "[r]EPL" }
+  which_key.add { "<leader>r", mode = "v", group = "[r]EPL" }
+  which_key.add { "<leader>rc", group = "REPL [c]onnection" }
+  which_key.add { "<leader>re", group = "[e]valuate" }
+  which_key.add { "<leader>rec", group = "result as [c]omment" }
+  which_key.add { "<leader>rg", group = "[g]oto" }
+  which_key.add { "<leader>rl", group = "[l]og buffer" }
+  which_key.add { "<leader>rr", group = "[r]efresh" }
+  which_key.add { "<leader>rs", group = "REPL [s]ession" }
+  which_key.add { "<leader>rt", group = "Run [t]ests" }
+  which_key.add { "<leader>rv", group = "[v]iew recent result" }
+  which_key.add { "<leader>rx", group = "[r]un form wrapped" }
 end
 
 -- [[ Plugin-specific keybindings ]]
@@ -162,6 +176,12 @@ M.plugins = {
       { desc = "Comment toggle linewise (visual)" }
     )
   end,
+
+  conjure = {
+    mapping = {
+      prefix = "<leader>r",
+    },
+  },
 
   copilot = {
     mappings = {

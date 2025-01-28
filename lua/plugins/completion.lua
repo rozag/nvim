@@ -9,6 +9,7 @@ M.ids = {
   cmp_nvim_lsp = "hrsh7th/cmp-nvim-lsp",
   cmp_buffer = "hrsh7th/cmp-buffer",
   cmp_path = "hrsh7th/cmp-path",
+  cmp_conjure = "PaterJason/cmp-conjure",
 
   autopairs = "windwp/nvim-autopairs",
 
@@ -49,6 +50,7 @@ M.lazy_defs = {
       M.ids.cmp_nvim_lsp,
       M.ids.cmp_buffer,
       M.ids.cmp_path,
+      M.ids.cmp_conjure,
     },
     config = function()
       local function border(hl_name)
@@ -136,6 +138,7 @@ M.lazy_defs = {
           { name = "buffer" },
           { name = "nvim_lua" },
           { name = "path" },
+          { name = "conjure" },
         },
         sorting = {
           comparators = {
