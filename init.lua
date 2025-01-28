@@ -1,9 +1,8 @@
 local kbd = require("kbd")
 
 -- [[ Set leader key before everything else ]]
-local leader_key = kbd.leader_key
-vim.g.mapleader = leader_key
-vim.g.maplocalleader = leader_key
+vim.g.mapleader = kbd.leader_key
+vim.g.maplocalleader = kbd.local_leader_key
 
 -- [[ Core keybindings, options, and autocommands ]]
 require("core")

@@ -23,6 +23,7 @@ end
 local M = {}
 
 M.leader_key = " "
+M.local_leader_key = ","
 
 -- [[ General keybindings ]]
 M.general = function()
