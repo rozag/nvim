@@ -66,10 +66,8 @@ M.lazy_defs = {
     lazy = true,
     dependencies = { M.ids.cmp_conjure },
     init = function()
-      local conjurekbd = require("kbd").plugins.conjure
-      vim.g["conjure#mapping#prefix"] = conjurekbd.mapping.prefix
-
       vim.g["conjure#filetypes"] = { "clojure", "fennel" }
+      vim.g["conjure#log#wrap"] = true
     end,
   },
 

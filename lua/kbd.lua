@@ -65,13 +65,13 @@ M.general = function()
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer")           -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
+  nmap("^[[M-s", vim.cmd.write, "save buffer")             -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers")       -- Cmd-S-s
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
-  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
-  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
+  nmap("^[[M-S-z", vim.cmd.redo, "redo")                   -- Cmd-S-z
+  nmap("^[[M-z", vim.cmd.undo, "undo")                     -- Cmd-z
   vim.keymap.set("i", "^[[M-z", vim.cmd.undo, {
     desc = "undo",
     noremap = true,
@@ -129,18 +129,18 @@ M.general = function()
   end, "git [b]lame")
 
   -- REPL (Conjure) commands
-  which_key.add { "<leader>r", group = "[r]EPL" }
-  which_key.add { "<leader>r", mode = "v", group = "[r]EPL" }
-  which_key.add { "<leader>rc", group = "REPL [c]onnection" }
-  which_key.add { "<leader>re", group = "[e]valuate" }
-  which_key.add { "<leader>rec", group = "result as [c]omment" }
-  which_key.add { "<leader>rg", group = "[g]oto" }
-  which_key.add { "<leader>rl", group = "[l]og buffer" }
-  which_key.add { "<leader>rr", group = "[r]efresh" }
-  which_key.add { "<leader>rs", group = "REPL [s]ession" }
-  which_key.add { "<leader>rt", group = "Run [t]ests" }
-  which_key.add { "<leader>rv", group = "[v]iew recent result" }
-  which_key.add { "<leader>rx", group = "[r]un form wrapped" }
+  which_key.add { "<localleader>", group = "Conjure REPL" }
+  which_key.add { "<localleader>", mode = "v", group = "Conjure REPL" }
+  which_key.add { "<localleader>c", group = "[c]onnection" }
+  which_key.add { "<localleader>e", group = "[e]valuate" }
+  which_key.add { "<localleader>ec", group = "result as [c]omment" }
+  which_key.add { "<localleader>g", group = "[g]oto" }
+  which_key.add { "<localleader>l", group = "[l]og buffer" }
+  which_key.add { "<localleader>r", group = "[r]efresh" }
+  which_key.add { "<localleader>s", group = "[s]ession" }
+  which_key.add { "<localleader>t", group = "[t]ests" }
+  which_key.add { "<localleader>v", group = "[v]iew recent result" }
+  which_key.add { "<localleader>x", group = "[r]un form wrapped" }
 end
 
 -- [[ Plugin-specific keybindings ]]
@@ -167,7 +167,7 @@ M.plugins = {
     vim.keymap.set("n", "^[[M-/", function()
       return vim.api.nvim_get_vvar("count") == 0
           and "<Plug>(comment_toggle_linewise_current)"
-        or "<Plug>(comment_toggle_linewise_count)"
+          or "<Plug>(comment_toggle_linewise_count)"
     end, { expr = true, desc = "Comment toggle current line" })
     vim.keymap.set(
       "v",
@@ -177,17 +177,11 @@ M.plugins = {
     )
   end,
 
-  conjure = {
-    mapping = {
-      prefix = "<leader>r",
-    },
-  },
-
   copilot = {
     mappings = {
       accept = "<C-Down>", -- C-j
-      next = "<C-Right>", -- C-l
-      prev = "<C-Left>", -- C-h
+      next = "<C-Right>",  -- C-l
+      prev = "<C-Left>",   -- C-h
       dismiss = "<C-]>",
     },
     core = function()
@@ -299,9 +293,9 @@ M.plugins = {
   telescope = {
     mappings = function()
       local actions =
-        require("plugins.telescope").require_module.telescope_actions()
+          require("plugins.telescope").require_module.telescope_actions()
       local trouble =
-        require("plugins.trouble").require_module.trouble_telescope()
+          require("plugins.trouble").require_module.trouble_telescope()
       local editing = require("plugins.editing")
       return {
         -- Normal mode
@@ -355,7 +349,7 @@ M.plugins = {
 
     lsp_on_attach = function()
       local builtin =
-        require("plugins.telescope").require_module.telescope_builtin()
+          require("plugins.telescope").require_module.telescope_builtin()
       nmap("gr", builtin.lsp_references, "[r]eferences")
       nmap("gd", builtin.lsp_definitions, "[d]efinition")
       nmap("gD", builtin.lsp_type_definitions, "type [D]efinition")
