@@ -5,6 +5,7 @@ M.ids = {
   which_key = "folke/which-key.nvim",
   comment = "numToStr/Comment.nvim",
   conjure = "Olical/conjure",
+  cmp_conjure = "PaterJason/cmp-conjure",
 }
 
 M.require_module = {
@@ -61,25 +62,27 @@ M.lazy_defs = {
   -- https://github.com/Olical/conjure
   {
     M.ids.conjure,
-    ft = { "clojure" },
-    dependencies = {
-      require("plugins.completion").ids.cmp_conjure,
-    },
+    ft = { "clojure", "fennel" },
+    lazy = true,
+    dependencies = { M.ids.cmp_conjure },
     init = function()
-      -- vim.g["conjure#log#hud#enabled"] = false
-
-      vim.g["conjure#filetypes"] = {
-        "clojure",
-        "fennel",
-        "janet",
-        "hy",
-        "racket",
-        "scheme",
-        "lisp",
-      }
-
       local conjurekbd = require("kbd").plugins.conjure
       vim.g["conjure#mapping#prefix"] = conjurekbd.mapping.prefix
+
+      vim.g["conjure#filetypes"] = { "clojure", "fennel" }
+    end,
+  },
+
+  -- [[ nvim-cmp source for conjure ]]
+  -- https://github.com/PaterJason/cmp-conjure
+  {
+    M.ids.cmp_conjure,
+    lazy = true,
+    config = function()
+      local cmp = require("plugins.completion").require_module.cmp()
+      local config = cmp.get_config()
+      table.insert(config.sources, { name = "conjure" })
+      return cmp.setup(config)
     end,
   },
 }
