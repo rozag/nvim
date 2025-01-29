@@ -8,6 +8,7 @@ M.ids = {
   tint = "levouh/tint.nvim",
   todo_comments = "folke/todo-comments.nvim",
   indent_blankline = "lukas-reineke/indent-blankline.nvim",
+  rainbow = "HiPhish/rainbow-delimiters.nvim",
 }
 
 M.require_module = {
@@ -25,6 +26,9 @@ M.require_module = {
   end,
   indent_blankline = function()
     return require("ibl")
+  end,
+  rainbow_setup = function()
+    return require("rainbow-delimiters.setup")
   end,
 }
 
@@ -142,6 +146,15 @@ M.lazy_defs = {
           enabled = false,
         },
       }
+    end,
+  },
+
+  -- [[ Rainbow delimiters for Neovim with Tree-sitter ]]
+  -- https://gitlab.com/HiPhish/rainbow-delimiters.nvim
+  {
+    M.ids.rainbow,
+    setup = function()
+      M.require_module.rainbow_setup().setup()
     end,
   },
 }
