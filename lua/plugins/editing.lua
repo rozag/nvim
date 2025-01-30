@@ -6,6 +6,7 @@ M.ids = {
   comment = "numToStr/Comment.nvim",
   conjure = "Olical/conjure",
   cmp_conjure = "PaterJason/cmp-conjure",
+  paredit = "julienvincent/nvim-paredit",
 }
 
 M.require_module = {
@@ -20,6 +21,9 @@ M.require_module = {
   end,
   conjure = function()
     return require("conjure")
+  end,
+  paredit = function()
+    return require("nvim-paredit")
   end,
 }
 
@@ -81,6 +85,17 @@ M.lazy_defs = {
       local config = cmp.get_config()
       table.insert(config.sources, { name = "conjure" })
       return cmp.setup(config)
+    end,
+  },
+
+  -- [[ A Paredit implementation for Neovim ]]
+  -- https://github.com/julienvincent/nvim-paredit
+  {
+    M.ids.paredit,
+    ft = { "clojure", "fennel", "scheme", "lisp" },
+    lazy = true,
+    config = function()
+      M.require_module.paredit().setup()
     end,
   },
 }
