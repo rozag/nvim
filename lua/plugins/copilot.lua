@@ -100,7 +100,8 @@ M.lazy_defs = {
     config = function()
       M.require_module.chat().setup {
         -- debug = true,
-        model = "gpt-4o",
+        -- model = "gpt-4o",
+        model = "claude-3.5-sonnet",
         window = {
           layout = "float",
           width = 0.5,
