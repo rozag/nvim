@@ -9,7 +9,7 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
-    null_ls_sources = function()
+    none_ls_sources = function()
       return {}
     end,
   },
@@ -25,12 +25,12 @@ local langs = {
       server_name = "clojure_lsp",
       settings = {},
     },
-    null_ls_sources = function()
-      local plug_null_ls = require("plugins.nullls")
-      local builtins = plug_null_ls.require_module.null_ls().builtins
+    none_ls_sources = function()
+      local plug_none_ls = require("plugins.nullls")
+      local builtins = plug_none_ls.require_module.none_ls().builtins
 
-      local methods = plug_null_ls.require_module.null_ls_methods()
-      local helpers = plug_null_ls.require_module.null_ls_helpers()
+      local methods = plug_none_ls.require_module.none_ls_methods()
+      local helpers = plug_none_ls.require_module.none_ls_helpers()
 
       local function cljfmt()
         return helpers.make_builtin {
@@ -71,7 +71,7 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
-    null_ls_sources = function()
+    none_ls_sources = function()
       return {}
     end,
   },
@@ -82,7 +82,7 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
-    null_ls_sources = function()
+    none_ls_sources = function()
       return {}
     end,
   },
@@ -103,9 +103,9 @@ local langs = {
       server_name = "gopls",
       settings = {},
     },
-    null_ls_sources = function()
-      local null_ls = require("plugins.nullls").require_module.null_ls()
-      local builtins = null_ls.builtins
+    none_ls_sources = function()
+      local none_ls = require("plugins.nullls").require_module.none_ls()
+      local builtins = none_ls.builtins
       return {
         -- [[ Code actions ]]
         -- Go tool to modify struct field tags.
@@ -135,7 +135,7 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
-    null_ls_sources = function()
+    none_ls_sources = function()
       return {}
     end,
   },
@@ -152,7 +152,7 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = { "node_modules" },
     lsp_settings = {},
-    null_ls_sources = function()
+    none_ls_sources = function()
       return {}
     end,
   },
@@ -163,7 +163,7 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
-    null_ls_sources = function()
+    none_ls_sources = function()
       return {}
     end,
   },
@@ -205,9 +205,9 @@ local langs = {
         },
       },
     },
-    null_ls_sources = function()
-      local null_ls = require("plugins.nullls").require_module.null_ls()
-      local builtins = null_ls.builtins
+    none_ls_sources = function()
+      local none_ls = require("plugins.nullls").require_module.none_ls()
+      local builtins = none_ls.builtins
       return {
         -- [[ Diagnostics ]]
         -- Uses inbuilt Lua code to detect lines with trailing whitespace
@@ -228,7 +228,7 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
-    null_ls_sources = function()
+    none_ls_sources = function()
       return {}
     end,
   },
@@ -239,7 +239,7 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
-    null_ls_sources = function()
+    none_ls_sources = function()
       return {}
     end,
   },
@@ -255,14 +255,14 @@ local langs = {
       server_name = "pyright",
       settings = {},
     },
-    null_ls_sources = function()
-      local plug_null_ls = require("plugins.nullls")
+    none_ls_sources = function()
+      local plug_none_ls = require("plugins.nullls")
 
-      local null_ls = plug_null_ls.require_module.null_ls()
-      local builtins = null_ls.builtins
+      local none_ls = plug_none_ls.require_module.none_ls()
+      local builtins = none_ls.builtins
 
-      local methods = plug_null_ls.require_module.null_ls_methods()
-      local helpers = plug_null_ls.require_module.null_ls_helpers()
+      local methods = plug_none_ls.require_module.none_ls_methods()
+      local helpers = plug_none_ls.require_module.none_ls_helpers()
 
       local function ruff_diag()
         local custom_end_col = {
@@ -435,13 +435,13 @@ local langs = {
         },
       },
     },
-    null_ls_sources = function()
-      local null_ls = require("plugins.nullls").require_module.null_ls()
-      local builtins = null_ls.builtins
+    none_ls_sources = function()
+      local none_ls = require("plugins.nullls").require_module.none_ls()
+      local builtins = none_ls.builtins
       return {
         -- [[ Formatting ]]
         -- A tool for formatting rust code according to style guidelines.
-        builtins.formatting.rustfmt,
+        require("plugins.nullls").require_module.none_ls_formatting_rustfmt(),
       }
     end,
   },
@@ -452,9 +452,9 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
-    null_ls_sources = function()
-      local null_ls = require("plugins.nullls").require_module.null_ls()
-      local builtins = null_ls.builtins
+    none_ls_sources = function()
+      local none_ls = require("plugins.nullls").require_module.none_ls()
+      local builtins = none_ls.builtins
       return {
         -- [[ Diagnostics ]]
         -- A SQL linter and auto-formatter for Humans
@@ -479,7 +479,7 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
-    null_ls_sources = function()
+    none_ls_sources = function()
       return {}
     end,
   },
@@ -490,7 +490,7 @@ local langs = {
     mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
-    null_ls_sources = function()
+    none_ls_sources = function()
       return {}
     end,
   },
@@ -509,19 +509,19 @@ local langs = {
       server_name = "ts_ls",
       settings = {},
     },
-    null_ls_sources = function()
-      local null_ls = require("plugins.nullls").require_module.null_ls()
-      local builtins = null_ls.builtins
+    none_ls_sources = function()
+      local none_ls = require("plugins.nullls").require_module.none_ls()
+      local builtins = none_ls.builtins
       return {
         -- [[ Code Actions ]]
         -- Injects actions to fix ESLint issues or ignore broken rules.
-        builtins.code_actions.eslint,
+        require("plugins.nullls").require_module.none_ls_code_actions_eslint(),
 
         -- [[ Diagnostics ]]
         -- A linter for the JavaScript ecosystem.
-        builtins.diagnostics.eslint,
+        require("plugins.nullls").require_module.none_ls_diagnostics_eslint(),
         -- Parses diagnostics from the TypeScript compiler.
-        builtins.diagnostics.tsc,
+        -- builtins.diagnostics.tsc,
 
         -- [[ Formatting ]]
         -- Find and fix problems in your JavaScript code.
@@ -595,13 +595,13 @@ for _, lang in pairs(langs) do
   end
 end
 
--- [[ null-ls sources ]]
-M.null_ls_sources = function()
-  local null_ls_sources = {}
+-- [[ none-ls sources ]]
+M.none_ls_sources = function()
+  local none_ls_sources = {}
   for _, lang in pairs(langs) do
-    utils.table.append_values(null_ls_sources, lang.null_ls_sources())
+    utils.table.append_values(none_ls_sources, lang.none_ls_sources())
   end
-  return null_ls_sources
+  return none_ls_sources
 end
 
 return M

@@ -18,8 +18,8 @@ M.require_module = {
 
 M.cmd_toggle_gitblame = "GitBlameToggle"
 
-M.null_ls_sources = function()
-  local builtins = require("plugins.nullls").require_module.null_ls().builtins
+M.none_ls_sources = function()
+  local builtins = require("plugins.nullls").require_module.none_ls().builtins
   return {
     -- [[ Code actions ]]
     -- Injects code actions for Git operations at the current cursor
@@ -94,7 +94,7 @@ M.lazy_defs = {
     config = function()
       vim.g.gitblame_date_format = "%Y-%m-%d"
       vim.g.gitblame_message_template =
-        "    󰊢 <author> • <date> • <summary> "
+      "    󰊢 <author> • <date> • <summary> "
       vim.g.gitblame_message_when_not_committed = "    󰊢 Not Committed Yet "
       vim.g.gitblame_delay = 500
       vim.g.gitblame_display_virtual_text = 1

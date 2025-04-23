@@ -1,48 +1,62 @@
 local M = {}
 
 M.ids = {
-  null_ls = "jose-elias-alvarez/null-ls.nvim",
+  none_ls = "nvimtools/none-ls.nvim",
+  none_ls_extras = "nvimtools/none-ls-extras.nvim",
 }
 
 M.require_module = {
-  null_ls = function()
+  none_ls = function()
     return require("null-ls")
   end,
-  null_ls_methods = function()
+  none_ls_methods = function()
     return require("null-ls.methods")
   end,
-  null_ls_helpers = function()
+  none_ls_helpers = function()
     return require("null-ls.helpers")
+  end,
+  none_ls_formatting_jq = function()
+    return require("none-ls.formatting.jq")
+  end,
+  none_ls_code_actions_eslint = function()
+    return require("none-ls.code_actions.eslint")
+  end,
+  none_ls_diagnostics_eslint = function()
+    return require("none-ls.diagnostics.eslint")
+  end,
+  none_ls_formatting_rustfmt = function()
+    return require("none-ls.formatting.rustfmt")
   end,
 }
 
 M.lazy_defs = {
   -- [[ LSP improvements - linters, formatters, etc. ]]
-  -- https://github.com/jose-elias-alvarez/null-ls.nvim
+  -- https://github.com/nvimtools/none-ls.nvim
   -- Available builtins:
-  -- github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md
+  -- https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md
   {
-    M.ids.null_ls,
+    M.ids.none_ls,
+    dependencies = { M.ids.none_ls_extras },
     config = function()
-      local null_ls = M.require_module.null_ls()
+      local none_ls = M.require_module.none_ls()
       local utils = require("utils")
 
       local sources = {
         -- [[ Formatting ]]
         -- Command-line JSON processor.
         -- https://github.com/stedolan/jq
-        null_ls.builtins.formatting.jq,
+        M.require_module.none_ls_formatting_jq(),
       }
       utils.table.append_values(
         sources,
-        require("plugins.git").null_ls_sources()
+        require("plugins.git").none_ls_sources()
       )
       utils.table.append_values(
         sources,
-        require("plugins.langs").null_ls_sources()
+        require("plugins.langs").none_ls_sources()
       )
 
-      null_ls.setup {
+      none_ls.setup {
         on_attach = require("plugins.lsp").on_attach,
         sources = sources,
       }
