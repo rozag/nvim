@@ -3,7 +3,6 @@ local utils = require("utils")
 local M = {}
 
 M.ids = {
-  colorizer = "NvChad/nvim-colorizer.lua",
   devicons = "nvim-tree/nvim-web-devicons",
   tint = "levouh/tint.nvim",
   todo_comments = "folke/todo-comments.nvim",
@@ -12,9 +11,6 @@ M.ids = {
 }
 
 M.require_module = {
-  colorizer = function()
-    return require("colorizer")
-  end,
   devicons = function()
     return require("nvim-web-devicons")
   end,
@@ -36,17 +32,6 @@ M.cmd_todo_telescope = "TodoTelescope"
 M.cmd_todo_trouble = "TodoTrouble"
 
 M.lazy_defs = {
-  -- [[ Preview for color literals, highlights #123456 strings ]]
-  -- https://github.com/NvChad/nvim-colorizer.lua
-  {
-    M.ids.colorizer,
-    config = function()
-      local colorizer = M.require_module.colorizer()
-      colorizer.setup {}
-      colorizer.attach_to_buffer(0)
-    end,
-  },
-
   -- [[ Fancy icons , , , etc. ]]
   -- https://github.com/nvim-tree/nvim-web-devicons
   {
@@ -154,7 +139,7 @@ M.lazy_defs = {
   {
     M.ids.rainbow,
     setup = function()
-      M.require_module.rainbow_setup().setup()
+      M.require_module.rainbow_setup().setup {}
     end,
   },
 }
