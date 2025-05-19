@@ -127,6 +127,9 @@ M.general = function()
   nmap("<leader>tb", function()
     vim.cmd(require("plugins.git").cmd_toggle_gitblame)
   end, "git [b]lame")
+  nmap("<leader>tw", function()
+    vim.cmd("set wrap!")
+  end, "line [w]rap")
 
   -- REPL (Conjure) commands
   which_key.add { "<localleader>", group = "Conjure REPL" }
