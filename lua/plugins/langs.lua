@@ -18,7 +18,7 @@ local langs = {
     fill_col_indicator = { type = "clojure", limit = "81" },
     treesitter_grammars = { "clojure" },
     mason_lspconfig_ensure_installed = {
-      "clojure_lsp", -- Clojure LSP
+      "clojure_lsp", -- Clojure LSP: https://clojure-lsp.io/settings/
     },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
