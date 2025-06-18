@@ -183,7 +183,8 @@ M.lazy_defs = {
       )
 
       M.require_module.autopairs().setup {
-        fast_wrap = {},
+        check_ts = true,
+        enable_check_bracket_line = false,
         disable_filetype = disable_filetype,
       }
 
