@@ -81,6 +81,7 @@ M.lazy_defs = {
           yaml = true,
           markdown = true,
         },
+        copilot_model = "o4-mini",
       }
 
       kbd.plugins.copilot.core()
@@ -100,9 +101,8 @@ M.lazy_defs = {
     config = function()
       M.require_module.chat().setup {
         -- debug = true,
-        -- model = "gpt-4o",
-        -- model = "claude-3.5-sonnet",
-        model = "claude-3.7-sonnet",
+        -- model = "claude-sonnet-4",
+        model = "o4-mini",
         window = {
           layout = "float",
           width = 0.5,
