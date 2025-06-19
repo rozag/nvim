@@ -14,7 +14,7 @@ M.require_module = {
 }
 
 M.cmd_toggle = "Trouble"
-M.cmd_doc_diagnostics = "Trouble project_diagnostics"
+M.cmd_doc_diagnostics = "Trouble diagnostics toggle filter.buf=0"
 M.cmd_lsp_document_symbols = "Trouble lsp_document_symbols"
 
 M.lazy_defs = {
