@@ -182,15 +182,21 @@ M.lazy_defs = {
         require("plugins.telescope").filetypes
       )
 
-      M.require_module.autopairs().setup {
+      local autopairs = M.require_module.autopairs()
+      autopairs.setup {
         check_ts = true,
         enable_check_bracket_line = false,
         disable_filetype = disable_filetype,
       }
+      autopairs.get_rules("'")[1].not_filetypes = {
+        "scheme",
+        "lisp",
+        "clojure",
+      }
 
-      local autopairs = M.require_module.autopairs_cmp()
+      local autopairs_cmp = M.require_module.autopairs_cmp()
       local cmp = M.require_module.cmp()
-      cmp.event:on("confirm_done", autopairs.on_confirm_done())
+      cmp.event:on("confirm_done", autopairs_cmp.on_confirm_done())
     end,
   },
 
