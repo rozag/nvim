@@ -72,6 +72,7 @@ M.lazy_defs = {
     init = function()
       vim.g["conjure#filetypes"] = { "clojure", "fennel" }
       vim.g["conjure#log#wrap"] = true
+      vim.g["conjure#mapping#doc_word"] = "gk"
     end,
   },
 
