@@ -6,6 +6,8 @@ M.name = "monokai-pro"
 -- Colors extracted from monokai-pro sources:
 -- https://github.com/loctvl842/monokai-pro.nvim
 --     /blob/master/lua/monokai-pro/colorscheme/palette/spectrum.lua
+M.color_background = "#222222"
+M.color_text = "#f7f1ff"
 M.color_accent1 = "#fc618d"
 M.color_dimmed5 = "#363537"
 
@@ -33,6 +35,10 @@ M.lazy_defs = {
 
       -- Column limit indicator appearance, have to do it after colorscheme.
       vim.cmd("highlight ColorColumn ctermbg=0 guibg=" .. M.color_dimmed5)
+
+      -- Floating window appearance, have to do it after colorscheme.
+      vim.cmd("highlight FloatBorder guifg=" .. M.color_text)
+      vim.cmd("highlight NormalFloat guibg=" .. M.color_background)
     end,
   },
 }
