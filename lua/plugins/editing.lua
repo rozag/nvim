@@ -7,6 +7,7 @@ M.ids = {
   conjure = "Olical/conjure",
   cmp_conjure = "PaterJason/cmp-conjure",
   paredit = "julienvincent/nvim-paredit",
+  mini_splitjoin = "echasnovski/mini.splitjoin",
 }
 
 M.require_module = {
@@ -24,6 +25,9 @@ M.require_module = {
   end,
   paredit = function()
     return require("nvim-paredit")
+  end,
+  mini_splitjoin = function()
+    return require("mini.splitjoin")
   end,
 }
 
@@ -97,6 +101,28 @@ M.lazy_defs = {
     lazy = true,
     config = function()
       M.require_module.paredit().setup()
+    end,
+  },
+
+  -- [[ Split and join arguments ]]
+  -- https://github.com/echasnovski/mini.splitjoin
+  {
+    M.ids.mini_splitjoin,
+    config = function()
+      local splitjoin = M.require_module.mini_splitjoin()
+      splitjoin.setup {
+        mappings = require("kbd").plugins.mini_splitjoin,
+        split = {
+          hooks_post = {
+            splitjoin.gen_hook.add_trailing_separator(),
+          },
+        },
+        join = {
+          hooks_post = {
+            splitjoin.gen_hook.del_trailing_separator(),
+          },
+        },
+      }
     end,
   },
 }
