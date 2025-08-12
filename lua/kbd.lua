@@ -124,12 +124,15 @@ M.general = function()
 
   -- Toggle commands
   which_key.add { "<leader>t", group = "[t]oggle" }
-  nmap("<leader>tb", function()
+  nmap("<leader>ta", function()
+    require("plugins.completion").toggle_cmp_enabled()
+  end, "[a]utocomplete")
+  nmap("<leader>tg", function()
     vim.cmd(require("plugins.git").cmd_toggle_gitblame)
-  end, "git [b]lame")
+  end, "[g]it blame")
   nmap("<leader>tw", function()
     vim.cmd("set wrap!")
-  end, "line [w]rap")
+  end, "[w]rap lines")
 
   -- REPL (Conjure) commands
   which_key.add { "<localleader>", group = "Conjure REPL" }

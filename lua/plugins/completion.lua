@@ -35,6 +35,10 @@ M.require_module = {
   end,
 }
 
+M.toggle_cmp_enabled = function()
+  vim.g.custom_cmp_disabled = not vim.g.custom_cmp_disabled
+end
+
 M.lazy_defs = {
   -- [[ Completions ]]
   -- https://github.com/hrsh7th/nvim-cmp
@@ -68,6 +72,19 @@ M.lazy_defs = {
       local luasnip = M.require_module.luasnip()
       local kbd_cmp = require("kbd").plugins.cmp
       cmp.setup {
+        enabled = function()
+          local disabled = false
+          disabled = disabled
+            or (
+              vim.api.nvim_get_option_value("buftype", { buf = 0 }) == "prompt"
+            )
+          disabled = disabled or (vim.fn.reg_recording() ~= "")
+          disabled = disabled or (vim.fn.reg_executing() ~= "")
+          disabled = disabled
+            or require("cmp.config.context").in_treesitter_capture("comment")
+          disabled = disabled or vim.g.custom_cmp_disabled
+          return not disabled
+        end,
         completion = {
           completeopt = "menu,menuone",
         },
