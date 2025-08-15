@@ -339,7 +339,12 @@ M.plugins = {
       end, "Tele[s]cope")
 
       nmap("<leader><space>", builtin.git_files, "Find git file")
-      nmap("<leader>,", builtin.buffers, "Find existing buffer")
+      nmap("<leader>,", function()
+        builtin.buffers {
+          sort_lastused = true,
+          sort_mru = true,
+        }
+      end, "Find existing buffer")
       nmap("<leader>b/", function()
         builtin.current_buffer_fuzzy_find(themes.get_dropdown {
           previewer = true,
