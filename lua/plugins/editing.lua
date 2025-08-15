@@ -70,11 +70,11 @@ M.lazy_defs = {
   -- https://github.com/Olical/conjure
   {
     M.ids.conjure,
-    ft = { "clojure", "fennel" },
+    ft = { "clojure", "fennel", "python" },
     lazy = true,
     dependencies = { M.ids.cmp_conjure },
     init = function()
-      vim.g["conjure#filetypes"] = { "clojure", "fennel" }
+      vim.g["conjure#filetypes"] = { "clojure", "fennel", "python" }
       vim.g["conjure#log#wrap"] = true
       vim.g["conjure#mapping#doc_word"] = "gk"
     end,
