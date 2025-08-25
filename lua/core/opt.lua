@@ -88,3 +88,7 @@ vim.opt.whichwrap:append("<>[]hl")
 
 -- Wildmenu kbd
 vim.cmd("set wildchar=<C-n>")
+
+-- Some space around the cursor while scrolling
+vim.opt.scrolloff = 8
+vim.opt.sidescrolloff = 8
