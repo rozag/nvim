@@ -77,6 +77,7 @@ M.lazy_defs = {
       vim.g["conjure#filetypes"] = { "clojure", "fennel", "python" }
       vim.g["conjure#log#wrap"] = true
       vim.g["conjure#mapping#doc_word"] = "gk"
+      vim.g["conjure#client#python#stdio#command"] = "python3 -iq -m asyncio"
     end,
   },
 
