@@ -44,7 +44,7 @@ M.lazy_defs = {
     M.ids.vimade,
     opts = {
       ncmode = "windows",
-      fadelevel = 0.6,
+      fadelevel = 0.7,
     },
   },
 
