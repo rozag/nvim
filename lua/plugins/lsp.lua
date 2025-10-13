@@ -45,12 +45,11 @@ M.lazy_defs = {
   -- https://github.com/neovim/nvim-lspconfig
   {
     M.ids.lspconfig,
+    commit = "624088f6478f7019b873a07527d2521e771fb8ce",
     dependencies = {
       M.ids.neodev,
     },
     config = function()
-      local lspconfig = M.require_module.lspconfig()
-
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities.textDocument.completion.completionItem = {
         documentationFormat = { "markdown", "plaintext" },
@@ -74,6 +73,7 @@ M.lazy_defs = {
       capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
       local langs = require("plugins.langs")
+      local lspconfig = M.require_module.lspconfig()
       for server_name, settings in pairs(langs.lsp_settings) do
         lspconfig[server_name].setup {
           capabilities = capabilities,
