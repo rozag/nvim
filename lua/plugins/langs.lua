@@ -6,7 +6,6 @@ local langs = {
   circom = {
     fill_col_indicator = { type = "circom", limit = "81" },
     treesitter_grammars = {},
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
     none_ls_sources = function()
@@ -17,9 +16,6 @@ local langs = {
   clojure = {
     fill_col_indicator = { type = "clojure", limit = "81" },
     treesitter_grammars = { "clojure" },
-    mason_lspconfig_ensure_installed = {
-      "clojure_lsp", -- Clojure LSP: https://clojure-lsp.io/settings/
-    },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
       server_name = "clojure_lsp",
@@ -68,7 +64,6 @@ local langs = {
   dart = {
     fill_col_indicator = { type = "dart", limit = "81" },
     treesitter_grammars = { "dart" },
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
     none_ls_sources = function()
@@ -79,7 +74,6 @@ local langs = {
   dockerfile = {
     fill_col_indicator = { type = "dockerfile", limit = "81" },
     treesitter_grammars = { "dockerfile" },
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
     none_ls_sources = function()
@@ -94,9 +88,6 @@ local langs = {
       "gomod",
       "gosum",
       "gowork",
-    },
-    mason_lspconfig_ensure_installed = {
-      "gopls", -- gopls
     },
     telescope_file_ignore_patterns = { "vendor" },
     lsp_settings = {
@@ -132,7 +123,6 @@ local langs = {
   java = {
     fill_col_indicator = { type = "java", limit = "141" },
     treesitter_grammars = { "java" },
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
     none_ls_sources = function()
@@ -149,7 +139,6 @@ local langs = {
       "json5",
       "jsonc",
     },
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = { "node_modules" },
     lsp_settings = {},
     none_ls_sources = function()
@@ -160,7 +149,6 @@ local langs = {
   kotlin = {
     fill_col_indicator = { type = "kotlin", limit = "141" },
     treesitter_grammars = { "kotlin" },
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
     none_ls_sources = function()
@@ -175,9 +163,6 @@ local langs = {
       "luadoc",
       "luap",
       "luau",
-    },
-    mason_lspconfig_ensure_installed = {
-      "lua_ls", -- lua-language-server
     },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
@@ -225,7 +210,6 @@ local langs = {
   markdown = {
     fill_col_indicator = { type = "markdown", limit = "81" },
     treesitter_grammars = { "markdown" },
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
     none_ls_sources = function()
@@ -236,7 +220,6 @@ local langs = {
   org = {
     fill_col_indicator = { type = "org", limit = "81" },
     treesitter_grammars = {},
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
     none_ls_sources = function()
@@ -247,9 +230,6 @@ local langs = {
   python = {
     fill_col_indicator = { type = "python", limit = "81" },
     treesitter_grammars = { "python", "starlark" },
-    mason_lspconfig_ensure_installed = {
-      "pyright", -- pyright
-    },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
       server_name = "pyright",
@@ -287,7 +267,7 @@ local langs = {
               pattern = [[%`(.*)%` imported but unused]]
             elseif code == "F841" then
               pattern =
-              [[Local variable %`(.*)%` is assigned to but never used]]
+                [[Local variable %`(.*)%` is assigned to but never used]]
             end
             if not pattern then
               return default_position
@@ -412,9 +392,6 @@ local langs = {
   rust = {
     fill_col_indicator = { type = "rust", limit = "101" },
     treesitter_grammars = { "rust", "toml" },
-    mason_lspconfig_ensure_installed = {
-      "rust_analyzer", -- rust-analyzer
-    },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
       server_name = "rust_analyzer",
@@ -449,7 +426,6 @@ local langs = {
   sql = {
     fill_col_indicator = { type = "sql", limit = "81" },
     treesitter_grammars = { "sql" },
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
     none_ls_sources = function()
@@ -476,7 +452,6 @@ local langs = {
   terraform = {
     fill_col_indicator = { type = "terraform", limit = "81" },
     treesitter_grammars = { "terraform" },
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
     none_ls_sources = function()
@@ -487,7 +462,6 @@ local langs = {
   text = {
     fill_col_indicator = { type = "text", limit = "81" },
     treesitter_grammars = {},
-    mason_lspconfig_ensure_installed = {},
     telescope_file_ignore_patterns = {},
     lsp_settings = {},
     none_ls_sources = function()
@@ -500,9 +474,6 @@ local langs = {
     treesitter_grammars = {
       "tsx",
       "typescript",
-    },
-    mason_lspconfig_ensure_installed = {
-      "ts_ls", -- typescript-language-server
     },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
@@ -540,7 +511,7 @@ local M = {}
 -- [[ Line width limit via colorcolumn ]]
 M.setup_fill_col_indicator = function()
   local fill_col_indicator_group =
-      vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
+    vim.api.nvim_create_augroup("FillColumnIndicator", { clear = true })
 
   local function bind_file_type_to_fill_col_indicator_limit(type, limit)
     vim.api.nvim_create_autocmd("FileType", {
@@ -564,16 +535,6 @@ end
 M.treesitter_grammars = {}
 for _, lang in pairs(langs) do
   utils.table.append_values(M.treesitter_grammars, lang.treesitter_grammars)
-end
-
--- [[ Mason LSP config -> ensure installed ]]
--- Package list: https://mason-registry.dev/registry/list
-M.mason_lspconfig_ensure_installed = {}
-for _, lang in pairs(langs) do
-  utils.table.append_values(
-    M.mason_lspconfig_ensure_installed,
-    lang.mason_lspconfig_ensure_installed
-  )
 end
 
 -- [[ Files ignored by Telescope ]]
