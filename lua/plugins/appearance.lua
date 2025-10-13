@@ -4,7 +4,7 @@ local M = {}
 
 M.ids = {
   devicons = "nvim-tree/nvim-web-devicons",
-  tint = "levouh/tint.nvim",
+  vimade = "tadaa/vimade",
   todo_comments = "folke/todo-comments.nvim",
   indent_blankline = "lukas-reineke/indent-blankline.nvim",
   rainbow = "HiPhish/rainbow-delimiters.nvim",
@@ -13,9 +13,6 @@ M.ids = {
 M.require_module = {
   devicons = function()
     return require("nvim-web-devicons")
-  end,
-  tint = function()
-    return require("tint")
   end,
   todo_comments = function()
     return require("todo-comments")
@@ -41,33 +38,14 @@ M.lazy_defs = {
     end,
   },
 
-  -- [[ Dim inactive windows ]]
-  -- https://github.com/levouh/tint.nvim
+  -- [[ Vimade helps you maintain focus on the active part of the screen ]]
+  -- https://github.com/TaDaa/vimade
   {
-    M.ids.tint,
-    config = function()
-      M.require_module.tint().setup {
-        tint = 0,
-        saturation = 0.2,
-        tint_background_colors = false,
-        window_ignore_function = function(winid)
-          local bufid = vim.api.nvim_win_get_buf(winid)
-
-          local buftype = vim.api.nvim_buf_get_option(bufid, "buftype")
-          local is_terminal = buftype == "terminal"
-
-          local filetype = vim.api.nvim_buf_get_option(bufid, "filetype")
-          local is_tree = utils.table.contains_value(
-            require("plugins.tree").filetypes,
-            filetype
-          )
-
-          local is_floating = vim.api.nvim_win_get_config(winid).relative ~= ""
-
-          return is_terminal or is_tree or is_floating
-        end,
-      }
-    end,
+    M.ids.vimade,
+    opts = {
+      ncmode = "windows",
+      fadelevel = 0.6,
+    },
   },
 
   -- [[ Highlight and search TODO comments ]]
