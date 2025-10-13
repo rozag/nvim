@@ -111,10 +111,6 @@ M.lazy_defs = {
       )
       utils.table.append_values(
         filetype_exclude,
-        require("plugins.mason").filetypes
-      )
-      utils.table.append_values(
-        filetype_exclude,
         require("plugins.telescope").filetypes
       )
       utils.table.append_values(

@@ -49,10 +49,6 @@ M.lazy_defs = {
       }
       utils.table.append_values(
         sources,
-        require("plugins.git").none_ls_sources()
-      )
-      utils.table.append_values(
-        sources,
         require("plugins.langs").none_ls_sources()
       )
 

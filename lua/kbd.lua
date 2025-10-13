@@ -65,13 +65,13 @@ M.general = function()
   vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
   -- Without leader key
-  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer") -- C-Tab
+  nmap("^[[C-Tab", vim.cmd.bnext, "next buffer")           -- C-Tab
   nmap("^[[C-S-Tab", vim.cmd.bprevious, "previous buffer") -- C-S-Tab
-  nmap("^[[M-s", vim.cmd.write, "save buffer") -- Cmd-s
-  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers") -- Cmd-S-s
+  nmap("^[[M-s", vim.cmd.write, "save buffer")             -- Cmd-s
+  nmap("^[[M-S-s", vim.cmd.wall, "save all buffers")       -- Cmd-S-s
   nmap("<Esc><Esc>", vim.cmd.nohlsearch, "dismiss search highlight")
-  nmap("^[[M-S-z", vim.cmd.redo, "redo") -- Cmd-S-z
-  nmap("^[[M-z", vim.cmd.undo, "undo") -- Cmd-z
+  nmap("^[[M-S-z", vim.cmd.redo, "redo")                   -- Cmd-S-z
+  nmap("^[[M-z", vim.cmd.undo, "undo")                     -- Cmd-z
   vim.keymap.set("i", "^[[M-z", vim.cmd.undo, {
     desc = "undo",
     noremap = true,
@@ -127,9 +127,6 @@ M.general = function()
   nmap("<leader>ta", function()
     require("plugins.completion").toggle_cmp_enabled()
   end, "[a]utocomplete")
-  nmap("<leader>tg", function()
-    vim.cmd(require("plugins.git").cmd_toggle_gitblame)
-  end, "[g]it blame")
   nmap("<leader>tw", function()
     vim.cmd("set wrap!")
   end, "[w]rap lines")
@@ -173,7 +170,7 @@ M.plugins = {
     vim.keymap.set("n", "^[[M-/", function()
       return vim.api.nvim_get_vvar("count") == 0
           and "<Plug>(comment_toggle_linewise_current)"
-        or "<Plug>(comment_toggle_linewise_count)"
+          or "<Plug>(comment_toggle_linewise_count)"
     end, { expr = true, desc = "Comment toggle current line" })
     vim.keymap.set(
       "v",
@@ -186,8 +183,8 @@ M.plugins = {
   copilot = {
     mappings = {
       accept = "<C-Down>", -- C-j
-      next = "<C-Right>", -- C-l
-      prev = "<C-Left>", -- C-h
+      next = "<C-Right>",  -- C-l
+      prev = "<C-Left>",   -- C-h
       dismiss = "<C-]>",
     },
     core = function()
@@ -292,12 +289,6 @@ M.plugins = {
     end,
   },
 
-  mason = function()
-    nmap("<leader>om", function()
-      vim.cmd(require("plugins.mason").cmd)
-    end, "[m]ason package manager")
-  end,
-
   mini_splitjoin = {
     toggle = "gS",
     split = "",
@@ -307,9 +298,9 @@ M.plugins = {
   telescope = {
     mappings = function()
       local actions =
-        require("plugins.telescope").require_module.telescope_actions()
+          require("plugins.telescope").require_module.telescope_actions()
       local trouble =
-        require("plugins.trouble").require_module.trouble_telescope()
+          require("plugins.trouble").require_module.trouble_telescope()
       local editing = require("plugins.editing")
       return {
         -- Normal mode
@@ -368,7 +359,7 @@ M.plugins = {
 
     lsp_on_attach = function()
       local builtin =
-        require("plugins.telescope").require_module.telescope_builtin()
+          require("plugins.telescope").require_module.telescope_builtin()
       nmap("gr", builtin.lsp_references, "[r]eferences")
       nmap("gd", builtin.lsp_definitions, "[d]efinition")
       nmap("gD", builtin.lsp_type_definitions, "type [D]efinition")
