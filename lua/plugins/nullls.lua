@@ -27,6 +27,12 @@ M.require_module = {
   none_ls_formatting_rustfmt = function()
     return require("none-ls.formatting.rustfmt")
   end,
+  none_ls_diagnostics_ruff = function()
+    return require("none-ls.diagnostics.ruff")
+  end,
+  none_ls_formatting_ruff = function()
+    return require("none-ls.formatting.ruff_format")
+  end,
 }
 
 M.lazy_defs = {
