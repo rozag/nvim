@@ -38,9 +38,20 @@ M.lazy_defs = {
           update_root = false,
         },
         view = {
-          adaptive_size = true,
+          adaptive_size = false,
           side = "left",
-          preserve_window_proportions = true,
+          float = {
+            enable = true,
+            quit_on_focus_loss = true,
+            open_win_config = {
+              relative = "editor",
+              border = "rounded",
+              width = 120,
+              height = 40,
+              row = 3,
+              col = 9,
+            },
+          },
         },
         git = {
           enable = true,
