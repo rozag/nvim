@@ -102,7 +102,7 @@ M.lazy_defs = {
     config = function()
       M.require_module.chat().setup {
         -- debug = true,
-        model = "claude-sonnet-4.5",
+        model = "claude-sonnet-4.6",
         -- model = "o4-mini",
         window = {
           layout = "float",
