@@ -5,17 +5,17 @@ local M = {}
 
 M.ids = {
   treesitter = "nvim-treesitter/nvim-treesitter",
-  treesitter_textobjects = "nvim-treesitter/nvim-treesitter-textobjects",
-  treesitter_refactor = "nvim-treesitter/nvim-treesitter-refactor",
+  -- treesitter_textobjects = "nvim-treesitter/nvim-treesitter-textobjects",
+  -- treesitter_refactor = "nvim-treesitter/nvim-treesitter-refactor",
 }
 
 M.require_module = {
-  treesitter_configs = function()
-    return require("nvim-treesitter.configs")
-  end,
-  treesitter_install = function()
-    return require("nvim-treesitter.install")
-  end,
+  -- treesitter_configs = function()
+  --   return require("nvim-treesitter.configs")
+  -- end,
+  -- treesitter_install = function()
+  --   return require("nvim-treesitter.install")
+  -- end,
 }
 
 local textobjects_move = { enable = true, set_jumps = true }
@@ -87,42 +87,43 @@ M.lazy_defs = {
   -- https://github.com/nvim-treesitter/nvim-treesitter
   {
     M.ids.treesitter,
-    dependencies = {
-      M.ids.treesitter_textobjects,
-      M.ids.treesitter_refactor,
-    },
+    -- dependencies = {
+    --   M.ids.treesitter_textobjects,
+    --   M.ids.treesitter_refactor,
+    -- },
+    branch = "main",
     build = ":TSUpdate",
     config = function()
-      M.require_module.treesitter_install().compilers = { "gcc" }
-      M.require_module.treesitter_configs().setup {
-        ensure_installed = ensure_grammars_installed,
-        sync_install = true,
-        auto_install = true,
-        highlight = {
-          enable = true,
-          use_languagetree = true,
-        },
-        indent = { enable = true },
-        incremental_selection = {
-          enable = true,
-          keymaps = kbd.plugins.treesitter.incremental_selection_keymaps,
-        },
-        textobjects = {
-          select = {
-            enable = true,
-            lookahead = true,
-            keymaps = kbd.plugins.treesitter.textobjects.selection_keymaps,
-          },
-          move = textobjects_move,
-          swap = textobjects_swap,
-        },
-        refactor = {
-          smart_rename = {
-            enable = true,
-            keymaps = kbd.plugins.treesitter.refactor_keymaps,
-          },
-        },
-      }
+      -- M.require_module.treesitter_install().compilers = { "gcc" }
+      -- M.require_module.treesitter_configs().setup {
+      --   ensure_installed = ensure_grammars_installed,
+      --   sync_install = true,
+      --   auto_install = true,
+      --   highlight = {
+      --     enable = true,
+      --     use_languagetree = true,
+      --   },
+      --   indent = { enable = true },
+      --   incremental_selection = {
+      --     enable = true,
+      --     keymaps = kbd.plugins.treesitter.incremental_selection_keymaps,
+      --   },
+      --   textobjects = {
+      --     select = {
+      --       enable = true,
+      --       lookahead = true,
+      --       keymaps = kbd.plugins.treesitter.textobjects.selection_keymaps,
+      --     },
+      --     move = textobjects_move,
+      --     swap = textobjects_swap,
+      --   },
+      --   refactor = {
+      --     smart_rename = {
+      --       enable = true,
+      --       keymaps = kbd.plugins.treesitter.refactor_keymaps,
+      --     },
+      --   },
+      -- }
     end,
   },
 }
