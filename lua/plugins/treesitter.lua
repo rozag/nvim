@@ -10,6 +10,9 @@ M.ids = {
 }
 
 M.require_module = {
+  treesitter = function()
+    return require("nvim-treesitter")
+  end,
   -- treesitter_configs = function()
   --   return require("nvim-treesitter.configs")
   -- end,
@@ -58,7 +61,6 @@ local ensure_grammars_installed = {
   "make",
   "ninja",
   "nix",
-  "norg",
   "ocaml",
   "proto",
   "racket",
@@ -70,7 +72,6 @@ local ensure_grammars_installed = {
   "smali",
   "solidity",
   "swift",
-  "verilog",
   "vim",
   "vimdoc",
   "wgsl",
@@ -94,6 +95,7 @@ M.lazy_defs = {
     branch = "main",
     build = ":TSUpdate",
     config = function()
+      M.require_module.treesitter().install(ensure_grammars_installed)
       -- M.require_module.treesitter_install().compilers = { "gcc" }
       -- M.require_module.treesitter_configs().setup {
       --   ensure_installed = ensure_grammars_installed,

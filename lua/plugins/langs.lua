@@ -137,7 +137,6 @@ local langs = {
       "jsdoc",
       "json",
       "json5",
-      "jsonc",
     },
     telescope_file_ignore_patterns = { "node_modules" },
     lsp_settings = {},
