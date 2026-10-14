@@ -1,5 +1,14 @@
 local M = {}
 
+-- show LSP float markdown as-is: keep fences/markup and highlight, no conceal
+local open_floating_preview = vim.lsp.util.open_floating_preview
+---@diagnostic disable-next-line: duplicate-set-field
+vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
+  local bufnr, winid = open_floating_preview(contents, syntax, opts, ...)
+  vim.wo[winid].conceallevel = 0
+  return bufnr, winid
+end
+
 M.ids = {
   lspconfig = "neovim/nvim-lspconfig",
   neodev = "folke/neodev.nvim",

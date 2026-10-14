@@ -31,7 +31,7 @@ M.filetypes = {
 
 M.cmd = "Telescope"
 M.cmd_file_browser_current =
-"Telescope file_browser path=%:p:h select_buffer=true"
+  "Telescope file_browser path=%:p:h select_buffer=true"
 M.cmd_file_browser_root = "Telescope file_browser"
 
 M.lazy_defs = {
@@ -39,7 +39,6 @@ M.lazy_defs = {
   -- https://github.com/nvim-telescope/telescope.nvim
   {
     M.ids.telescope,
-    branch = "0.1.x",
     dependencies = { require("plugins.stdlib").ids.plenary },
     config = function()
       local telescope = M.require_module.telescope()
