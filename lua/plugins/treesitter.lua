@@ -92,10 +92,29 @@ M.lazy_defs = {
     --   M.ids.treesitter_textobjects,
     --   M.ids.treesitter_refactor,
     -- },
+    lazy = false,
     branch = "main",
     build = ":TSUpdate",
     config = function()
-      M.require_module.treesitter().install(ensure_grammars_installed)
+      local ts = M.require_module.treesitter()
+      ts.install(ensure_grammars_installed)
+
+      -- parser names -> filetypes (bash -> sh, vimdoc -> help, ...)
+      local filetypes = {}
+      for _, lang in ipairs(ensure_grammars_installed) do
+        vim.list_extend(filetypes, vim.treesitter.language.get_filetypes(lang))
+      end
+
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = filetypes,
+        callback = function(args)
+          -- pcall: install is async, so the parser may not exist yet on 1st run
+          if not pcall(vim.treesitter.start, args.buf) then
+            return
+          end
+        end,
+      })
+
       -- M.require_module.treesitter_install().compilers = { "gcc" }
       -- M.require_module.treesitter_configs().setup {
       --   ensure_installed = ensure_grammars_installed,
