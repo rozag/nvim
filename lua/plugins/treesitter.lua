@@ -5,33 +5,26 @@ local M = {}
 
 M.ids = {
   treesitter = "nvim-treesitter/nvim-treesitter",
-  -- treesitter_textobjects = "nvim-treesitter/nvim-treesitter-textobjects",
-  -- treesitter_refactor = "nvim-treesitter/nvim-treesitter-refactor",
+  treesitter_textobjects = "nvim-treesitter/nvim-treesitter-textobjects",
 }
 
 M.require_module = {
   treesitter = function()
     return require("nvim-treesitter")
   end,
-  -- treesitter_configs = function()
-  --   return require("nvim-treesitter.configs")
-  -- end,
-  -- treesitter_install = function()
-  --   return require("nvim-treesitter.install")
-  -- end,
+  textobjects = function()
+    return require("nvim-treesitter-textobjects")
+  end,
+  textobjects_select = function()
+    return require("nvim-treesitter-textobjects.select")
+  end,
+  textobjects_move = function()
+    return require("nvim-treesitter-textobjects.move")
+  end,
+  textobjects_swap = function()
+    return require("nvim-treesitter-textobjects.swap")
+  end,
 }
-
-local textobjects_move = { enable = true, set_jumps = true }
-utils.table.append_keys_values(
-  textobjects_move,
-  kbd.plugins.treesitter.textobjects.move_keymaps
-)
-
-local textobjects_swap = { enable = true }
-utils.table.append_keys_values(
-  textobjects_swap,
-  kbd.plugins.treesitter.textobjects.swap_keymaps
-)
 
 local ensure_grammars_installed = {
   "bash",
@@ -88,16 +81,11 @@ M.lazy_defs = {
   -- https://github.com/nvim-treesitter/nvim-treesitter
   {
     M.ids.treesitter,
-    -- dependencies = {
-    --   M.ids.treesitter_textobjects,
-    --   M.ids.treesitter_refactor,
-    -- },
     lazy = false,
     branch = "main",
     build = ":TSUpdate",
     config = function()
-      local ts = M.require_module.treesitter()
-      ts.install(ensure_grammars_installed)
+      M.require_module.treesitter().install(ensure_grammars_installed)
 
       -- parser names -> filetypes (bash -> sh, vimdoc -> help, ...)
       local filetypes = {}
@@ -109,42 +97,53 @@ M.lazy_defs = {
         pattern = filetypes,
         callback = function(args)
           -- pcall: install is async, so the parser may not exist yet on 1st run
-          if not pcall(vim.treesitter.start, args.buf) then
-            return
-          end
+          pcall(vim.treesitter.start, args.buf)
         end,
       })
+    end,
+  },
 
-      -- M.require_module.treesitter_install().compilers = { "gcc" }
-      -- M.require_module.treesitter_configs().setup {
-      --   ensure_installed = ensure_grammars_installed,
-      --   sync_install = true,
-      --   auto_install = true,
-      --   highlight = {
-      --     enable = true,
-      --     use_languagetree = true,
-      --   },
-      --   indent = { enable = true },
-      --   incremental_selection = {
-      --     enable = true,
-      --     keymaps = kbd.plugins.treesitter.incremental_selection_keymaps,
-      --   },
-      --   textobjects = {
-      --     select = {
-      --       enable = true,
-      --       lookahead = true,
-      --       keymaps = kbd.plugins.treesitter.textobjects.selection_keymaps,
-      --     },
-      --     move = textobjects_move,
-      --     swap = textobjects_swap,
-      --   },
-      --   refactor = {
-      --     smart_rename = {
-      --       enable = true,
-      --       keymaps = kbd.plugins.treesitter.refactor_keymaps,
-      --     },
-      --   },
-      -- }
+  -- https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+  {
+    M.ids.treesitter_textobjects,
+    branch = "main",
+    dependencies = { M.ids.treesitter },
+    init = function()
+      -- keep built-in ftplugins from overriding ]m [m ]] [[ etc.
+      vim.g.no_plugin_maps = true
+    end,
+    config = function()
+      local keymaps = kbd.plugins.treesitter.textobjects
+
+      M.require_module.textobjects().setup {
+        select = { lookahead = true },
+        move = { set_jumps = true },
+      }
+
+      local select = M.require_module.textobjects_select()
+      for lhs, query in pairs(keymaps.selection_keymaps) do
+        vim.keymap.set({ "x", "o" }, lhs, function()
+          select.select_textobject(query, "textobjects")
+        end)
+      end
+
+      local move = M.require_module.textobjects_move()
+      for fn, maps in pairs(keymaps.move_keymaps) do
+        for lhs, query in pairs(maps) do
+          vim.keymap.set({ "n", "x", "o" }, lhs, function()
+            move[fn](query, "textobjects")
+          end)
+        end
+      end
+
+      local swap = M.require_module.textobjects_swap()
+      for fn, maps in pairs(keymaps.swap_keymaps) do
+        for lhs, query in pairs(maps) do
+          vim.keymap.set("n", lhs, function()
+            swap[fn](query)
+          end)
+        end
+      end
     end,
   },
 }
