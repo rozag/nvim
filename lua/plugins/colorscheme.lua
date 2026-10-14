@@ -29,6 +29,7 @@ M.lazy_defs = {
     priority = 100,
     config = function()
       M.require_module.monokai_pro().setup {
+        transparent_background = true,
         filter = "spectrum",
       }
       vim.cmd.colorscheme(M.name)
