@@ -228,10 +228,11 @@ local langs = {
 
   python = {
     fill_col_indicator = { type = "python", limit = "81" },
-    treesitter_grammars = { "python", "starlark" },
+    treesitter_grammars = { "python" },
     telescope_file_ignore_patterns = {},
     lsp_settings = {
-      server_name = "pyright",
+      -- server_name = "pyright",
+      server_name = "ty",
       settings = {},
     },
     none_ls_sources = function()

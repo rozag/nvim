@@ -18,6 +18,12 @@ M.require_module = {
   lspconfig = function()
     return require("lspconfig")
   end,
+  lspconfig_configs = function()
+    return require("lspconfig.configs")
+  end,
+  lspconfig_util = function()
+    return require("lspconfig.util")
+  end,
   neodev = function()
     return require("neodev")
   end,
@@ -59,6 +65,29 @@ M.lazy_defs = {
       M.ids.neodev,
     },
     config = function()
+      local lspconfig = M.require_module.lspconfig()
+      local configs = M.require_module.lspconfig_configs()
+      local util = M.require_module.lspconfig_util()
+
+      if not configs.ty then
+        configs.ty = {
+          default_config = {
+            cmd = { "ty", "server" },
+            filetypes = { "python" },
+            root_dir = util.root_pattern(
+              "ty.toml",
+              "pyproject.toml",
+              "setup.py",
+              "setup.cfg",
+              "requirements.txt",
+              ".git"
+            ),
+            single_file_support = true,
+            settings = {},
+          },
+        }
+      end
+
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities.textDocument.completion.completionItem = {
         documentationFormat = { "markdown", "plaintext" },
@@ -82,7 +111,6 @@ M.lazy_defs = {
       capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
       local langs = require("plugins.langs")
-      local lspconfig = M.require_module.lspconfig()
       for server_name, settings in pairs(langs.lsp_settings) do
         lspconfig[server_name].setup {
           capabilities = capabilities,
